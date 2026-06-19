@@ -33,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | ba
 |---|---|---|
 | `MESA_HOME` | `~/.mesa` | install location (same as `--prefix`) |
 | `MESA_GIT_ORG` | `idss-mesa` | GitHub org to clone from |
-| `MESA_MCP_REF` | `feat/datacite-support` | branch/tag for `mesa-mcp` (the DataCite tools live here until merged to `main`) |
+| `MESA_MCP_REF` | `main` | branch/tag for `mesa-mcp` |
 | `MCP_SCOPE` | `user` | Claude Code scope: `user`, `project`, or `local` |
 | `CYVERSE_USERNAME` / `CYVERSE_PASSWORD` | — | applied to `mesa-mcp` and `formation` |
 | any `MESA_MCP_*` / `FORMATION_*` | — | passed through verbatim to the matching server |
@@ -43,7 +43,7 @@ curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | ba
 ```
 ~/.mesa/
 ├── repos/
-│   ├── mesa-mcp/            # editable Python source (branch: feat/datacite-support)
+│   ├── mesa-mcp/            # editable Python source
 │   ├── mesa-ducklake/       # editable Python source
 │   ├── irods-mcp-server/    # Go source
 │   └── formation-mcp/       # Go source

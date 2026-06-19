@@ -36,9 +36,5 @@ Configuration precedence is **CLI flag > environment variable > YAML file > defa
 defaults target anonymous public CyVerse access. See [Credentials](../credentials.md) and
 [`.env.example`](https://github.com/idss-mesa/mesa-mcp/blob/main/.env.example) for the full set.
 
-!!! note "Branch"
-    MESA installs `mesa-mcp` from the `feat/datacite-support` branch (override with
-    `MESA_MCP_REF`), which carries the DataCite tools until they merge to `main`.
-
 Full documentation lives in the repo under
 [`docs/`](https://github.com/idss-mesa/mesa-mcp/tree/main/docs) (user / dev / deploy guides).

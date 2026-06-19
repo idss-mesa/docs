@@ -23,7 +23,7 @@
 # Environment overrides:
 #   MESA_HOME          install location          (default: ~/.mesa)
 #   MESA_GIT_ORG       GitHub org to clone from  (default: idss-mesa)
-#   MESA_MCP_REF       branch/tag for mesa-mcp   (default: feat/datacite-support)
+#   MESA_MCP_REF       branch/tag for mesa-mcp   (default: main)
 #   MCP_SCOPE          claude mcp scope          (default: user)
 #
 # Credentials (optional — default is anonymous public CyVerse access):
@@ -37,7 +37,7 @@ set -euo pipefail
 # ---------------------------------------------------------------------------
 MESA_HOME="${MESA_HOME:-$HOME/.mesa}"
 MESA_GIT_ORG="${MESA_GIT_ORG:-idss-mesa}"
-MESA_MCP_REF="${MESA_MCP_REF:-feat/datacite-support}"
+MESA_MCP_REF="${MESA_MCP_REF:-main}"
 MCP_SCOPE="${MCP_SCOPE:-user}"
 GO_MIN_MINOR=25            # require Go >= 1.25
 BUILD_GO=1
