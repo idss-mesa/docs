@@ -1,3 +1,16 @@
+---
+type: Reference
+title: Credentials
+description: Authenticating the MESA servers to CyVerse — env vars at install time, native iRODS auth, and per-server configuration.
+tags:
+  - credentials
+  - authentication
+  - cyverse
+  - irods
+  - formation
+timestamp: "2026-07-18T00:00:00Z"
+---
+
 # Credentials
 
 By default every MESA server connects **anonymously** to public CyVerse infrastructure
@@ -12,15 +25,17 @@ CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
   curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
 ```
 
-The installer threads these into the Claude Code registration as:
+The installer threads these into **every client registration it creates** as:
 
 - `mesa-mcp` → `MESA_MCP_IRODS__USER`, `MESA_MCP_IRODS__PASSWORD`
 - `formation` → `FORMATION_USERNAME`, `FORMATION_PASSWORD`
 
 !!! warning "Where the password ends up"
-    With user/project scope, these land in your Claude Code config file in plaintext. Prefer
-    the `~/.irods` method below if you don't want the password stored there, and never commit
-    a `project`-scope `.mcp.json` containing secrets.
+    These land in plaintext in each client's config file: `~/.claude.json` (Claude Code
+    user scope), `~/.codex/config.toml`, `$HOME/.gemini/config/mcp_config.json`, and
+    `${XDG_CONFIG_HOME:-~/.config}/opencode/opencode.json`. Prefer the `~/.irods` method below if you don't
+    want the password stored there, and never commit a `project`-scope `.mcp.json`
+    containing secrets.
 
 ## mesa-mcp & irods — native iRODS auth
 

@@ -1,6 +1,6 @@
 # MESA
 
-**One-line install of the CyVerse MESA MCP stack for [Claude Code](https://docs.claude.com/en/docs/claude-code/overview).**
+**One-line install of the CyVerse MESA MCP stack for [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), [Codex CLI](https://developers.openai.com/codex/cli/), [Google Antigravity](https://antigravity.google/), and [OpenCode](https://opencode.ai).**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
@@ -13,8 +13,10 @@ access works out of the box — no credentials needed to start.
 
 ## What it installs
 
-One installer clones, builds, and registers four CyVerse repos as local **stdio** MCP
-servers in Claude Code:
+One installer clones and builds four CyVerse repos, then registers three of them as
+local **stdio** MCP servers in every supported agent client it detects — Claude Code,
+Codex CLI, Antigravity, and OpenCode. Restrict targets with
+`--for claude,codex,antigravity,opencode`:
 
 | Server | Lang | Role |
 |---|---|---|
@@ -23,12 +25,14 @@ servers in Claude Code:
 | [`irods-mcp-server`](https://github.com/idss-mesa/irods-mcp-server) | Go | reference iRODS Data Store server |
 | [`formation-mcp`](https://github.com/idss-mesa/formation-mcp) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
 
-After install, `claude mcp list` shows `mesa-mcp`, `irods`, and `formation`. Ask Claude Code
-to *"ping the CyVerse Data Store"* to confirm.
+After install, `mesa-mcp`, `irods`, and `formation` are registered with each detected
+client — verify with `claude mcp list` / `codex mcp list` / `opencode mcp list`, or
+Antigravity's **Manage MCP Servers** panel. Ask your agent to *"ping the CyVerse Data
+Store"* to confirm.
 
 ## Requirements
 
-- [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) (`claude` on `PATH`) — the installer refuses to run without it
+- at least one supported agent client — [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), [Codex CLI](https://developers.openai.com/codex/cli/), [Antigravity](https://antigravity.google/), or [OpenCode](https://opencode.ai) — the installer refuses to run if none is found
 - `git`, `curl`
 - `uv` — auto-installed if missing
 - Go ≥ 1.25 — only for the two Go servers; pass `--no-go` to skip them
@@ -42,10 +46,13 @@ CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••' bash install.sh
 # Python-only (no Go toolchain)
 bash install.sh --no-go
 
+# register with specific clients only
+bash install.sh --for claude,codex
+
 # custom location
 bash install.sh --prefix ~/tools/mesa
 
-# remove everything
+# remove everything (from all detected clients)
 bash install.sh --uninstall
 ```
 
@@ -72,6 +79,15 @@ from the Material for MkDocs team.
 uv tool run zensical serve -o     # live preview at http://localhost:8000
 uv tool run zensical build        # static output in ./site
 ```
+
+### Docs conventions
+
+The pages under `docs/` follow the
+[Open Knowledge Format v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog)
+(OKF): every content page carries YAML frontmatter (`type`, `title`, `description`,
+`tags`, `timestamp`), and `docs/log.md` is the OKF update log. One deliberate deviation:
+`docs/index.md` keeps frontmatter and rich content instead of OKF's reserved
+frontmatter-free link listing, because Zensical requires `index.md` as the site homepage.
 
 ## License
 

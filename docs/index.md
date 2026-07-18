@@ -1,14 +1,28 @@
 ---
+type: Homepage
+title: MESA
+description: One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
+tags:
+  - mesa
+  - mcp
+  - cyverse
+  - install
+timestamp: "2026-07-18T00:00:00Z"
 icon: lucide/rocket
 ---
 
+<!-- OKF deviation: OKF v0.1 reserves index.md as a frontmatter-free link listing.
+     This file intentionally keeps frontmatter and rich content because Zensical
+     requires index.md to be the site homepage. See README "Docs conventions". -->
+
 # MESA
 
-**MESA** wires the CyVerse data-management MCP servers into
-[Claude Code](https://docs.claude.com/en/docs/claude-code/overview) with a single
-command. One installer clones, builds, and registers everything you need to browse and
-curate the CyVerse Data Store (iRODS), apply ontology-backed metadata, and launch
-Discovery Environment apps — all from natural language.
+**MESA** wires the CyVerse data-management MCP servers into your AI coding agent —
+[Claude Code](claude-code.md), [Codex CLI](codex.md), [Antigravity](antigravity.md), or
+[OpenCode](opencode.md) — with a single command. One installer clones, builds, and
+registers everything you need to browse and curate the CyVerse Data Store (iRODS), apply
+ontology-backed metadata, and launch Discovery Environment apps — all from natural
+language.
 
 ## Install
 
@@ -31,17 +45,24 @@ anonymous public CyVerse access — no credentials required to get started.
 | [**irods-mcp-server**](servers/irods-mcp-server.md) | Go | Reference iRODS Data Store MCP server |
 | [**formation-mcp**](servers/formation-mcp.md) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
 
-After install, the three servers (`mesa-mcp`, `irods`, `formation`) appear in
-`claude mcp list`. Open Claude Code and ask it to *"ping the CyVerse Data Store"* to
-confirm the link.
+After install, the three servers (`mesa-mcp`, `irods`, `formation`) are registered with
+every client the installer detected. Open your agent and ask it to *"ping the CyVerse
+Data Store"* to confirm the link — see the [Quickstart](quickstart.md) for per-client
+verification.
 
 ## How it fits together
 
 ```mermaid
 graph LR
-  CC[Claude Code] -->|stdio| M[mesa-mcp]
-  CC -->|stdio| I[irods-mcp-server]
-  CC -->|stdio| F[formation-mcp]
+  subgraph clients [Agent clients]
+    CC[Claude Code]
+    CX[Codex CLI]
+    AG[Antigravity]
+    OC[OpenCode]
+  end
+  clients -->|stdio| M[mesa-mcp]
+  clients -->|stdio| I[irods-mcp-server]
+  clients -->|stdio| F[formation-mcp]
   M -->|imports| D[mesa-ducklake]
   M --> IR[(CyVerse iRODS<br/>data.cyverse.org)]
   I --> IR

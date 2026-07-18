@@ -1,8 +1,21 @@
+---
+type: Integration Guide
+title: Claude Code integration
+description: How MESA registers its MCP servers with Claude Code — scopes, management commands, and the registration it creates.
+tags:
+  - claude-code
+  - mcp
+  - registration
+  - scopes
+timestamp: "2026-07-18T00:00:00Z"
+---
+
 # Claude Code integration
 
 MESA registers each server as a **local stdio** MCP server: Claude Code launches the
 binary as a subprocess and talks to it over standard input/output. No network ports, no
-hosted service required.
+hosted service required. Claude Code is one of four clients MESA supports — see also
+[Codex CLI](codex.md), [Antigravity](antigravity.md), and [OpenCode](opencode.md).
 
 ## Scopes
 
@@ -27,6 +40,9 @@ claude mcp remove mesa-mcp -s user
 ```
 
 ## The registration MESA creates
+
+User-scope registrations live in `~/.claude.json`; project scope lands in a `.mcp.json`
+committed at the repo root.
 
 ```jsonc
 {

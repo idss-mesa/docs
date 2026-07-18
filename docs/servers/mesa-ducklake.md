@@ -1,10 +1,22 @@
+---
+type: Library
+title: mesa-ducklake
+description: The AVU metadata-history library that backs mesa-mcp — DuckLake snapshots, provenance, and time-travel.
+tags:
+  - mesa-ducklake
+  - python
+  - ducklake
+  - metadata-history
+timestamp: "2026-07-18T00:00:00Z"
+---
+
 # mesa-ducklake
 
 **Repo:** [idss-mesa/mesa-ducklake](https://github.com/idss-mesa/mesa-ducklake) · **Language:** Python 3.11+ · **Registered as:** *(none — it's a library)*
 
 `mesa-ducklake` is **not a standalone MCP server.** It is the metadata-history library that
 [mesa-mcp](mesa-mcp.md) imports in-process. The installer installs it editable into the same
-venv so `mesa-mcp` resolves it, but it is never registered with Claude Code on its own.
+venv so `mesa-mcp` resolves it, but it is never registered with any client on its own.
 
 ## What it does
 

@@ -1,3 +1,17 @@
+---
+type: Guide
+title: Quickstart
+description: Install the MESA MCP stack and register it with your agent client in a few minutes.
+tags:
+  - quickstart
+  - install
+  - claude-code
+  - codex
+  - antigravity
+  - opencode
+timestamp: "2026-07-18T00:00:00Z"
+---
+
 # Quickstart
 
 ## 1. Prerequisites
@@ -7,9 +21,22 @@ The installer checks for these and helps you install the missing ones:
 | Tool | Needed for | Notes |
 |---|---|---|
 | `git`, `curl` | cloning + downloading | usually preinstalled |
-| `claude` | the integration target | install [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) first — the installer refuses to run without it |
+| an agent client | the integration target | any of the four below — the installer auto-detects the ones present and refuses to run if it finds none |
 | `uv` | Python servers | auto-installed from [astral.sh/uv](https://docs.astral.sh/uv/) if missing |
 | Go ≥ 1.25 | the two Go servers | only needed for `irods` + `formation`; pass `--no-go` to skip them |
+
+Supported agent clients:
+
+| Client | Detected via | Integration page |
+|---|---|---|
+| Claude Code | `claude` on `PATH` | [Claude Code](claude-code.md) |
+| Codex CLI | `codex` on `PATH` | [Codex CLI](codex.md) |
+| Antigravity | `agy` on `PATH`, the IDE app, or a `~/.gemini` config dir | [Antigravity](antigravity.md) |
+| OpenCode | `opencode` on `PATH` | [OpenCode](opencode.md) |
+
+Other clients[^openclaw] can reuse the [manual install](install.md#manual-install) steps.
+
+[^openclaw]: OpenClaw support is deferred until its MCP interface can be verified.
 
 !!! tip "Windows users"
     Run everything inside **WSL** (Ubuntu or similar). The installer detects WSL and
@@ -27,16 +54,37 @@ This will:
 2. Clone the four repos from `idss-mesa` into `~/.mesa/repos/`.
 3. Create a Python venv at `~/.mesa/.venv` and install `mesa-ducklake` + `mesa-mcp`.
 4. Build the Go servers into `~/.mesa/bin/`.
-5. Register `mesa-mcp`, `irods`, and `formation` with Claude Code at **user scope**.
+5. Register `mesa-mcp`, `irods`, and `formation` with **every detected client** —
+   Claude Code at user scope, Codex globally, Antigravity and OpenCode via their config
+   files. Restrict targets with `--for`, e.g. `bash -s -- --for claude,codex`.
 
 ## 3. Verify
 
-```bash
-claude mcp list
-```
+=== "Claude Code"
 
-You should see `mesa-mcp`, `irods`, and `formation` reported as **connected**. Then, in a
-Claude Code session, try:
+    ```bash
+    claude mcp list
+    ```
+
+=== "Codex"
+
+    ```bash
+    codex mcp list      # or /mcp inside a Codex session
+    ```
+
+=== "Antigravity"
+
+    Open the IDE's **Manage MCP Servers** panel (or restart `agy`) and confirm the
+    three servers are listed.
+
+=== "OpenCode"
+
+    ```bash
+    opencode mcp list
+    ```
+
+You should see `mesa-mcp`, `irods`, and `formation` listed. Then, in your agent
+session, try:
 
 > *Ping the CyVerse Data Store and list what's in the shared directory.*
 
@@ -53,14 +101,15 @@ CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
   curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
 ```
 
+The credentials are threaded into **every** client registration the installer creates.
 See [Credentials](credentials.md) for all the options (env vars, `~/.irods`, per-server config).
 
 ## Updating & uninstalling
 
 Re-running the one-liner pulls the latest code and rebuilds — it is safe to run again.
+Uninstalling removes the three servers from every detected client and (after
+confirmation) deletes `~/.mesa`:
 
 ```bash
-# clone the repo first, or use your existing ~/.mesa checkout
-~/.mesa/repos/.. # (the installer is also fetched fresh each run via curl)
 curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash -s -- --uninstall
 ```

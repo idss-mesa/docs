@@ -1,3 +1,14 @@
+---
+type: MCP Server
+title: irods-mcp-server
+description: The reference Go MCP server for the CyVerse Data Store (iRODS), registered as irods.
+tags:
+  - irods
+  - go
+  - data-store
+timestamp: "2026-07-18T00:00:00Z"
+---
+
 # irods-mcp-server
 
 **Repo:** [idss-mesa/irods-mcp-server](https://github.com/idss-mesa/irods-mcp-server) · **Language:** Go · **Registered as:** `irods`
@@ -13,9 +24,13 @@ anonymous-access config:
 
 ```bash
 ( cd ~/.mesa/repos/irods-mcp-server && make build )      # -> bin/irods-mcp-server
-claude mcp add irods -s user -- ~/.mesa/bin/irods-mcp-server \
-  -c ~/.mesa/repos/irods-mcp-server/config-stdio.yaml
+~/.mesa/bin/irods-mcp-server -c ~/.mesa/repos/irods-mcp-server/config-stdio.yaml
 ```
+
+It is registered under the name `irods` with every detected client — see
+[Claude Code](../claude-code.md), [Codex CLI](../codex.md),
+[Antigravity](../antigravity.md), or [OpenCode](../opencode.md) for the exact
+registration each one gets.
 
 `make build` produces a static (`CGO_ENABLED=0`) binary; Go ≥ 1.25 is required. Pass
 `--no-go` to the installer to skip this server (and `formation`).

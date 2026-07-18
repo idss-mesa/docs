@@ -1,3 +1,17 @@
+---
+type: MCP Server
+title: mesa-mcp
+description: The flagship MESA server — iRODS Data Store tools, OBO/OLS ontology AVUs, DataCite, and DuckLake metadata history.
+tags:
+  - mesa-mcp
+  - python
+  - irods
+  - ontology
+  - datacite
+  - ducklake
+timestamp: "2026-07-18T00:00:00Z"
+---
+
 # mesa-mcp
 
 **Repo:** [idss-mesa/mesa-mcp](https://github.com/idss-mesa/mesa-mcp) · **Language:** Python 3.11+ · **Registered as:** `mesa-mcp`
@@ -21,8 +35,13 @@ The installer creates a uv venv and installs `mesa-mcp` editable (alongside
 `mesa-ducklake`), then registers the stdio entry point:
 
 ```bash
-claude mcp add mesa-mcp -s user -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio
+~/.mesa/.venv/bin/mesa-mcp --transport stdio
 ```
+
+It is registered under the name `mesa-mcp` with every detected client — see
+[Claude Code](../claude-code.md), [Codex CLI](../codex.md),
+[Antigravity](../antigravity.md), or [OpenCode](../opencode.md) for the exact
+registration each one gets.
 
 ## The AVU contract
 
