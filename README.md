@@ -3,13 +3,13 @@
 **One-line install of the CyVerse MESA MCP stack for [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), [Codex CLI](https://developers.openai.com/codex/cli/), [Google Antigravity](https://antigravity.google/), and [OpenCode](https://opencode.ai).**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
 Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. Anonymous public CyVerse
 access works out of the box — no credentials needed to start.
 
-📖 **Docs:** <https://idss-mesa.github.io/mesa/>
+📖 **Docs:** <https://idss-mesa.github.io/docs/>
 
 ## What it installs
 
@@ -56,14 +56,14 @@ bash install.sh --prefix ~/tools/mesa
 bash install.sh --uninstall
 ```
 
-See the [install reference](https://idss-mesa.github.io/mesa/install/) for all flags and
-environment variables, and [credentials](https://idss-mesa.github.io/mesa/credentials/) for
+See the [install reference](https://idss-mesa.github.io/docs/install/) for all flags and
+environment variables, and [credentials](https://idss-mesa.github.io/docs/credentials/) for
 authenticating.
 
 ## Repository layout
 
 ```
-mesa/
+docs/
 ├── install.sh                 # the one-liner
 ├── zensical.toml              # docs site config (Zensical)
 ├── docs/                      # documentation source

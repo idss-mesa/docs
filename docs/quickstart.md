@@ -45,7 +45,7 @@ Other clients[^openclaw] can reuse the [manual install](install.md#manual-instal
 ## 2. Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
 This will:
@@ -98,7 +98,7 @@ Anonymous access is read-only on public collections. To act as yourself, re-run 
 
 ```bash
 CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
-  curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
 The credentials are threaded into **every** client registration the installer creates.
@@ -111,5 +111,5 @@ Uninstalling removes the three servers from every detected client and (after
 confirmation) deletes `~/.mesa`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash -s -- --uninstall
 ```

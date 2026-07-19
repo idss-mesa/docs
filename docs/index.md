@@ -27,7 +27,7 @@ language.
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
 Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. By default it uses

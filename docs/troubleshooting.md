@@ -94,7 +94,7 @@ still succeeds.
 ## Starting over
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash -s -- --uninstall
 ```
 
 removes the three servers from every detected client and (after confirmation) deletes `~/.mesa`.

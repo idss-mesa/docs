@@ -22,7 +22,7 @@ private data, or launch apps as yourself, authenticate.
 
 ```bash
 CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
-  curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
 The installer threads these into **every client registration it creates** as:

@@ -13,15 +13,15 @@ timestamp: "2026-07-18T00:00:00Z"
 # Install reference
 
 The installer is a single POSIX `bash` script,
-[`install.sh`](https://github.com/idss-mesa/mesa/blob/main/install.sh). You can pipe it
+[`install.sh`](https://github.com/idss-mesa/docs/blob/main/install.sh). You can pipe it
 from `curl` or clone this repo and run it directly.
 
 ```bash
 # one-liner
-curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 
 # from a clone
-git clone https://github.com/idss-mesa/mesa.git && ./mesa/install.sh
+git clone https://github.com/idss-mesa/docs.git && ./docs/install.sh
 ```
 
 ## Flags
@@ -37,7 +37,7 @@ git clone https://github.com/idss-mesa/mesa.git && ./mesa/install.sh
 When piping through `curl`, pass flags after `-s --`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash -s -- --no-go
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash -s -- --no-go
 ```
 
 ## Environment overrides

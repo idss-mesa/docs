@@ -20,6 +20,6 @@
 ## 2026-06-18
 
 * **Update**: Defaulted `mesa-mcp` to `main` now that the DataCite tools are merged
-  ([bba04fd](https://github.com/idss-mesa/mesa/commit/bba04fd)).
+  ([bba04fd](https://github.com/idss-mesa/docs/commit/bba04fd)).
 * **Creation**: Initial MESA umbrella repo — one-liner `install.sh` plus Zensical docs
-  ([27360b8](https://github.com/idss-mesa/mesa/commit/27360b8)).
+  ([27360b8](https://github.com/idss-mesa/docs/commit/27360b8)).

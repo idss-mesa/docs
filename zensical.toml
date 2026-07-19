@@ -2,9 +2,9 @@
 site_name = "MESA"
 site_description = "One-line install of the CyVerse MESA MCP stack (mesa-mcp, mesa-ducklake, irods-mcp-server, formation-mcp) for Claude Code, Codex CLI, Antigravity, and OpenCode."
 site_author = "idss-mesa"
-site_url = "https://idss-mesa.github.io/mesa/"
-repo_url = "https://github.com/idss-mesa/mesa"
-repo_name = "idss-mesa/mesa"
+site_url = "https://idss-mesa.github.io/docs/"
+repo_url = "https://github.com/idss-mesa/docs"
+repo_name = "idss-mesa/docs"
 copyright = """
 Copyright &copy; 2026 The Regents of the University of New Mexico
 """

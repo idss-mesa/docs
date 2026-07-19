@@ -19,7 +19,7 @@
 # Supported platforms: Linux, macOS, and Windows Subsystem for Linux (WSL).
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/idss-mesa/mesa/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 #
 #   # or, after cloning this repo:
 #   ./install.sh [--prefix DIR] [--for CLIENTS] [--no-go] [--uninstall] [--help]
@@ -90,7 +90,7 @@ Usage:
 Environment overrides: MESA_HOME, MESA_GIT_ORG, MESA_MCP_REF, MESA_CLIENTS,
 MCP_SCOPE, CYVERSE_USERNAME / CYVERSE_PASSWORD.
 
-Docs: https://idss-mesa.github.io/mesa/
+Docs: https://idss-mesa.github.io/docs/
 EOF
   fi
   exit 0
@@ -562,7 +562,7 @@ summary() {
   echo "  • By default the servers use anonymous public access (data.cyverse.org, zone iplant)."
   echo "  • To authenticate, re-run with CYVERSE_USERNAME / CYVERSE_PASSWORD set, or edit"
   echo "    $MESA_HOME/repos/irods-mcp-server/config-stdio.yaml and your ~/.irods/irods_environment.json."
-  echo "  • Docs: https://idss-mesa.github.io/mesa/   •   Uninstall: $0 --uninstall"
+  echo "  • Docs: https://idss-mesa.github.io/docs/   •   Uninstall: $0 --uninstall"
 }
 
 # ---------------------------------------------------------------------------
