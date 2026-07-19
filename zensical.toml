@@ -6,7 +6,7 @@ site_url = "https://idss-mesa.github.io/mesa/"
 repo_url = "https://github.com/idss-mesa/mesa"
 repo_name = "idss-mesa/mesa"
 copyright = """
-Copyright &copy; 2026 The Arizona Board of Regents on behalf of The University of Arizona
+Copyright &copy; 2026 The Regents of the University of New Mexico
 """
 
 # Explicit navigation. Omit this to derive nav from the docs/ tree instead.
