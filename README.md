@@ -91,4 +91,5 @@ frontmatter-free link listing, because Zensical requires `index.md` as the site 
 
 ## License
 
-BSD 3-Clause — see [LICENSE](LICENSE).
+BSD 3-Clause, © 2026 The Regents of the University of New Mexico — see
+[LICENSE](LICENSE).

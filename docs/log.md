@@ -1,5 +1,10 @@
 # Directory Update Log
 
+## 2026-07-19
+
+* **Update**: Changed the copyright holder to The Regents of the University of New
+  Mexico (site footer, `LICENSE`, and README).
+
 ## 2026-07-18
 
 * **Update**: Generalized MESA from a Claude-Code-only installer to four agent clients — added
