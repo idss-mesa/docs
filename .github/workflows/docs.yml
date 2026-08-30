@@ -31,6 +31,8 @@ jobs:
         run: pip install zensical
       - name: Build site
         run: zensical build --clean
+      - name: Add agent-readable markdown and llms.txt
+        run: python3 scripts/agent_markdown.py
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
