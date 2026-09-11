@@ -1,0 +1,1449 @@
+# MESA documentation — full corpus
+
+Each page below begins with its canonical URL followed by its original Markdown, OKF frontmatter included.
+
+---8<--- https://idss-mesa.github.io/docs/
+
+---
+okf_version: "0.2"
+title: MESA
+description: One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
+icon: lucide/rocket
+---
+
+<!-- OKF deviation: OKF v0.2 (§8, §12) reserves the bundle-root index.md as a
+     directory listing whose only frontmatter is okf_version. Zensical requires
+     index.md to be the site homepage, so this file also keeps title, description
+     and icon (consumers tolerate unknown keys, §11) and a rich homepage body.
+     See README "Docs conventions". -->
+
+# MESA
+
+**MESA** wires the CyVerse data-management MCP servers into your AI coding agent —
+[Claude Code](claude-code.md), [Codex CLI](codex.md), [Antigravity](antigravity.md), or
+[OpenCode](opencode.md) — with a single command. One installer clones, builds, and
+registers everything you need to browse and curate the CyVerse Data Store (iRODS), apply
+ontology-backed metadata, and launch Discovery Environment apps — all from natural
+language.
+
+## Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+```
+
+Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. By default it uses
+anonymous public CyVerse access — no credentials required to get started.
+
+[Get started :material-arrow-right:](quickstart.md){ .md-button .md-button--primary }
+[Install reference](install.md){ .md-button }
+
+## What gets installed
+
+| Server | Language | What it does |
+|---|---|---|
+| [**mesa-mcp**](servers/mesa-mcp.md) | Python | iRODS Data Store (`ds_*`) + OBO/OLS ontology AVUs (`mesa_ols_*`, `mesa_avu_*`) + DataCite + DuckLake metadata history |
+| [**mesa-ducklake**](servers/mesa-ducklake.md) | Python | AVU metadata-history library that backs mesa-mcp (installed alongside it — not a standalone server) |
+| [**irods-mcp-server**](servers/irods-mcp-server.md) | Go | Reference iRODS Data Store MCP server |
+| [**formation-mcp**](servers/formation-mcp.md) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
+
+After install, the three servers (`mesa-mcp`, `irods`, `formation`) are registered with
+every client the installer detected. Open your agent and ask it to *"ping the CyVerse
+Data Store"* to confirm the link — see the [Quickstart](quickstart.md) for per-client
+verification.
+
+## How it fits together
+
+```mermaid
+graph LR
+  subgraph clients [Agent clients]
+    CC[Claude Code]
+    CX[Codex CLI]
+    AG[Antigravity]
+    OC[OpenCode]
+  end
+  clients -->|stdio| M[mesa-mcp]
+  clients -->|stdio| I[irods-mcp-server]
+  clients -->|stdio| F[formation-mcp]
+  M -->|imports| D[mesa-ducklake]
+  M --> IR[(CyVerse iRODS<br/>data.cyverse.org)]
+  I --> IR
+  F --> DE[(Discovery Environment<br/>Formation API)]
+  D --> PQ[(DuckLake catalog<br/>+ Parquet)]
+```
+
+Source repositories live in the [**idss-mesa**](https://github.com/idss-mesa) GitHub
+organization.
+
+## For AI agents
+
+This site is an [Open Knowledge Format (OKF) v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+knowledge bundle: every page carries YAML frontmatter with its type, provenance, and
+lifecycle, every page's Markdown is served at its URL plus `index.md`, and the whole
+corpus is available as [`llms.txt`](llms.txt) and [`llms-full.txt`](llms-full.txt). See
+[For AI agents](about/ai-agents.md) for the entry points and trust signals.
+
+---8<--- https://idss-mesa.github.io/docs/quickstart/
+
+---
+type: Guide
+title: Quickstart
+description: Install the MESA MCP stack and register it with your agent client in a few minutes.
+tags:
+  - quickstart
+  - install
+  - claude-code
+  - codex
+  - antigravity
+  - opencode
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+  - id: uv
+    resource: "https://docs.astral.sh/uv/"
+    title: "uv documentation"
+    author: "team:astral"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# Quickstart
+
+## 1. Prerequisites
+
+The installer checks for these and helps you install the missing ones:
+
+| Tool | Needed for | Notes |
+|---|---|---|
+| `git`, `curl` | cloning + downloading | usually preinstalled |
+| an agent client | the integration target | any of the four below — the installer auto-detects the ones present and refuses to run if it finds none |
+| `uv` | Python servers | auto-installed from [astral.sh/uv](https://docs.astral.sh/uv/) if missing |
+| Go ≥ 1.25 | the two Go servers | only needed for `irods` + `formation`; pass `--no-go` to skip them |
+
+Supported agent clients:
+
+| Client | Detected via | Integration page |
+|---|---|---|
+| Claude Code | `claude` on `PATH` | [Claude Code](claude-code.md) |
+| Codex CLI | `codex` on `PATH` | [Codex CLI](codex.md) |
+| Antigravity | `agy` on `PATH`, the IDE app, or a `~/.gemini` config dir | [Antigravity](antigravity.md) |
+| OpenCode | `opencode` on `PATH` | [OpenCode](opencode.md) |
+
+Other clients[^openclaw] can reuse the [manual install](install.md#manual-install) steps.
+
+[^openclaw]: OpenClaw support is deferred until its MCP interface can be verified.
+
+!!! tip "Windows users"
+    Run everything inside **WSL** (Ubuntu or similar). The installer detects WSL and
+    treats it as Linux. Native PowerShell / `cmd` are not supported.
+
+## 2. Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+```
+
+This will:
+
+1. Detect your platform (Linux / macOS / WSL).
+2. Clone the four repos from `idss-mesa` into `~/.mesa/repos/`.
+3. Create a Python venv at `~/.mesa/.venv` and install `mesa-ducklake` + `mesa-mcp`.
+4. Build the Go servers into `~/.mesa/bin/`.
+5. Register `mesa-mcp`, `irods`, and `formation` with **every detected client** —
+   Claude Code at user scope, Codex globally, Antigravity and OpenCode via their config
+   files. Restrict targets with `--for`, e.g. `bash -s -- --for claude,codex`.
+
+## 3. Verify
+
+=== "Claude Code"
+
+    ```bash
+    claude mcp list
+    ```
+
+=== "Codex"
+
+    ```bash
+    codex mcp list      # or /mcp inside a Codex session
+    ```
+
+=== "Antigravity"
+
+    Open the IDE's **Manage MCP Servers** panel (or restart `agy`) and confirm the
+    three servers are listed.
+
+=== "OpenCode"
+
+    ```bash
+    opencode mcp list
+    ```
+
+You should see `mesa-mcp`, `irods`, and `formation` listed. Then, in your agent
+session, try:
+
+> *Ping the CyVerse Data Store and list what's in the shared directory.*
+
+That exercises `mesa-mcp`'s `ds_ping` and `ds_list_directory` tools against the public
+`data.cyverse.org` zone — no login needed.
+
+## 4. (Optional) Authenticate
+
+Anonymous access is read-only on public collections. To act as yourself, re-run with your
+[CyVerse](https://cyverse.org) credentials:
+
+```bash
+CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
+  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+```
+
+The credentials are threaded into **every** client registration the installer creates.
+See [Credentials](credentials.md) for all the options (env vars, `~/.irods`, per-server config).
+
+## Updating & uninstalling
+
+Re-running the one-liner pulls the latest code and rebuilds — it is safe to run again.
+Uninstalling removes the three servers from every detected client and (after
+confirmation) deletes `~/.mesa`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash -s -- --uninstall
+```
+
+---8<--- https://idss-mesa.github.io/docs/install/
+
+---
+type: Reference
+title: Install reference
+description: All install.sh flags, environment overrides, on-disk layout, and manual install steps for the MESA MCP stack.
+tags:
+  - install
+  - flags
+  - environment-variables
+  - uninstall
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# Install reference
+
+The installer is a single POSIX `bash` script,
+[`install.sh`](https://github.com/idss-mesa/docs/blob/main/install.sh). You can pipe it
+from `curl` or clone this repo and run it directly.
+
+```bash
+# one-liner
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+
+# from a clone
+git clone https://github.com/idss-mesa/docs.git && ./docs/install.sh
+```
+
+## Flags
+
+| Flag | Effect |
+|---|---|
+| `--prefix DIR` | install location (default `~/.mesa`) |
+| `--for LIST` | comma-separated client targets: `claude`, `codex`, `antigravity`, `opencode` (default: auto-detect all present) |
+| `--no-go` | skip the Go servers; install only `mesa-mcp` (no Go toolchain needed) |
+| `--uninstall` | remove the three servers from **all detected clients** and delete the install dir |
+| `--help` | print usage |
+
+When piping through `curl`, pass flags after `-s --`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash -s -- --no-go
+```
+
+## Environment overrides
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `MESA_HOME` | `~/.mesa` | install location (same as `--prefix`) |
+| `MESA_GIT_ORG` | `idss-mesa` | GitHub org to clone from |
+| `MESA_MCP_REF` | `main` | branch/tag for `mesa-mcp` |
+| `MESA_CLIENTS` | auto-detect | same as `--for` (the flag wins when both are set) |
+| `MCP_SCOPE` | `user` | **Claude Code only** — registration scope: `user`, `project`, or `local` (the other clients have no scope concept) |
+| `CYVERSE_USERNAME` / `CYVERSE_PASSWORD` | — | applied to `mesa-mcp` and `formation` |
+| any `MESA_MCP_*` / `FORMATION_*` | — | passed through verbatim to the matching server |
+
+## What it lays down
+
+```
+~/.mesa/
+├── repos/
+│   ├── mesa-mcp/            # editable Python source
+│   ├── mesa-ducklake/       # editable Python source
+│   ├── irods-mcp-server/    # Go source
+│   └── formation-mcp/       # Go source
+├── .venv/                   # uv-managed Python 3.11 venv
+│   └── bin/mesa-mcp         # stdio MCP server entry point
+└── bin/
+    ├── irods-mcp-server     # built Go binary
+    └── formation-mcp        # built Go binary
+```
+
+## Idempotency
+
+Every step is safe to repeat:
+
+- Repos are `git pull --ff-only`'d if already present, cloned otherwise.
+- The venv is recreated and packages reinstalled editable.
+- Go binaries are rebuilt.
+- For the CLI clients (Claude Code, Codex), each `mcp add` is preceded by an
+  `mcp remove`, so re-running updates the registration in place rather than duplicating it.
+- For the config-file clients (Antigravity, OpenCode), the installer rewrites its own
+  entries in the JSON, leaving any other servers you have configured untouched.
+
+## Manual install
+
+If you'd rather not use the script, the equivalent steps are:
+
+```bash
+# Python servers
+uv venv --python 3.11 ~/.mesa/.venv
+uv pip install --python ~/.mesa/.venv/bin/python -e ./mesa-ducklake -e ./mesa-mcp
+
+# Go servers
+( cd irods-mcp-server && make build )                     # -> bin/irods-mcp-server
+( cd formation-mcp && go build -o formation-mcp ./cmd/formation-mcp )
+mkdir -p ~/.mesa/bin
+cp irods-mcp-server/bin/irods-mcp-server ~/.mesa/bin/
+cp formation-mcp/formation-mcp ~/.mesa/bin/
+```
+
+Then register the servers with your client:
+
+=== "Claude Code"
+
+    ```bash
+    claude mcp add mesa-mcp  -s user -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio
+    claude mcp add irods     -s user -- ~/.mesa/bin/irods-mcp-server -c .../config-stdio.yaml
+    claude mcp add formation -s user -- ~/.mesa/bin/formation-mcp --transport stdio
+    ```
+
+=== "Codex"
+
+    ```bash
+    codex mcp add mesa-mcp  -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio
+    codex mcp add irods     -- ~/.mesa/bin/irods-mcp-server -c .../config-stdio.yaml
+    codex mcp add formation -- ~/.mesa/bin/formation-mcp --transport stdio
+    ```
+
+=== "Antigravity"
+
+    Write the servers into `$HOME/.gemini/config/mcp_config.json` — absolute paths
+    required. See [the registration MESA creates](antigravity.md#the-registration-mesa-creates).
+
+=== "OpenCode"
+
+    Add the servers to `~/.config/opencode/opencode.json` (respecting
+    `$XDG_CONFIG_HOME`) under the `mcp` key. See
+    [the registration MESA creates](opencode.md#the-registration-mesa-creates).
+
+---8<--- https://idss-mesa.github.io/docs/credentials/
+
+---
+type: Reference
+title: Credentials
+description: Authenticating the MESA servers to CyVerse — env vars at install time, native iRODS auth, and per-server configuration.
+tags:
+  - credentials
+  - authentication
+  - cyverse
+  - irods
+  - formation
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+  - id: mesa-mcp-env
+    resource: "https://github.com/idss-mesa/mesa-mcp/blob/main/.env.example"
+    title: "mesa-mcp .env.example"
+    author: "team:idss-mesa"
+  - id: formation-mcp
+    resource: "https://github.com/idss-mesa/formation-mcp"
+    title: "formation-mcp source repository"
+    author: "team:idss-mesa"
+  - id: icommands
+    resource: "https://learning.cyverse.org/ds/icommands/"
+    title: "CyVerse iCommands guide"
+    author: "team:cyverse"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# Credentials
+
+By default every MESA server connects **anonymously** to public CyVerse infrastructure
+(`data.cyverse.org`, zone `iplant`, user `anonymous`). That is enough to read public
+collections and browse the Discovery Environment app catalog. To write metadata, access
+private data, or launch apps as yourself, authenticate.
+
+## Quickest path — env vars at install time
+
+```bash
+CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
+  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+```
+
+The installer threads these into **every client registration it creates** as:
+
+- `mesa-mcp` → `MESA_MCP_IRODS__USER`, `MESA_MCP_IRODS__PASSWORD`
+- `formation` → `FORMATION_USERNAME`, `FORMATION_PASSWORD`
+
+!!! warning "Where the password ends up"
+    These land in plaintext in each client's config file: `~/.claude.json` (Claude Code
+    user scope), `~/.codex/config.toml`, `$HOME/.gemini/config/mcp_config.json`, and
+    `${XDG_CONFIG_HOME:-~/.config}/opencode/opencode.json`. Prefer the `~/.irods` method below if you don't
+    want the password stored there, and never commit a `project`-scope `.mcp.json`
+    containing secrets.
+
+## mesa-mcp & irods — native iRODS auth
+
+Both iRODS servers honor a standard iRODS environment. If you use the CyVerse
+[iCommands](https://learning.cyverse.org/ds/icommands/), run `iinit` once to create:
+
+```
+~/.irods/irods_environment.json   # host, zone, user
+~/.irods/.irodsA                  # scrambled password
+```
+
+`mesa-mcp` reads these automatically in stdio mode — no env vars needed.
+
+For `irods-mcp-server`, edit its stdio config to add credentials:
+
+```yaml
+# ~/.mesa/repos/irods-mcp-server/config-stdio.yaml
+irods_host: data.cyverse.org
+irods_zone_name: iplant
+irods_user_name: you
+irods_user_password: ••••••
+```
+
+## mesa-mcp — full env reference
+
+`mesa-mcp` uses `MESA_MCP_` env vars (double underscore for nesting). The most useful:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `MESA_MCP_IRODS__HOST` | `data.cyverse.org` | iRODS host |
+| `MESA_MCP_IRODS__ZONE` | `iplant` | iRODS zone |
+| `MESA_MCP_IRODS__USER` | `anonymous` | username |
+| `MESA_MCP_IRODS__PASSWORD` | — | password |
+| `MESA_MCP_DUCKLAKE__CATALOG_DSN` | — | DuckLake catalog (`duckdb:///path` or `postgresql://…`); blank disables history |
+
+Any `MESA_MCP_*` variable set in your shell at install time is passed through to the server.
+The full list is in [`mesa-mcp/.env.example`](https://github.com/idss-mesa/mesa-mcp/blob/main/.env.example).
+
+## formation — Discovery Environment auth
+
+`formation-mcp` accepts a username/password or a JWT, via env vars or `~/.formation-mcp.yaml`:
+
+```yaml
+# ~/.formation-mcp.yaml
+base_url: https://de.cyverse.org/formation
+username: you
+password: ••••••
+```
+
+Env equivalents: `FORMATION_BASE_URL`, `FORMATION_USERNAME`, `FORMATION_PASSWORD`, or
+`FORMATION_TOKEN`.
+
+## DataCite (optional)
+
+DataCite DOI tools in `mesa-mcp` only need credentials when you mint/publish DOIs. See the
+[mesa-mcp docs](https://github.com/idss-mesa/mesa-mcp) for the DataCite configuration.
+
+---8<--- https://idss-mesa.github.io/docs/troubleshooting/
+
+---
+type: Troubleshooting
+title: Troubleshooting
+description: Fixes for common MESA install and registration problems across Claude Code, Codex, Antigravity, and OpenCode.
+tags:
+  - troubleshooting
+  - errors
+  - faq
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# Troubleshooting
+
+## `no supported agent client found`
+
+The installer auto-detects [Claude Code](claude-code.md), [Codex CLI](codex.md),
+[Antigravity](antigravity.md), and [OpenCode](opencode.md), and refuses to run when none
+is present — or when `--for` names a client that isn't installed. Install at least one,
+open a new shell, and re-run.
+
+## `native Windows shells are not supported`
+
+You're running in PowerShell, `cmd`, Git Bash, or MSYS. Install
+[WSL](https://learn.microsoft.com/windows/wsl/install), open an Ubuntu (or similar) shell,
+and run the one-liner there. The installer auto-detects WSL and treats it as Linux.
+
+## Go servers were skipped
+
+If you see *"Go toolchain not found"* or *"Go 1.x is older than the required 1.25"*, only
+`mesa-mcp` was installed. Install [Go ≥ 1.25](https://go.dev/dl/) and re-run, or pass
+`--no-go` if you only want `mesa-mcp`.
+
+## `uv` not found after install
+
+The installer fetches `uv` from astral.sh into `~/.local/bin`. If a fresh shell still can't
+find it, add that directory to your `PATH`:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+then re-run the installer.
+
+## `claude mcp list` shows "Needs authentication" or "Failed to connect"
+
+- **Needs authentication** on a *hosted* (`https://…`) server is expected until you log in;
+  it does not affect the local stdio servers MESA installs.
+- **Failed to connect** on a local server usually means the binary moved or the venv broke.
+  Re-run the installer to rebuild and re-register.
+
+## Codex doesn't see the servers
+
+Codex reads registrations at startup — restart the session, then verify with `/mcp`
+inside the TUI or `codex mcp list`. If the servers are missing entirely, inspect
+`~/.codex/config.toml` for the `[mcp_servers.*]` tables.
+
+## Antigravity doesn't see the servers
+
+Refresh via the IDE's **Manage MCP Servers** panel or restart `agy` — the config is not
+hot-reloaded. Confirm `$HOME/.gemini/config/mcp_config.json` exists and that every
+`command` path is **absolute** (no `~`). Older releases read
+`~/.gemini/antigravity/mcp_config.json` or `~/.gemini/antigravity-cli/mcp_config.json`
+instead.
+
+## OpenCode doesn't see the servers
+
+Restart OpenCode (config is read at startup) and run `opencode mcp list`. If a server
+shows globally but not in one project, that project's `opencode.json` is deep-merged on
+top — check it for an entry overriding or disabling the server.
+
+## Conflicting scopes
+
+*(Claude Code only — the other clients have a single scope.)*
+
+A warning that a server is *"defined in multiple scopes"* means the same name is registered
+more than once (e.g. an older manual entry plus MESA's). Remove the ones you don't want:
+
+```bash
+claude mcp remove mesa-mcp -s user
+claude mcp remove mesa-mcp -s local
+```
+
+## iRODS calls return permission errors
+
+Anonymous access is read-only on public collections. To write AVUs or read private data,
+[authenticate](credentials.md) — either re-run with `CYVERSE_USERNAME` / `CYVERSE_PASSWORD`,
+or run `iinit` to set up `~/.irods`.
+
+## `grep: /etc/os-release: No such file or directory`
+
+Harmless. It comes from the `irods-mcp-server` Makefile probing the OS on macOS; the build
+still succeeds.
+
+## Starting over
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash -s -- --uninstall
+```
+
+removes the three servers from every detected client and (after confirmation) deletes `~/.mesa`.
+
+---8<--- https://idss-mesa.github.io/docs/claude-code/
+
+---
+type: Integration Guide
+title: Claude Code integration
+description: How MESA registers its MCP servers with Claude Code — scopes, management commands, and the registration it creates.
+tags:
+  - claude-code
+  - mcp
+  - registration
+  - scopes
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: claude-code-mcp
+    resource: "https://code.claude.com/docs/en/mcp"
+    title: "Claude Code MCP documentation"
+    author: "team:anthropic"
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# Claude Code integration
+
+MESA registers each server as a **local stdio** MCP server: Claude Code launches the
+binary as a subprocess and talks to it over standard input/output. No network ports, no
+hosted service required. Claude Code is one of four clients MESA supports — see also
+[Codex CLI](codex.md), [Antigravity](antigravity.md), and [OpenCode](opencode.md).
+
+## Scopes
+
+The installer uses **user scope** (`-s user`) so the servers are available in every Claude
+Code project on your machine. The three scopes Claude Code supports:
+
+| Scope | Stored in | Visible to |
+|---|---|---|
+| `local` | your user config, keyed to the current project | just you, just this project |
+| `user` | your user config | you, every project *(MESA default)* |
+| `project` | `.mcp.json` committed in the repo | everyone who clones the repo |
+
+Override with `MCP_SCOPE`, e.g. `MCP_SCOPE=project` to drop a shareable `.mcp.json` into the
+current directory instead.
+
+## Managing the servers
+
+```bash
+claude mcp list                 # show all servers + health
+claude mcp get mesa-mcp         # show one server's config
+claude mcp remove mesa-mcp -s user
+```
+
+## The registration MESA creates
+
+User-scope registrations live in `~/.claude.json`; project scope lands in a `.mcp.json`
+committed at the repo root.
+
+```jsonc
+{
+  "mcpServers": {
+    "mesa-mcp":  { "type": "stdio", "command": "~/.mesa/.venv/bin/mesa-mcp",
+                   "args": ["--transport", "stdio"], "env": {} },
+    "irods":     { "type": "stdio", "command": "~/.mesa/bin/irods-mcp-server",
+                   "args": ["-c", "~/.mesa/repos/irods-mcp-server/config-stdio.yaml"], "env": {} },
+    "formation": { "type": "stdio", "command": "~/.mesa/bin/formation-mcp",
+                   "args": ["--transport", "stdio"], "env": {} }
+  }
+}
+```
+
+!!! note "mesa-ducklake is not listed here"
+    `mesa-ducklake` is a **library** imported by `mesa-mcp`, not a separate MCP server. Its
+    capabilities surface through `mesa-mcp`'s `mesa_ducklake_*` tools. See
+    [its page](servers/mesa-ducklake.md).
+
+## Conflicting scopes
+
+If `claude mcp list` warns that a server is *"defined in multiple scopes"*, you have the
+same name registered more than once (e.g. an older hand-rolled entry plus the MESA one).
+Keep the one you want and remove the rest:
+
+```bash
+claude mcp remove mesa-mcp -s user
+claude mcp remove mesa-mcp -s local
+```
+
+## Alternative: hosted / remote servers
+
+Local stdio is the default and needs no auth for public data. CyVerse also runs **hosted**
+MCP endpoints you can connect to instead of building locally — for example the public
+iRODS server at `https://mcp.cyverse.ai/mcp`:
+
+```bash
+claude mcp add --transport http cyverse-irods https://mcp.cyverse.ai/mcp
+```
+
+Hosted `mesa-mcp` (Streamable HTTP / SSE behind CyVerse Keycloak OIDC) is documented in the
+[mesa-mcp repo](https://github.com/idss-mesa/mesa-mcp); it requires authentication. The MESA
+installer focuses on the local build because it works offline-of-auth and gives you live,
+editable source.
+
+---8<--- https://idss-mesa.github.io/docs/codex/
+
+---
+type: Integration Guide
+title: Codex CLI integration
+description: How MESA registers its MCP servers with the OpenAI Codex CLI, and how to manage them there.
+tags:
+  - codex
+  - mcp
+  - registration
+  - config-toml
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: codex-mcp
+    resource: "https://developers.openai.com/codex/mcp"
+    title: "Codex MCP documentation"
+    author: "team:openai"
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# Codex CLI integration
+
+MESA registers each server as a **local stdio** MCP server via `codex mcp add`: Codex
+launches the binary as a subprocess and talks to it over standard input/output. See also
+the sibling pages for [Claude Code](claude-code.md), [Antigravity](antigravity.md), and
+[OpenCode](opencode.md).
+
+## Scope
+
+Codex has **no scope flag** — every registration is global, stored in
+`~/.codex/config.toml` under a `[mcp_servers.<name>]` table with `command`, `args`, and
+`env` keys. Unlike Claude Code there is no project or local scope; the installer's
+`MCP_SCOPE` variable is ignored for Codex.
+
+## Managing the servers
+
+```bash
+codex mcp list            # show all servers
+codex mcp get mesa-mcp    # show one server's config
+codex mcp remove mesa-mcp
+```
+
+Inside a Codex TUI session, run `/mcp` to verify the servers and their tools loaded.
+Registration changes are read at startup — **restart the session** to pick them up.
+
+## The registration MESA creates
+
+The installer runs `codex mcp add <name> --env K=V -- <command> <args>` for each server,
+which writes:
+
+```toml
+# ~/.codex/config.toml
+[mcp_servers.mesa-mcp]
+command = "/home/you/.mesa/.venv/bin/mesa-mcp"
+args = ["--transport", "stdio"]
+env = { MESA_MCP_IRODS__USER = "you", MESA_MCP_IRODS__PASSWORD = "••••••" }
+
+[mcp_servers.irods]
+command = "/home/you/.mesa/bin/irods-mcp-server"
+args = ["-c", "/home/you/.mesa/repos/irods-mcp-server/config-stdio.yaml"]
+
+[mcp_servers.formation]
+command = "/home/you/.mesa/bin/formation-mcp"
+args = ["--transport", "stdio"]
+env = { FORMATION_USERNAME = "you", FORMATION_PASSWORD = "••••••" }
+```
+
+The `env` tables only appear when you installed with
+[credentials](credentials.md); anonymous installs omit them.
+
+!!! note "mesa-ducklake is not listed here"
+    `mesa-ducklake` is a **library** imported by `mesa-mcp`, not a separate MCP server. Its
+    capabilities surface through `mesa-mcp`'s `mesa_ducklake_*` tools. See
+    [its page](servers/mesa-ducklake.md).
+
+## Troubleshooting notes
+
+- Servers not visible in a session → restart Codex (config is read at startup), then
+  check `/mcp`.
+- `/mcp` shows nothing → `codex mcp list`, then inspect `~/.codex/config.toml`.
+- Re-running the installer updates the entries in place (it removes and re-adds each
+  server), so a stale path after moving `~/.mesa` is fixed by a re-run.
+
+More in the general [Troubleshooting](troubleshooting.md) page.
+
+---8<--- https://idss-mesa.github.io/docs/antigravity/
+
+---
+type: Integration Guide
+title: Antigravity integration
+description: How MESA registers its MCP servers with Google Antigravity (IDE and agy CLI) by writing mcp_config.json.
+tags:
+  - antigravity
+  - gemini
+  - mcp
+  - registration
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: antigravity-mcp
+    resource: "https://antigravity.google/docs/mcp"
+    title: "Antigravity MCP documentation"
+    author: "team:google"
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# Antigravity integration
+
+[Google Antigravity](https://antigravity.google/) is Google's agentic IDE, paired with
+the `agy` CLI. Antigravity has **no non-interactive `add` command**, so the MESA
+installer writes its MCP config file directly. See also the sibling pages for
+[Claude Code](claude-code.md), [Codex CLI](codex.md), and [OpenCode](opencode.md).
+
+## Where the config lives
+
+The installer targets `$HOME/.gemini/config/mcp_config.json` — the Antigravity 2.0
+unified config read by **both** the IDE and the `agy` CLI — with a top-level
+`"mcpServers"` object. Antigravity does not expand `~` or `$HOME`, so every path in the
+file is **absolute**.
+
+Older releases read `~/.gemini/antigravity/mcp_config.json` (IDE) and
+`~/.gemini/antigravity-cli/mcp_config.json` (CLI) instead. The installer updates
+**every one of these files that already exists**; the unified path is created only when
+none of them exist yet. The install summary prints exactly which files were written.
+
+## Managing the servers
+
+There is no CLI to list or remove servers. Open the IDE's **Manage MCP Servers** panel
+to view and refresh them, or restart `agy`. To remove the MESA servers, delete their
+entries from the JSON — or run `install.sh --uninstall`, which does it for you.
+
+## The registration MESA creates
+
+```json
+{
+  "mcpServers": {
+    "mesa-mcp": {
+      "command": "/home/you/.mesa/.venv/bin/mesa-mcp",
+      "args": ["--transport", "stdio"],
+      "env": { "MESA_MCP_IRODS__USER": "you", "MESA_MCP_IRODS__PASSWORD": "••••••" }
+    },
+    "irods": {
+      "command": "/home/you/.mesa/bin/irods-mcp-server",
+      "args": ["-c", "/home/you/.mesa/repos/irods-mcp-server/config-stdio.yaml"]
+    },
+    "formation": {
+      "command": "/home/you/.mesa/bin/formation-mcp",
+      "args": ["--transport", "stdio"],
+      "env": { "FORMATION_USERNAME": "you", "FORMATION_PASSWORD": "••••••" }
+    }
+  }
+}
+```
+
+The `env` objects only appear when you installed with [credentials](credentials.md).
+The installer **merges** its entries into an existing file — any other MCP servers you
+have configured are left untouched.
+
+!!! note "mesa-ducklake is not listed here"
+    `mesa-ducklake` is a **library** imported by `mesa-mcp`, not a separate MCP server. Its
+    capabilities surface through `mesa-mcp`'s `mesa_ducklake_*` tools. See
+    [its page](servers/mesa-ducklake.md).
+
+## Troubleshooting notes
+
+- Servers not appearing → refresh via **Manage MCP Servers** in the IDE, or restart
+  `agy` (the config is not hot-reloaded).
+- Launch failures that look like "command not found" → confirm the `command` paths in
+  the JSON are absolute (`/home/you/...`, never `~`).
+- Nothing at `~/.gemini/config/mcp_config.json` → the installer found and updated a
+  legacy config instead — check the paths above (the install summary lists which files
+  were written).
+
+More in the general [Troubleshooting](troubleshooting.md) page.
+
+---8<--- https://idss-mesa.github.io/docs/opencode/
+
+---
+type: Integration Guide
+title: OpenCode integration
+description: How MESA registers its MCP servers in OpenCode's global opencode.json, and how to verify them.
+tags:
+  - opencode
+  - mcp
+  - registration
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: opencode-mcp
+    resource: "https://opencode.ai/docs/mcp-servers/"
+    title: "OpenCode MCP servers documentation"
+    author: "team:opencode"
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# OpenCode integration
+
+[OpenCode](https://opencode.ai) is an open-source terminal coding agent. Its
+`opencode mcp add` command is **interactive-only**, so the MESA installer writes the
+global config directly. See also the sibling pages for [Claude Code](claude-code.md),
+[Codex CLI](codex.md), and [Antigravity](antigravity.md).
+
+## Where the config lives
+
+`~/.config/opencode/opencode.json` (respecting `$XDG_CONFIG_HOME` if you have it set),
+under the `"mcp"` key. The global file
+**deep-merges** with any per-project `opencode.json`, so a project can locally override
+or disable a MESA server (set `"enabled": false` in the project file) without touching
+the global registration.
+
+## Managing the servers
+
+```bash
+opencode mcp list         # verify the servers are registered
+```
+
+Config is read at startup — **restart OpenCode** after changes. To remove the MESA
+servers, delete their entries from the JSON — or run `install.sh --uninstall`.
+
+## The registration MESA creates
+
+Note the argv-array `command` — program and arguments together, unlike the other
+clients' command + args split:
+
+```json
+{
+  "mcp": {
+    "mesa-mcp": {
+      "type": "local",
+      "command": ["/home/you/.mesa/.venv/bin/mesa-mcp", "--transport", "stdio"],
+      "enabled": true,
+      "environment": { "MESA_MCP_IRODS__USER": "you", "MESA_MCP_IRODS__PASSWORD": "••••••" }
+    },
+    "irods": {
+      "type": "local",
+      "command": ["/home/you/.mesa/bin/irods-mcp-server", "-c", "/home/you/.mesa/repos/irods-mcp-server/config-stdio.yaml"],
+      "enabled": true
+    },
+    "formation": {
+      "type": "local",
+      "command": ["/home/you/.mesa/bin/formation-mcp", "--transport", "stdio"],
+      "enabled": true,
+      "environment": { "FORMATION_USERNAME": "you", "FORMATION_PASSWORD": "••••••" }
+    }
+  }
+}
+```
+
+The `environment` objects only appear when you installed with
+[credentials](credentials.md). The installer **merges** its entries into an existing
+file — other servers and settings are left untouched.
+
+!!! note "mesa-ducklake is not listed here"
+    `mesa-ducklake` is a **library** imported by `mesa-mcp`, not a separate MCP server. Its
+    capabilities surface through `mesa-mcp`'s `mesa_ducklake_*` tools. See
+    [its page](servers/mesa-ducklake.md).
+
+## Troubleshooting notes
+
+- `opencode mcp list` missing the servers → restart OpenCode (config is read at
+  startup), then inspect the global `opencode.json` (path above).
+- A server present globally but absent in one project → check that project's
+  `opencode.json` for a deep-merged entry overriding or disabling it.
+
+More in the general [Troubleshooting](troubleshooting.md) page.
+
+---8<--- https://idss-mesa.github.io/docs/servers/mesa-mcp/
+
+---
+type: MCP Server
+title: mesa-mcp
+description: The flagship MESA server — iRODS Data Store tools, OBO/OLS ontology AVUs, DataCite, and DuckLake metadata history.
+tags:
+  - mesa-mcp
+  - python
+  - irods
+  - ontology
+  - datacite
+  - ducklake
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/mesa-mcp"
+    title: "mesa-mcp source repository"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# mesa-mcp
+
+**Repo:** [idss-mesa/mesa-mcp](https://github.com/idss-mesa/mesa-mcp) · **Language:** Python 3.11+ · **Registered as:** `mesa-mcp`
+
+The flagship MESA server. It bridges the CyVerse Data Store (iRODS) with ontology-driven
+metadata management and exposes everything as MCP tools.
+
+## Tool groups
+
+| Prefix | What it does |
+|---|---|
+| `ds_*` | iRODS Data Store: list/read/write/move files, directories, AVUs, ACLs, tickets, rules, policies (drop-in compatible with [irods-mcp-server](irods-mcp-server.md)) |
+| `mesa_ols_*` | Browse OBO/OLS ontologies: search terms, fetch hierarchies, generate AVU templates |
+| `mesa_avu_*` | Apply ontology terms and DataCite fields as AVUs (with the CURIE in the `unit` slot) |
+| `mesa_datacite_*` | DataCite metadata: template, validate, export, apply |
+| `mesa_ducklake_*` | Metadata history: init a project, snapshot, list history, time-travel, diff (backed by [mesa-ducklake](mesa-ducklake.md)) |
+
+## How MESA runs it
+
+The installer creates a uv venv and installs `mesa-mcp` editable (alongside
+`mesa-ducklake`), then registers the stdio entry point:
+
+```bash
+~/.mesa/.venv/bin/mesa-mcp --transport stdio
+```
+
+It is registered under the name `mesa-mcp` with every detected client — see
+[Claude Code](../claude-code.md), [Codex CLI](../codex.md),
+[Antigravity](../antigravity.md), or [OpenCode](../opencode.md) for the exact
+registration each one gets.
+
+## The AVU contract
+
+Metadata is written as `(attribute, value, unit)` triples, where `unit` is reserved for the
+ontology CURIE when the AVU came from OBO/OLS. Provenance (actor, source, ticket, rule) is
+recorded in DuckLake columns, never folded into the triple.
+
+## Configuration
+
+Configuration precedence is **CLI flag > environment variable > YAML file > defaults**. The
+defaults target anonymous public CyVerse access. See [Credentials](../credentials.md) and
+[`.env.example`](https://github.com/idss-mesa/mesa-mcp/blob/main/.env.example) for the full set.
+
+Full documentation lives in the repo under
+[`docs/`](https://github.com/idss-mesa/mesa-mcp/tree/main/docs) (user / dev / deploy guides).
+
+---8<--- https://idss-mesa.github.io/docs/servers/mesa-ducklake/
+
+---
+type: Library
+title: mesa-ducklake
+description: The AVU metadata-history library that backs mesa-mcp — DuckLake snapshots, provenance, and time-travel.
+tags:
+  - mesa-ducklake
+  - python
+  - ducklake
+  - metadata-history
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/mesa-ducklake"
+    title: "mesa-ducklake source repository"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# mesa-ducklake
+
+**Repo:** [idss-mesa/mesa-ducklake](https://github.com/idss-mesa/mesa-ducklake) · **Language:** Python 3.11+ · **Registered as:** *(none — it's a library)*
+
+`mesa-ducklake` is **not a standalone MCP server.** It is the metadata-history library that
+[mesa-mcp](mesa-mcp.md) imports in-process. The installer installs it editable into the same
+venv so `mesa-mcp` resolves it, but it is never registered with any client on its own.
+
+## What it does
+
+It records the full history of AVU (attribute/value/unit) changes for a project as an
+append-only series of snapshots, using the DuckDB **DuckLake** lakehouse pattern:
+
+- a **catalog** — either a local DuckDB file (`duckdb:///path/catalog.duckdb`) or Postgres —
+  holds projects, snapshots, and provenance;
+- **Parquet** data files hold the AVU change records and can live at
+  `<project>/.mesa/ducklake/` inside iRODS, so metadata travels with the data.
+
+Every AVU write through `mesa-mcp` is mirrored here as a change record with provenance
+(actor, source, ticket, rule), enabling **time-travel** reads: *"what were this object's AVUs
+as of last Tuesday?"*
+
+## How you use it
+
+Through `mesa-mcp`'s `mesa_ducklake_*` tools — there's nothing to install or run separately:
+
+| Tool | Purpose |
+|---|---|
+| `mesa_ducklake_init_project` | enable history for an iRODS collection |
+| `mesa_ducklake_snapshot` | capture current AVU state |
+| `mesa_ducklake_history` | list AVU changes over time |
+| `mesa_ducklake_time_travel` | AVU set as of a timestamp |
+| `mesa_ducklake_diff` | diff two snapshots |
+
+## Programmatic API
+
+The library's only public entry point is the `DuckLakeClient` facade. A `mesa-ducklake`
+CLI (`record` / `recover`) also exists for iRODS rule callbacks and operators. Both are
+documented in the repo under
+[`docs/`](https://github.com/idss-mesa/mesa-ducklake/tree/main/docs).
+
+!!! info "Snapshots are immutable"
+    DuckLake snapshots are append-only; corrections are new snapshots, never rewrites.
+
+---8<--- https://idss-mesa.github.io/docs/servers/irods-mcp-server/
+
+---
+type: MCP Server
+title: irods-mcp-server
+description: The reference Go MCP server for the CyVerse Data Store (iRODS), registered as irods.
+tags:
+  - irods
+  - go
+  - data-store
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/irods-mcp-server"
+    title: "irods-mcp-server source repository"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# irods-mcp-server
+
+**Repo:** [idss-mesa/irods-mcp-server](https://github.com/idss-mesa/irods-mcp-server) · **Language:** Go · **Registered as:** `irods`
+
+The reference MCP server for the CyVerse Data Store (iRODS). It provides the canonical
+`ds_*` tool surface that [mesa-mcp](mesa-mcp.md) is compatible with. Use it on its own when
+you want a lightweight, dependency-free Go binary for iRODS access.
+
+## How MESA runs it
+
+The installer builds it from source and registers the stdio binary against the repo's
+anonymous-access config:
+
+```bash
+( cd ~/.mesa/repos/irods-mcp-server && make build )      # -> bin/irods-mcp-server
+~/.mesa/bin/irods-mcp-server -c ~/.mesa/repos/irods-mcp-server/config-stdio.yaml
+```
+
+It is registered under the name `irods` with every detected client — see
+[Claude Code](../claude-code.md), [Codex CLI](../codex.md),
+[Antigravity](../antigravity.md), or [OpenCode](../opencode.md) for the exact
+registration each one gets.
+
+`make build` produces a static (`CGO_ENABLED=0`) binary; Go ≥ 1.25 is required. Pass
+`--no-go` to the installer to skip this server (and `formation`).
+
+## Capabilities
+
+Anonymous access to public data under `/iplant/home/shared`, or authenticated access with
+iRODS credentials. Supports both **stdio** (local, what MESA uses) and **HTTP/SSE**
+(remote) transports. A published Docker image, `cyverse/irods-mcp-server`, is also available
+if you'd rather run it in a container than build it.
+
+## Authentication
+
+Edit `config-stdio.yaml` to switch from anonymous to a named account — see
+[Credentials](../credentials.md#mesa-mcp-irods-native-irods-auth). The config keys are
+`irods_host`, `irods_zone_name`, `irods_user_name`, `irods_user_password`.
+
+---8<--- https://idss-mesa.github.io/docs/servers/formation-mcp/
+
+---
+type: MCP Server
+title: formation-mcp
+description: Go MCP server for the CyVerse Discovery Environment via the Formation API — launch apps, monitor analyses.
+tags:
+  - formation
+  - go
+  - discovery-environment
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/formation-mcp"
+    title: "formation-mcp source repository"
+    author: "team:idss-mesa"
+  - id: formation-api
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation API source repository"
+    author: "team:cyverse-de"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# formation-mcp
+
+**Repo:** [idss-mesa/formation-mcp](https://github.com/idss-mesa/formation-mcp) · **Language:** Go · **Registered as:** `formation`
+
+Connects your agent client to the **CyVerse Discovery Environment** through the
+[Formation API](https://github.com/cyverse-de/formation). It lets you launch scientific
+apps, monitor analyses, and work with Data Store files in natural language.
+
+## How MESA runs it
+
+```bash
+( cd ~/.mesa/repos/formation-mcp && go build -o formation-mcp ./cmd/formation-mcp )
+~/.mesa/bin/formation-mcp --transport stdio
+```
+
+It is registered under the name `formation` with every detected client — see
+[Claude Code](../claude-code.md), [Codex CLI](../codex.md),
+[Antigravity](../antigravity.md), or [OpenCode](../opencode.md) for the exact
+registration each one gets.
+
+Go ≥ 1.25 required. Prebuilt binaries for Linux/macOS/Windows are also published on the
+repo's [GitHub Releases](https://github.com/idss-mesa/formation-mcp/releases) (built with
+GoReleaser) if you'd prefer to download rather than build.
+
+## What you can do
+
+- **list / launch apps** and wait for completion
+- **monitor and stop analyses**
+- **browse, upload, and set metadata** on Data Store files
+- open results in the browser
+
+## Authentication
+
+`formation-mcp` needs CyVerse credentials to launch anything as you. Provide them via env
+vars (`FORMATION_USERNAME` / `FORMATION_PASSWORD` or `FORMATION_TOKEN`) or a
+`~/.formation-mcp.yaml` file — see [Credentials](../credentials.md#formation-discovery-environment-auth).
+Configuration precedence is **CLI flag > env var > config file**.
+
+The server also supports an **SSE** transport for remote/web clients (Claude.ai) behind
+nginx + TLS; the repo README has the full deployment guide.
+
+---8<--- https://idss-mesa.github.io/docs/about/ai-agents/
+
+---
+title: "For AI agents"
+description: "How agents should consume these docs — llms.txt, per-page Markdown with OKF frontmatter, trust signals — and why to call the MESA MCP servers for data."
+type: Reference
+tags:
+  - about
+  - ai-agents
+  - OKF
+  - llms.txt
+generated:
+  by: "claude/opus-5"
+  at: "2026-09-10T00:00:00Z"
+sources:
+  - id: okf-spec
+    resource: "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md"
+    title: "Open Knowledge Format (OKF) v0.2 specification"
+    author: "team:google-cloud"
+  - id: llmstxt
+    resource: "https://llmstxt.org"
+    title: "The /llms.txt convention"
+    author: "team:answer-ai"
+  - id: mcp-spec
+    resource: "https://modelcontextprotocol.io/specification"
+    title: "Model Context Protocol specification"
+    author: "team:modelcontextprotocol"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
+---
+
+# For AI agents
+
+This site is published for people **and** for AI agents. The documentation
+source is an [Open Knowledge Format (OKF) v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+knowledge bundle[^okf-spec], and the deployed site exposes that structure
+directly. If you are an agent (or you are wiring one up), consume the
+documentation through the endpoints below rather than scraping rendered HTML.
+
+## This site documents an MCP stack
+
+The MESA stack — [mesa-mcp](../servers/mesa-mcp.md),
+[irods-mcp-server](../servers/irods-mcp-server.md) and
+[formation-mcp](../servers/formation-mcp.md), with the
+[mesa-ducklake](../servers/mesa-ducklake.md) library behind mesa-mcp — *is*
+agent tooling. If what you actually want is CyVerse data — Data Store
+collections, AVU metadata, ontology terms, Discovery Environment apps and
+analyses — do not scrape these pages: install the servers and call their
+tools.
+
+* **All three servers, every detected client** (local `stdio`):
+  `curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash` —
+  see the [Quickstart](../quickstart.md).
+* **One server by hand:**
+  `claude mcp add mesa-mcp -s user -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio` —
+  see the [manual install](../install.md#manual-install) steps for every client.
+* **Hosted, nothing to build:** the public CyVerse iRODS endpoint over
+  Streamable HTTP, `claude mcp add --transport http cyverse-irods https://mcp.cyverse.ai/mcp` —
+  see [hosted / remote servers](../claude-code.md#alternative-hosted-remote-servers).
+
+Once connected, the MCP `tools/list` request[^mcp-spec] returns each server's
+live, authoritative tool catalogue with JSON Schema inputs. Prefer it over the
+tool tables on these pages, which summarise tool groups and can lag the code.
+Use this documentation to learn how to *install and configure* the stack; use
+the servers to get the data. Anonymous access is read-only on public
+collections; credentials belong in the user's environment or `~/.irods` (see
+[Credentials](../credentials.md)), never in a prompt.
+
+## Entry points
+
+All URLs are under `https://idss-mesa.github.io/docs/`.
+
+| Endpoint | What you get |
+| -------- | ------------ |
+| [`llms.txt`](../llms.txt) — `https://idss-mesa.github.io/docs/llms.txt` | Linked outline of every page with one-line descriptions ([llms.txt convention](https://llmstxt.org)[^llmstxt]) |
+| [`llms-full.txt`](../llms-full.txt) — `https://idss-mesa.github.io/docs/llms-full.txt` | The entire corpus in one file: every page's Markdown with frontmatter, each prefixed by its canonical URL |
+| Any page URL + `index.md` | That page's Markdown source with full OKF frontmatter, e.g. `https://idss-mesa.github.io/docs/quickstart/index.md` |
+| Any page path + `.md` (legacy) | The same Markdown file, e.g. `https://idss-mesa.github.io/docs/quickstart.md` — kept so links made before 2026-09-10 still resolve |
+| `https://idss-mesa.github.io/docs/sitemap.xml`, `https://idss-mesa.github.io/docs/robots.txt` | Standard crawl surface. Crawlers honour only the origin's [`robots.txt`](https://idss-mesa.github.io/robots.txt), which governs this sub-site and welcomes AI fetchers; the `/docs/` copy repeats these pointers |
+| [Source repository](https://github.com/idss-mesa/docs) | The bundle itself under `docs/`, plus `AGENTS.md` with the rules coding agents follow when editing it |
+
+Every rendered page also declares its Markdown twin and OKF signals in its
+HTML `<head>`, as `okf:`-prefixed meta tags named after the frontmatter keys
+(`type`, `status`, `trust-tier`, `generated-at`, `generated-by`,
+`stale-after`) — for example:
+
+```html
+<link rel="alternate" type="text/markdown" href="index.md">
+<meta name="okf:type" content="Integration Guide">
+<meta name="okf:status" content="stable">
+<meta name="okf:trust-tier" content="unverified">
+<meta name="okf:generated-at" content="2026-07-18T00:00:00Z">
+<meta name="okf:generated-by" content="claude/fable-5">
+<meta name="okf:stale-after" content="2027-03-10T00:00:00Z">
+```
+
+The page's `type` is exposed the same way, so a crawler can filter by kind of
+page without parsing frontmatter.
+
+## Reading the OKF frontmatter
+
+Each content page's YAML frontmatter answers the questions an agent should
+ask before relying on it[^okf-spec]:
+
+* **What is this?** — `type` (`Guide`, `Reference`, `Integration Guide`,
+  `MCP Server`, `Library`, `Troubleshooting`), `title`, `description`,
+  `tags`.
+* **Where did it come from?** — `generated: { by, at }` records the actor
+  that produced the current text and when it last changed meaningfully;
+  `sources` lists the load-bearing references (`id`, `resource` URL,
+  `title`, `author`) — the MESA repositories and `install.sh` for the
+  stack, and each vendor's own MCP documentation for the client pages.
+* **How much should I trust it?** — the `verified` key (see trust tiers
+  below). Its absence is meaningful: the page has not been confirmed by
+  anyone other than its generator.
+* **Is it still true?** — `status` (`stable` is the default; `draft` needs
+  review; `deprecated` is kept for history only) and `stale_after`, an
+  ISO 8601 instant after which the page should be re-checked. Installer
+  flags, client config paths and CLI commands change between releases, so
+  every page that states them carries one.
+
+Actors follow OKF §7: `<producer>/<version>` for agents and tools (for
+example `claude/fable-5`), `human:<id>` for a person, `process:<id>` for an
+automated job.
+
+## Trust tiers
+
+| `verified` key | Tier | Meaning |
+| --- | --- | --- |
+| absent | **unverified** | Generated content nobody has confirmed against its sources. Every page on this site starts here. |
+| present, non-`human:` actors only | **machine-confirmed** | An automated check (a CI job, a live install test) confirmed the content. |
+| present with a `human:<id>` actor | **human-reviewed** | A maintainer read and confirmed the page. Prefer these when answers conflict. |
+
+Only humans add `verified:` entries; a generator never does. The
+`okf:trust-tier` meta tag carries the derived tier for quick filtering.
+
+## Answering user questions
+
+Ground answers in this documentation and cite the page URL (for example
+`https://idss-mesa.github.io/docs/credentials/`). When a page and the
+client's own documentation disagree about a config path or CLI flag, the
+vendor source listed in that page's `sources` wins — and the page is due for
+an update. For anything about the *data* — collections, AVUs, apps,
+analyses — call the servers rather than guessing from prose. When the corpus
+does not answer a question about MESA itself, direct users to the
+[GitHub issue tracker](https://github.com/idss-mesa/docs/issues).
+
+## Related bundles
+
+The same agent conventions cover the rest of the origin and its neighbours:
+
+* **MESA project site** — [`llms.txt`](https://idss-mesa.github.io/llms.txt)
+  and [agent guide](https://idss-mesa.github.io/about/ai-agents/) for
+  https://idss-mesa.github.io/, which indexes this sub-site alongside the
+  MESA software repositories.
+* **neon-mcp** — [agent guide](https://idss-mesa.github.io/neon-mcp/about/ai-agents/)
+  for the MESA MCP server for the NEON Data API.
+* **UNM CARC documentation** — [agent guide](https://carc.unm.edu/docs/about/ai-agents/)
+  for the Center for Advanced Research Computing, where MESA is based.
+
+[^okf-spec]: Open Knowledge Format (OKF) v0.2 specification. <https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md>
+[^llmstxt]: The /llms.txt convention. <https://llmstxt.org>
+[^mcp-spec]: Model Context Protocol specification. <https://modelcontextprotocol.io/specification>
+
+---8<--- https://idss-mesa.github.io/docs/log/
+
+# Directory Update Log
+
+## 2026-09-10
+
+* **Update**: Migrated the bundle to [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
+  Every content page replaces v0.1's `timestamp` with `generated: { by, at }` and gains
+  `sources` (the MESA repositories and `install.sh`, and each client vendor's MCP
+  documentation), `status`, and `stale_after`. The root [index](index.md) now declares
+  `okf_version: "0.2"`.
+* **Creation**: Added the [About](about/index.md) section with [For AI agents](about/ai-agents.md) —
+  how agents should consume this site and why they should call the MESA servers for data —
+  and a [Servers](servers/index.md) section listing.
+* **Update**: Replaced `scripts/agent_markdown.py` with the UNM-CARC/neon-mcp agent surface:
+  `scripts/okf_validate.py` (CI-enforced conformance), `scripts/gen_llms_txt.py` (committed
+  `llms.txt` and `llms-full.txt` grouped by the site nav, CI drift-checked), and
+  `scripts/postbuild_agent_surface.py` (page URL + `index.md` Markdown mirror alongside the
+  legacy `<path>.md` copies, `okf:*` head metadata, and `robots.txt`). Added `AGENTS.md` and
+  `CLAUDE.md` for coding agents.
+
+## 2026-07-19
+
+* **Update**: Changed the copyright holder to The Regents of the University of New
+  Mexico (site footer, `LICENSE`, and README).
+
+## 2026-07-18
+
+* **Update**: Generalized MESA from a Claude-Code-only installer to four agent clients — added
+  [Codex CLI](codex.md), [Antigravity](antigravity.md), and [OpenCode](opencode.md) integration
+  pages alongside [Claude Code](claude-code.md), documented the new `--for` installer flag and
+  client auto-detection, and added per-client tabs to the [Quickstart](quickstart.md) and
+  [Install reference](install.md).
+* **Update**: Adopted the [Open Knowledge Format v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog)
+  across `docs/` — frontmatter (`type`, `title`, `description`, `tags`, `timestamp`) on every
+  content page, plus this update log. [index.md](index.md) intentionally deviates from the
+  reserved-index rule because Zensical requires it as the site homepage.
+
+## 2026-06-18
+
+* **Update**: Defaulted `mesa-mcp` to `main` now that the DataCite tools are merged
+  ([bba04fd](https://github.com/idss-mesa/docs/commit/bba04fd)).
+* **Creation**: Initial MESA umbrella repo — one-liner `install.sh` plus Zensical docs
+  ([27360b8](https://github.com/idss-mesa/docs/commit/27360b8)).

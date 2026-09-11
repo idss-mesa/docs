@@ -1,0 +1,40 @@
+# MESA documentation
+
+> One-line install of the CyVerse MESA MCP stack (mesa-mcp, mesa-ducklake, irods-mcp-server, formation-mcp) for Claude Code, Codex CLI, Antigravity, and OpenCode. This documentation covers the installer, per-client registration, CyVerse credentials, the four servers, and troubleshooting. The source repository is an Open Knowledge Format (OKF v0.2) bundle: every page carries YAML frontmatter with type, provenance (generated/sources), and lifecycle (status/stale_after) fields.
+
+Full corpus for ingestion: https://idss-mesa.github.io/docs/llms-full.txt
+
+Every page's Markdown source (OKF frontmatter included) is served at its URL plus `index.md` — for example https://idss-mesa.github.io/docs/quickstart/index.md (the legacy form https://idss-mesa.github.io/docs/quickstart.md also works). Agent guide: https://idss-mesa.github.io/docs/about/ai-agents/
+
+If you want CyVerse data rather than documentation, install the MESA MCP servers (or connect to a hosted endpoint) and call their tools; the agent guide explains how.
+
+## Install and configure
+
+- [MESA](https://idss-mesa.github.io/docs/): One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
+- [Quickstart](https://idss-mesa.github.io/docs/quickstart/): Install the MESA MCP stack and register it with your agent client in a few minutes.
+- [Install reference](https://idss-mesa.github.io/docs/install/): All install.sh flags, environment overrides, on-disk layout, and manual install steps for the MESA MCP stack.
+- [Credentials](https://idss-mesa.github.io/docs/credentials/): Authenticating the MESA servers to CyVerse — env vars at install time, native iRODS auth, and per-server configuration.
+- [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/): Fixes for common MESA install and registration problems across Claude Code, Codex, Antigravity, and OpenCode.
+
+## Agent clients
+
+- [Claude Code integration](https://idss-mesa.github.io/docs/claude-code/): How MESA registers its MCP servers with Claude Code — scopes, management commands, and the registration it creates.
+- [Codex CLI integration](https://idss-mesa.github.io/docs/codex/): How MESA registers its MCP servers with the OpenAI Codex CLI, and how to manage them there.
+- [Antigravity integration](https://idss-mesa.github.io/docs/antigravity/): How MESA registers its MCP servers with Google Antigravity (IDE and agy CLI) by writing mcp_config.json.
+- [OpenCode integration](https://idss-mesa.github.io/docs/opencode/): How MESA registers its MCP servers in OpenCode's global opencode.json, and how to verify them.
+
+## Servers
+
+- [mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/): The flagship MESA server — iRODS Data Store tools, OBO/OLS ontology AVUs, DataCite, and DuckLake metadata history.
+- [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/): The AVU metadata-history library that backs mesa-mcp — DuckLake snapshots, provenance, and time-travel.
+- [irods-mcp-server](https://idss-mesa.github.io/docs/servers/irods-mcp-server/): The reference Go MCP server for the CyVerse Data Store (iRODS), registered as irods.
+- [formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/): Go MCP server for the CyVerse Discovery Environment via the Formation API — launch apps, monitor analyses.
+
+## About
+
+- [For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/): How agents should consume these docs — llms.txt, per-page Markdown with OKF frontmatter, trust signals — and why to call the MESA MCP servers for data.
+
+## Meta
+
+- [Documentation update log](https://idss-mesa.github.io/docs/log/): dated history of changes to this bundle.
+- [MESA project site](https://idss-mesa.github.io/llms.txt): origin-level llms.txt indexing the MESA site, this documentation, and the MESA software repositories.

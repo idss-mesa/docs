@@ -9,7 +9,16 @@ tags:
   - ontology
   - datacite
   - ducklake
-timestamp: "2026-07-18T00:00:00Z"
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/mesa-mcp"
+    title: "mesa-mcp source repository"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
 ---
 
 # mesa-mcp

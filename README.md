@@ -66,8 +66,10 @@ authenticating.
 docs/
 ├── install.sh                 # the one-liner
 ├── zensical.toml              # docs site config (Zensical)
-├── docs/                      # documentation source
-└── .github/workflows/docs.yml # builds + deploys the docs to GitHub Pages
+├── docs/                      # documentation source (an OKF v0.2 bundle)
+├── scripts/                   # OKF validator, llms.txt generator, post-build agent surface
+├── AGENTS.md                  # rules for AI coding agents editing this repo
+└── .github/workflows/docs.yml # validates, builds, and deploys the docs to GitHub Pages
 ```
 
 ## Building the docs locally
@@ -82,12 +84,24 @@ uv tool run zensical build        # static output in ./site
 
 ### Docs conventions
 
-The pages under `docs/` follow the
-[Open Knowledge Format v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog)
-(OKF): every content page carries YAML frontmatter (`type`, `title`, `description`,
-`tags`, `timestamp`), and `docs/log.md` is the OKF update log. One deliberate deviation:
-`docs/index.md` keeps frontmatter and rich content instead of OKF's reserved
-frontmatter-free link listing, because Zensical requires `index.md` as the site homepage.
+The pages under `docs/` form an
+[Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+(OKF) bundle: every content page carries YAML frontmatter (`type`, `title`,
+`description`, `tags`, provenance in `generated` and `sources`, lifecycle in `status`
+and `stale_after`), section `index.md` files are frontmatter-free listings, and
+`docs/log.md` is the OKF update log. One deliberate deviation: `docs/index.md` carries
+`okf_version` plus `title`, `description`, and `icon`, and keeps rich content instead of a
+plain link listing, because Zensical requires `index.md` as the site homepage. The full
+rules, for people and coding agents alike, are in [AGENTS.md](AGENTS.md).
+
+```bash
+uvx --with pyyaml python scripts/okf_validate.py docs   # OKF conformance (CI-enforced)
+uvx --with pyyaml python scripts/gen_llms_txt.py        # regenerate docs/llms.txt + llms-full.txt (CI checks drift)
+```
+
+The deployed site is agent-readable: every page's Markdown is served at its URL plus
+`index.md`, and `llms.txt`, `llms-full.txt`, and the
+[For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/) guide sit alongside it.
 
 ## License
 

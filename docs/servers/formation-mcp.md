@@ -6,7 +6,20 @@ tags:
   - formation
   - go
   - discovery-environment
-timestamp: "2026-07-18T00:00:00Z"
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/formation-mcp"
+    title: "formation-mcp source repository"
+    author: "team:idss-mesa"
+  - id: formation-api
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation API source repository"
+    author: "team:cyverse-de"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
 ---
 
 # formation-mcp

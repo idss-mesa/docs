@@ -7,7 +7,20 @@ tags:
   - mcp
   - registration
   - scopes
-timestamp: "2026-07-18T00:00:00Z"
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: claude-code-mcp
+    resource: "https://code.claude.com/docs/en/mcp"
+    title: "Claude Code MCP documentation"
+    author: "team:anthropic"
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
 ---
 
 # Claude Code integration

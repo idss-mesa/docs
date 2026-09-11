@@ -7,7 +7,20 @@ tags:
   - mcp
   - registration
   - config-toml
-timestamp: "2026-07-18T00:00:00Z"
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: codex-mcp
+    resource: "https://developers.openai.com/codex/mcp"
+    title: "Codex MCP documentation"
+    author: "team:openai"
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
 ---
 
 # Codex CLI integration
