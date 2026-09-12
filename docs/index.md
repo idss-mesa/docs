@@ -1,19 +1,15 @@
 ---
-type: Homepage
+okf_version: "0.2"
 title: MESA
 description: One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
-tags:
-  - mesa
-  - mcp
-  - cyverse
-  - install
-timestamp: "2026-07-18T00:00:00Z"
 icon: lucide/rocket
 ---
 
-<!-- OKF deviation: OKF v0.1 reserves index.md as a frontmatter-free link listing.
-     This file intentionally keeps frontmatter and rich content because Zensical
-     requires index.md to be the site homepage. See README "Docs conventions". -->
+<!-- OKF deviation: OKF v0.2 (§8, §12) reserves the bundle-root index.md as a
+     directory listing whose only frontmatter is okf_version. Zensical requires
+     index.md to be the site homepage, so this file also keeps title, description
+     and icon (consumers tolerate unknown keys, §11) and a rich homepage body.
+     See README "Docs conventions". -->
 
 # MESA
 
@@ -72,3 +68,22 @@ graph LR
 
 Source repositories live in the [**idss-mesa**](https://github.com/idss-mesa) GitHub
 organization.
+
+## For AI agents
+
+This site is an [Open Knowledge Format (OKF) v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+knowledge bundle: every page carries YAML frontmatter with its type, provenance, and
+lifecycle. Three addresses return the same content for any page — the rendered page, its
+Markdown twin (add `index.md` to the page address, or use the **View this page as
+Markdown** button in the upper right), and the raw source on GitHub:
+
+| What | Address |
+|---|---|
+| Outline of every page | [`https://idss-mesa.github.io/docs/llms.txt`](https://idss-mesa.github.io/docs/llms.txt) |
+| Whole corpus in one file | [`https://idss-mesa.github.io/docs/llms-full.txt`](https://idss-mesa.github.io/docs/llms-full.txt) |
+| Markdown twin of a page | [`https://idss-mesa.github.io/docs/quickstart/index.md`](https://idss-mesa.github.io/docs/quickstart/index.md) |
+| Raw source on GitHub | [`https://raw.githubusercontent.com/idss-mesa/docs/main/docs/quickstart.md`](https://raw.githubusercontent.com/idss-mesa/docs/main/docs/quickstart.md) |
+
+See [For AI agents](about/ai-agents.md) for the entry points, trust signals, and what to
+do if your harness cannot reach this site. For CyVerse *data*, install the MESA servers
+and call their tools rather than reading these pages.

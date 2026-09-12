@@ -5,9 +5,13 @@ site_author = "idss-mesa"
 site_url = "https://idss-mesa.github.io/docs/"
 repo_url = "https://github.com/idss-mesa/docs"
 repo_name = "idss-mesa/docs"
-copyright = """
-Copyright &copy; 2026 The Regents of the University of New Mexico
-"""
+edit_uri = "edit/main/docs/"
+copyright = "Copyright &copy; 2026 The Regents of the University of New Mexico. For AI agents: <a href=\"https://idss-mesa.github.io/docs/llms.txt\">llms.txt</a> &middot; <a href=\"https://idss-mesa.github.io/docs/llms-full.txt\">llms-full.txt</a> &middot; <a href=\"https://idss-mesa.github.io/docs/about/ai-agents/\">agent guide</a>."
+
+# TOML: bare keys attach to the most recent [table] header, so every
+# [project] key — extra_css and nav included — must stay above the first
+# [project.*] header.
+extra_css = ["stylesheets/extra.css"]
 
 # Explicit navigation. Omit this to derive nav from the docs/ tree instead.
 nav = [
@@ -22,19 +26,25 @@ nav = [
   ] },
   { "Credentials" = "credentials.md" },
   { "Servers" = [
+      "servers/index.md",
       { "mesa-mcp" = "servers/mesa-mcp.md" },
       { "mesa-ducklake" = "servers/mesa-ducklake.md" },
       { "irods-mcp-server" = "servers/irods-mcp-server.md" },
       { "formation-mcp" = "servers/formation-mcp.md" },
   ] },
   { "Troubleshooting" = "troubleshooting.md" },
-  { "Changelog" = "log.md" },
+  { "About" = [
+      "about/index.md",
+      { "For AI agents" = "about/ai-agents.md" },
+      { "Changelog" = "log.md" },
+  ] },
 ]
 
 [project.theme]
 language = "en"
 features = [
   "announce.dismiss",
+  "content.action.edit",
   "content.action.view",
   "content.code.annotate",
   "content.code.copy",

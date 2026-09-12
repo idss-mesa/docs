@@ -1,0 +1,17 @@
+/* MESA documentation — small additions to the Zensical theme.
+   Keep this file minimal; the theme carries the design. */
+
+/* Body-level machine-readable pointers injected by
+   scripts/postbuild_agent_surface.py. They are visible on purpose: text
+   extracting fetch tools and URL allowlists never see <head>. */
+.md-typeset .mesa-machine-readable {
+  margin-top: 1.2rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  font-size: 0.64rem;
+  color: var(--md-default-fg-color--light);
+}
+
+@media print {
+  .md-typeset .mesa-machine-readable { display: none; }
+}

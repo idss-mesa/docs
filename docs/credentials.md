@@ -8,7 +8,28 @@ tags:
   - cyverse
   - irods
   - formation
-timestamp: "2026-07-18T00:00:00Z"
+generated:
+  by: "claude/fable-5"
+  at: "2026-07-18T00:00:00Z"
+sources:
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+  - id: mesa-mcp-env
+    resource: "https://github.com/idss-mesa/mesa-mcp/blob/main/.env.example"
+    title: "mesa-mcp .env.example"
+    author: "team:idss-mesa"
+  - id: formation-mcp
+    resource: "https://github.com/idss-mesa/formation-mcp"
+    title: "formation-mcp source repository"
+    author: "team:idss-mesa"
+  - id: icommands
+    resource: "https://learning.cyverse.org/ds/icommands/"
+    title: "CyVerse iCommands guide"
+    author: "team:cyverse"
+status: stable
+stale_after: "2027-03-10T00:00:00Z"
 ---
 
 # Credentials
