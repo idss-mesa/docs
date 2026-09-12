@@ -1,5 +1,27 @@
 # Directory Update Log
 
+## 2026-09-12
+
+* **Update**: Made the Markdown easier for agents to find, following
+  [DUST 2026](https://unm-carc.github.io/dust-2026/about/ai-agents/). Every rendered page
+  now carries two *visible* pointers, because text-extracting fetchers and URL allowlists
+  never see `<head>`: a "View this page as Markdown" button beside Edit and View source,
+  and a "Machine-readable versions" line at the end of the article linking the Markdown
+  twin, the raw GitHub source, `llms.txt`, and `llms-full.txt`. The site footer carries the
+  same three links on every page.
+* **Update**: [llms.txt](llms.txt) now lists three addresses per page — rendered page,
+  Markdown twin, and raw source on `raw.githubusercontent.com` — because sandboxed agents
+  often reach github.com when they cannot reach `*.github.io`, and its Meta section states
+  the corpus size and token estimate. [llms-full.txt](llms-full.txt) and the per-page
+  Markdown mirror now rewrite relative links to absolute URLs, so links survive being read
+  away from their source directory.
+* **Update**: [For AI agents](about/ai-agents.md) documents the raw-source convention, adds
+  an "If you cannot fetch this site" section, and warns that the `<head>` signals are
+  invisible to most fetch tools. The [home page](index.md) lists the same addresses.
+* **Update**: The three scripts now share `scripts/okf_common.py` (config, frontmatter,
+  URL, and link-rewriting helpers, ported from UNM-CARC/dust-2026) and read `site_url`,
+  `repo_url`, `edit_uri`, and `nav` from `zensical.toml` instead of hard-coding them.
+
 ## 2026-09-10
 
 * **Update**: Migrated the bundle to [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).

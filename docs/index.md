@@ -73,6 +73,17 @@ organization.
 
 This site is an [Open Knowledge Format (OKF) v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 knowledge bundle: every page carries YAML frontmatter with its type, provenance, and
-lifecycle, every page's Markdown is served at its URL plus `index.md`, and the whole
-corpus is available as [`llms.txt`](llms.txt) and [`llms-full.txt`](llms-full.txt). See
-[For AI agents](about/ai-agents.md) for the entry points and trust signals.
+lifecycle. Three addresses return the same content for any page — the rendered page, its
+Markdown twin (add `index.md` to the page address, or use the **View this page as
+Markdown** button in the upper right), and the raw source on GitHub:
+
+| What | Address |
+|---|---|
+| Outline of every page | [`https://idss-mesa.github.io/docs/llms.txt`](https://idss-mesa.github.io/docs/llms.txt) |
+| Whole corpus in one file | [`https://idss-mesa.github.io/docs/llms-full.txt`](https://idss-mesa.github.io/docs/llms-full.txt) |
+| Markdown twin of a page | [`https://idss-mesa.github.io/docs/quickstart/index.md`](https://idss-mesa.github.io/docs/quickstart/index.md) |
+| Raw source on GitHub | [`https://raw.githubusercontent.com/idss-mesa/docs/main/docs/quickstart.md`](https://raw.githubusercontent.com/idss-mesa/docs/main/docs/quickstart.md) |
+
+See [For AI agents](about/ai-agents.md) for the entry points, trust signals, and what to
+do if your harness cannot reach this site. For CyVerse *data*, install the MESA servers
+and call their tools rather than reading these pages.

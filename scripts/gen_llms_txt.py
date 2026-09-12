@@ -2,188 +2,173 @@
 """Generate llms.txt and llms-full.txt from the MESA docs/ OKF bundle.
 
 llms.txt      — linked outline of the site (llmstxt.org convention): every
-                concept page with its frontmatter description, grouped by
-                section, with absolute URLs derived from site_url.
+                page with its frontmatter description, grouped by the nav
+                sections in zensical.toml. Each entry carries three addresses
+                that return the same content — the rendered page, its Markdown
+                twin (page URL + `index.md`), and the raw source on GitHub —
+                because sandboxed agents often reach raw.githubusercontent.com
+                when they cannot reach *.github.io.
 llms-full.txt — the entire corpus concatenated as Markdown, frontmatter
-                included, so an agent can ingest the whole bundle in one file.
+                included and relative links rewritten to absolute URLs, so an
+                agent can ingest the whole bundle in one fetch.
 
-Grouping and order follow the `nav` array in zensical.toml, since this site
-keeps most pages at the docs/ root: top-level nav pages are listed under
-TOP_LEVEL_HEADING and every nested nav section becomes its own heading.
-Section index.md files (OKF §8 listings) are skipped; log.md is listed under
-Meta. Pages on disk but missing from the nav are reported and listed last.
-
-Both files are written into docs/ so the static build ships them at the site
-root (https://idss-mesa.github.io/docs/llms.txt). They are committed; CI fails
-when they drift from the sources (`git diff --exit-code`). Needs PyYAML and
-Python 3.11+ (tomllib).
+Site name, description, URL, repository, and page order all come from
+zensical.toml. Both files are written into docs/ so the static build ships
+them at the site root; CI regenerates them and fails if the committed copies
+drift.
 
 Usage: python scripts/gen_llms_txt.py      (from the repository root)
 """
 
 from __future__ import annotations
 
-import re
 import sys
-import tomllib
 from pathlib import Path
 
-import yaml
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from okf_common import (DOCS, absolutize, frontmatter, is_external,  # noqa: E402
+                        load_config, nav_pages, page_url, raw_source_url,
+                        repo_branch, rewrite_link_targets, site_url,
+                        split_frontmatter)
 
-ROOT = Path(__file__).resolve().parent.parent
-DOCS = ROOT / "docs"
-
-# Heading for the pages that sit directly in the nav rather than in a section.
+# Heading for pages that sit directly in the nav rather than inside a section.
 TOP_LEVEL_HEADING = "Install and configure"
 
-
-def load_project() -> dict:
-    return tomllib.loads((ROOT / "zensical.toml").read_text(encoding="utf-8"))["project"]
+ORIGIN_LLMS = "https://idss-mesa.github.io/llms.txt"
 
 
-def frontmatter(path: Path):
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return {}, text
-    m = re.match(r"^---\s*\n(.*?)\n---\s*\n?", text, re.DOTALL)
-    if not m:
-        return {}, text
-    try:
-        data = yaml.safe_load(m.group(1)) or {}
-    except yaml.YAMLError:
-        data = {}
-    return (data if isinstance(data, dict) else {}), text[m.end() :]
-
-
-def page_url(base: str, rel: str) -> str:
-    # use_directory_urls-style pretty URLs
-    path = Path(rel)
-    if path.name == "index.md":
-        tail = str(path.parent) + "/" if str(path.parent) != "." else ""
-    else:
-        tail = str(path.with_suffix("")) + "/"
-    return base + tail.replace("\\", "/")
-
-
-def nav_leaves(items) -> list[str]:
-    out: list[str] = []
-    for item in items:
-        if isinstance(item, str):
-            out.append(item)
-            continue
-        for value in item.values():
-            out.extend([value] if isinstance(value, str) else nav_leaves(value))
-    return out
-
-
-def nav_sections(nav) -> list[tuple[str, list[str]]]:
-    """(heading, [page paths]) in nav order."""
-    top: list[str] = []
-    sections: list[tuple[str, list[str]]] = [(TOP_LEVEL_HEADING, top)]
-    for item in nav:
-        if isinstance(item, str):
-            top.append(item)
-            continue
-        for label, value in item.items():
-            if isinstance(value, str):
-                top.append(value)
-            else:
-                sections.append((label, nav_leaves(value)))
-    return sections
-
-
-def is_listing(rel: str) -> bool:
-    return rel == "log.md" or (rel.endswith("/index.md"))
-
-
-def main():
-    project = load_project()
-    base = project["site_url"].rstrip("/") + "/"
-    sections = nav_sections(project.get("nav", []))
-
-    in_nav = {rel for _, pages in sections for rel in pages}
-    on_disk = {
-        str(p.relative_to(DOCS))
-        for p in DOCS.rglob("*.md")
-        if p.relative_to(DOCS).parts[0] not in ("assets", "stylesheets")
-    }
-    missing = sorted(rel for rel in on_disk - in_nav if not is_listing(rel))
-    for rel in missing:
-        print(f"warning: {rel} is not in the zensical.toml nav", file=sys.stderr)
-    if missing:
-        sections.append(("Other pages", missing))
+def main() -> int:
+    cfg = load_config()
+    base = site_url(cfg)
+    name = cfg.get("site_name", "Documentation")
+    desc = cfg.get("site_description", "").strip()
+    raw_root = raw_source_url(cfg, "")
+    branch = repo_branch(cfg)
 
     lines = [
-        f"# {project['site_name']} documentation",
+        f"# {name} documentation",
         "",
-        f"> {project['site_description']} This documentation covers the "
-        "installer, per-client registration, CyVerse credentials, the four "
-        "servers, and troubleshooting. The source repository is an Open "
-        "Knowledge Format (OKF v0.2) bundle: every page carries YAML "
-        "frontmatter with type, provenance (generated/sources), and lifecycle "
-        "(status/stale_after) fields.",
+        f"> {desc} This documentation covers the installer, per-client "
+        "registration, CyVerse credentials, the four servers, and "
+        "troubleshooting. The source repository is an Open Knowledge Format "
+        "(OKF v0.2) bundle: every page carries YAML frontmatter with type, "
+        "provenance (generated/sources), and lifecycle (status/stale_after) "
+        "fields.",
         "",
-        f"Full corpus for ingestion: {base}llms-full.txt",
+        "Every page below is listed with three addresses that all return the "
+        "same content: the rendered HTML page, its Markdown twin (page URL + "
+        "`index.md`, served as text/markdown with the OKF frontmatter), and "
+        "the raw source file on GitHub. Fetch whichever your tool is allowed "
+        "to reach; many sandboxes permit github.com and "
+        "raw.githubusercontent.com but not *.github.io.",
         "",
-        "Every page's Markdown source (OKF frontmatter included) is served at "
-        "its URL plus `index.md` — for example "
-        f"{base}quickstart/index.md (the legacy form {base}quickstart.md also "
-        f"works). Agent guide: {base}about/ai-agents/",
-        "",
-        "If you want CyVerse data rather than documentation, install the MESA "
-        "MCP servers (or connect to a hosted endpoint) and call their tools; "
-        "the agent guide explains how.",
-        "",
+        "```",
+        f"Site page        {base}<path>/",
+        f"Markdown twin    {base}<path>/index.md",
     ]
+    if raw_root:
+        lines += [
+            f"Raw source       {raw_root}<path>.md      (branch {branch}; a moving target)",
+            "",
+            f"Content page     /quickstart/      ->  {raw_root}quickstart.md",
+            f"Section listing  /servers/         ->  {raw_root}servers/index.md",
+        ]
+    lines += ["```", "",
+              f"The legacy form {base}<path>.md also still returns the same "
+              "Markdown, for links made before 2026-09-10.", ""]
+
     full = [
-        f"# {project['site_name']} documentation — full corpus",
+        f"# {name} documentation — full corpus",
         "",
         "Each page below begins with its canonical URL followed by its "
-        "original Markdown, OKF frontmatter included.",
+        "original Markdown, OKF frontmatter included. Relative links have "
+        "been rewritten to absolute URLs.",
         "",
     ]
 
+    # section -> subsection -> outline lines, in nav order; empty groups are
+    # never rendered.
+    groups: dict[str, dict[str | None, list[str]]] = {}
+
+    def add(trail: tuple, line: str):
+        section = trail[0] if trail else TOP_LEVEL_HEADING
+        sub = " / ".join(trail[1:]) or None
+        groups.setdefault(section, {}).setdefault(sub, []).append(line)
+
+    seen: set[str] = set()
     n = 0
-    for heading, pages in sections:
-        pages = [rel for rel in pages if not is_listing(rel) and (DOCS / rel).exists()]
-        if not pages:
+    for trail, label, target in nav_pages(cfg.get("nav", [])):
+        if is_external(target):
+            add(trail, f"- [{label or target}]({target}): External resource.")
             continue
-        lines += [f"## {heading}", ""]
-        for rel in pages:
-            path = DOCS / rel
-            fm, _ = frontmatter(path)
-            url = page_url(base, rel)
-            title = fm.get("title") or path.stem.replace("-", " ").title()
-            desc = str(fm.get("description", "")).strip()
-            suffix = ""
-            if fm.get("status") == "deprecated":
-                suffix = " (deprecated; kept for history)"
-            elif fm.get("status") == "draft":
-                suffix = " (draft)"
-            lines.append(f"- [{title}]({url}): {desc}{suffix}")
-            full += [f"---8<--- {url}", "", path.read_text(encoding="utf-8").rstrip(), ""]
-            n += 1
-        lines.append("")
+        rel = target.replace("\\", "/")
+        if rel in seen or not (DOCS / rel).exists():
+            continue
+        seen.add(rel)
+        # Section listings (OKF §8) and the §9 log are not concept pages; the
+        # bundle root index.md is this site's homepage, so it stays listed.
+        if rel.endswith("/index.md") or rel == "log.md":
+            continue
+        fm = frontmatter(DOCS / rel)
+        url = page_url(base, rel)
+        title = fm.get("title") or label or Path(rel).stem.replace("-", " ").title()
+        summary = str(fm.get("description", "")).strip()
+        suffix = ""
+        if fm.get("status") == "deprecated":
+            suffix = " (deprecated; kept for history)"
+        elif fm.get("status") == "draft":
+            suffix = " (draft)"
+        raw = raw_source_url(cfg, rel)
+        alt = f" Markdown twin: {url}index.md" + (f" Raw source: {raw}" if raw else "")
+        add(trail, f"- [{title}]({url}): {summary}{suffix}{alt}")
+        text = (DOCS / rel).read_text(encoding="utf-8")
+        _, body = split_frontmatter(text)
+        head = text[: len(text) - len(body)]
+        body = rewrite_link_targets(body, lambda t, r=rel: absolutize(t, r, base))
+        full += [f"---8<--- {url}", "", (head + body).rstrip(), ""]
+        n += 1
+
+    for section, subs in groups.items():
+        lines += [f"## {section}", ""]
+        for sub, entries in subs.items():
+            if sub:
+                lines += [f"### {sub}", ""]
+            lines += entries + [""]
+
+    log = DOCS / "log.md"
+    if log.exists():
+        full += [f"---8<--- {base}log/", "", log.read_text(encoding="utf-8").rstrip(), ""]
+    full_text = "\n".join(full).rstrip() + "\n"
+    nbytes = len(full_text.encode("utf-8"))
+    ktok = max(1, round(nbytes / 4 / 1000))
 
     lines += [
         "## Meta",
         "",
+        f"- [Full corpus in one file]({base}llms-full.txt): every page's Markdown with "
+        f"frontmatter, links made absolute; about {nbytes // 1024} KB, roughly {ktok},000 "
+        "tokens. Prefer it over fetching pages one at a time.",
         f"- [Documentation update log]({base}log/): dated history of changes to this bundle.",
-        "- [MESA project site](https://idss-mesa.github.io/llms.txt): origin-level "
-        "llms.txt indexing the MESA site, this documentation, and the MESA "
-        "software repositories.",
-        "",
+        f"- [For AI agents]({base}about/ai-agents/): endpoints, trust signals, and what to "
+        "do if you cannot fetch this site.",
+        f"- [Sitemap]({base}sitemap.xml) and [robots.txt]({base}robots.txt): crawlers honour "
+        "only the origin https://idss-mesa.github.io/robots.txt, which is equally permissive.",
+        f"- [MESA project site]({ORIGIN_LLMS}): origin-level llms.txt indexing the MESA site, "
+        "this documentation, and the MESA software repositories.",
     ]
-    log = DOCS / "log.md"
-    if log.exists():
-        full += [f"---8<--- {base}log/", "", log.read_text(encoding="utf-8").rstrip(), ""]
+    if raw_root:
+        lines.append(f"- [Source repository]({cfg.get('repo_url')}): the bundle itself; "
+                     "`docs/` mirrors the site paths one to one.")
+    lines += ["",
+              "If you want CyVerse data rather than documentation, install the MESA MCP "
+              "servers (or connect to a hosted endpoint) and call their tools; the agent "
+              "guide explains how.", ""]
 
     (DOCS / "llms.txt").write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
-    (DOCS / "llms-full.txt").write_text("\n".join(full).rstrip() + "\n", encoding="utf-8")
-    print(
-        f"llms.txt: {n} pages indexed; llms-full.txt: "
-        f"{(DOCS / 'llms-full.txt').stat().st_size // 1024} KB"
-    )
+    (DOCS / "llms-full.txt").write_text(full_text, encoding="utf-8")
+    print(f"llms.txt: {n} pages indexed; llms-full.txt: "
+          f"{(DOCS / 'llms-full.txt').stat().st_size // 1024} KB")
+    return 0
 
 
 if __name__ == "__main__":

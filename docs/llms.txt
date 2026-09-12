@@ -2,39 +2,52 @@
 
 > One-line install of the CyVerse MESA MCP stack (mesa-mcp, mesa-ducklake, irods-mcp-server, formation-mcp) for Claude Code, Codex CLI, Antigravity, and OpenCode. This documentation covers the installer, per-client registration, CyVerse credentials, the four servers, and troubleshooting. The source repository is an Open Knowledge Format (OKF v0.2) bundle: every page carries YAML frontmatter with type, provenance (generated/sources), and lifecycle (status/stale_after) fields.
 
-Full corpus for ingestion: https://idss-mesa.github.io/docs/llms-full.txt
+Every page below is listed with three addresses that all return the same content: the rendered HTML page, its Markdown twin (page URL + `index.md`, served as text/markdown with the OKF frontmatter), and the raw source file on GitHub. Fetch whichever your tool is allowed to reach; many sandboxes permit github.com and raw.githubusercontent.com but not *.github.io.
 
-Every page's Markdown source (OKF frontmatter included) is served at its URL plus `index.md` — for example https://idss-mesa.github.io/docs/quickstart/index.md (the legacy form https://idss-mesa.github.io/docs/quickstart.md also works). Agent guide: https://idss-mesa.github.io/docs/about/ai-agents/
+```
+Site page        https://idss-mesa.github.io/docs/<path>/
+Markdown twin    https://idss-mesa.github.io/docs/<path>/index.md
+Raw source       https://raw.githubusercontent.com/idss-mesa/docs/main/docs/<path>.md      (branch main; a moving target)
 
-If you want CyVerse data rather than documentation, install the MESA MCP servers (or connect to a hosted endpoint) and call their tools; the agent guide explains how.
+Content page     /quickstart/      ->  https://raw.githubusercontent.com/idss-mesa/docs/main/docs/quickstart.md
+Section listing  /servers/         ->  https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/index.md
+```
+
+The legacy form https://idss-mesa.github.io/docs/<path>.md also still returns the same Markdown, for links made before 2026-09-10.
 
 ## Install and configure
 
-- [MESA](https://idss-mesa.github.io/docs/): One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
-- [Quickstart](https://idss-mesa.github.io/docs/quickstart/): Install the MESA MCP stack and register it with your agent client in a few minutes.
-- [Install reference](https://idss-mesa.github.io/docs/install/): All install.sh flags, environment overrides, on-disk layout, and manual install steps for the MESA MCP stack.
-- [Credentials](https://idss-mesa.github.io/docs/credentials/): Authenticating the MESA servers to CyVerse — env vars at install time, native iRODS auth, and per-server configuration.
-- [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/): Fixes for common MESA install and registration problems across Claude Code, Codex, Antigravity, and OpenCode.
+- [MESA](https://idss-mesa.github.io/docs/): One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode. Markdown twin: https://idss-mesa.github.io/docs/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/index.md
+- [Quickstart](https://idss-mesa.github.io/docs/quickstart/): Install the MESA MCP stack and register it with your agent client in a few minutes. Markdown twin: https://idss-mesa.github.io/docs/quickstart/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/quickstart.md
+- [Install reference](https://idss-mesa.github.io/docs/install/): All install.sh flags, environment overrides, on-disk layout, and manual install steps for the MESA MCP stack. Markdown twin: https://idss-mesa.github.io/docs/install/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/install.md
+- [Credentials](https://idss-mesa.github.io/docs/credentials/): Authenticating the MESA servers to CyVerse — env vars at install time, native iRODS auth, and per-server configuration. Markdown twin: https://idss-mesa.github.io/docs/credentials/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/credentials.md
+- [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/): Fixes for common MESA install and registration problems across Claude Code, Codex, Antigravity, and OpenCode. Markdown twin: https://idss-mesa.github.io/docs/troubleshooting/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/troubleshooting.md
 
 ## Agent clients
 
-- [Claude Code integration](https://idss-mesa.github.io/docs/claude-code/): How MESA registers its MCP servers with Claude Code — scopes, management commands, and the registration it creates.
-- [Codex CLI integration](https://idss-mesa.github.io/docs/codex/): How MESA registers its MCP servers with the OpenAI Codex CLI, and how to manage them there.
-- [Antigravity integration](https://idss-mesa.github.io/docs/antigravity/): How MESA registers its MCP servers with Google Antigravity (IDE and agy CLI) by writing mcp_config.json.
-- [OpenCode integration](https://idss-mesa.github.io/docs/opencode/): How MESA registers its MCP servers in OpenCode's global opencode.json, and how to verify them.
+- [Claude Code integration](https://idss-mesa.github.io/docs/claude-code/): How MESA registers its MCP servers with Claude Code — scopes, management commands, and the registration it creates. Markdown twin: https://idss-mesa.github.io/docs/claude-code/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/claude-code.md
+- [Codex CLI integration](https://idss-mesa.github.io/docs/codex/): How MESA registers its MCP servers with the OpenAI Codex CLI, and how to manage them there. Markdown twin: https://idss-mesa.github.io/docs/codex/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/codex.md
+- [Antigravity integration](https://idss-mesa.github.io/docs/antigravity/): How MESA registers its MCP servers with Google Antigravity (IDE and agy CLI) by writing mcp_config.json. Markdown twin: https://idss-mesa.github.io/docs/antigravity/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/antigravity.md
+- [OpenCode integration](https://idss-mesa.github.io/docs/opencode/): How MESA registers its MCP servers in OpenCode's global opencode.json, and how to verify them. Markdown twin: https://idss-mesa.github.io/docs/opencode/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/opencode.md
 
 ## Servers
 
-- [mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/): The flagship MESA server — iRODS Data Store tools, OBO/OLS ontology AVUs, DataCite, and DuckLake metadata history.
-- [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/): The AVU metadata-history library that backs mesa-mcp — DuckLake snapshots, provenance, and time-travel.
-- [irods-mcp-server](https://idss-mesa.github.io/docs/servers/irods-mcp-server/): The reference Go MCP server for the CyVerse Data Store (iRODS), registered as irods.
-- [formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/): Go MCP server for the CyVerse Discovery Environment via the Formation API — launch apps, monitor analyses.
+- [mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/): The flagship MESA server — iRODS Data Store tools, OBO/OLS ontology AVUs, DataCite, and DuckLake metadata history. Markdown twin: https://idss-mesa.github.io/docs/servers/mesa-mcp/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/mesa-mcp.md
+- [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/): The AVU metadata-history library that backs mesa-mcp — DuckLake snapshots, provenance, and time-travel. Markdown twin: https://idss-mesa.github.io/docs/servers/mesa-ducklake/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/mesa-ducklake.md
+- [irods-mcp-server](https://idss-mesa.github.io/docs/servers/irods-mcp-server/): The reference Go MCP server for the CyVerse Data Store (iRODS), registered as irods. Markdown twin: https://idss-mesa.github.io/docs/servers/irods-mcp-server/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/irods-mcp-server.md
+- [formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/): Go MCP server for the CyVerse Discovery Environment via the Formation API — launch apps, monitor analyses. Markdown twin: https://idss-mesa.github.io/docs/servers/formation-mcp/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/formation-mcp.md
 
 ## About
 
-- [For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/): How agents should consume these docs — llms.txt, per-page Markdown with OKF frontmatter, trust signals — and why to call the MESA MCP servers for data.
+- [For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/): How agents should consume these docs — llms.txt, per-page Markdown with OKF frontmatter, trust signals — and why to call the MESA MCP servers for data. Markdown twin: https://idss-mesa.github.io/docs/about/ai-agents/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/about/ai-agents.md
 
 ## Meta
 
+- [Full corpus in one file](https://idss-mesa.github.io/docs/llms-full.txt): every page's Markdown with frontmatter, links made absolute; about 61 KB, roughly 16,000 tokens. Prefer it over fetching pages one at a time.
 - [Documentation update log](https://idss-mesa.github.io/docs/log/): dated history of changes to this bundle.
+- [For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/): endpoints, trust signals, and what to do if you cannot fetch this site.
+- [Sitemap](https://idss-mesa.github.io/docs/sitemap.xml) and [robots.txt](https://idss-mesa.github.io/docs/robots.txt): crawlers honour only the origin https://idss-mesa.github.io/robots.txt, which is equally permissive.
 - [MESA project site](https://idss-mesa.github.io/llms.txt): origin-level llms.txt indexing the MESA site, this documentation, and the MESA software repositories.
+- [Source repository](https://github.com/idss-mesa/docs): the bundle itself; `docs/` mirrors the site paths one to one.
+
+If you want CyVerse data rather than documentation, install the MESA MCP servers (or connect to a hosted endpoint) and call their tools; the agent guide explains how.

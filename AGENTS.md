@@ -16,15 +16,21 @@ change log.
 
 ## Reading the corpus
 
-- `docs/llms.txt` — linked outline of every page with descriptions.
-- `docs/llms-full.txt` — the entire corpus in one file, frontmatter included.
+- `docs/llms.txt` — linked outline of every page with descriptions, each with
+  its Markdown twin and raw GitHub source address (generated; do not edit).
+- `docs/llms-full.txt` — the entire corpus in one file, frontmatter included
+  and links made absolute (generated; do not edit).
 - Live site: any page URL + `index.md` returns that page's Markdown source
   (e.g. https://idss-mesa.github.io/docs/quickstart/index.md); the legacy
   `<path>.md` form (https://idss-mesa.github.io/docs/quickstart.md) still
-  works. `robots.txt`, `sitemap.xml`, `llms.txt` and `llms-full.txt` sit at
-  the site root; the agent guide is at `/about/ai-agents/`. Crawlers honour
-  only the origin robots.txt, which lives in the `idss-mesa/idss-mesa.github.io`
-  repository.
+  works, and every page links its twin from a visible "View this page as
+  Markdown" button and a "Machine-readable versions" line. The same content
+  is on GitHub at
+  `https://raw.githubusercontent.com/idss-mesa/docs/main/docs/<path>.md`, for
+  harnesses that cannot reach `*.github.io`. `robots.txt`, `sitemap.xml`,
+  `llms.txt` and `llms-full.txt` sit at the site root; the agent guide is at
+  `/about/ai-agents/`. Crawlers honour only the origin robots.txt, which
+  lives in the `idss-mesa/idss-mesa.github.io` repository.
 - Trust: pages without a `verified:` key are **unverified** (OKF §5.3);
   `status: deprecated` pages are history, `status: draft` pages need review.
   Pages with `stale_after` state installer, client, or credential facts that
@@ -43,7 +49,10 @@ python scripts/gen_llms_txt.py                  # regenerate docs/llms.txt + doc
 python scripts/postbuild_agent_surface.py site  # after build: md mirror + okf:* meta + robots.txt
 ```
 
-All three scripts need only PyYAML (and Python 3.11+ for `tomllib`).
+All three scripts need only PyYAML (and Python 3.11+ for `tomllib`). They
+share `scripts/okf_common.py`, which reads `site_url`, `repo_url`,
+`edit_uri`, and `nav` from `zensical.toml` — nothing hard-codes the site
+address, so changing `zensical.toml` is enough.
 
 ## Editing rules
 
@@ -81,3 +90,10 @@ All three scripts need only PyYAML (and Python 3.11+ for `tomllib`).
    content change, not on typo or formatting fixes.
 9. **Never add `verified:`.** Only a human maintainer does that, as
    `verified: { by: "human:<id>", at: <ISO 8601> }`.
+10. **Agent-facing addresses must be visible in body text** as absolute
+    links: text-extracting fetchers discard `<head>`, and URL allowlists key
+    on anchors seen in earlier results. Never leave one as a bare code span.
+    `postbuild_agent_surface.py` injects the per-page Markdown button and the
+    "Machine-readable versions" line; the `copyright` string in
+    `zensical.toml` carries the site-wide `llms.txt`, `llms-full.txt`, and
+    agent-guide links into every page footer.
