@@ -403,7 +403,9 @@ install_python() {
   # One resolve for the three editables so mesa-anyjev's bare mesa-mcp/mesa-ducklake
   # requirements are met by the checkouts; AnyJev is pinned to the commit mesa-anyjev was
   # designed against (PyPI's 0.0.2 lacks the L2 heads).
-  VIRTUAL_ENV="$MESA_HOME/.venv" uv pip install --python "$MESA_HOME/.venv/bin/python" \
+  # --no-sources: mesa-anyjev pins mesa-mcp/mesa-ducklake to git commits in
+  # [tool.uv.sources]; the editable checkouts must win here.
+  VIRTUAL_ENV="$MESA_HOME/.venv" uv pip install --no-sources --python "$MESA_HOME/.venv/bin/python" \
     -e "$MESA_HOME/repos/mesa-ducklake" \
     -e "$MESA_HOME/repos/mesa-mcp" \
     -e "$MESA_HOME/repos/mesa-anyjev" \
