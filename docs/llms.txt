@@ -34,6 +34,7 @@ The legacy form https://idss-mesa.github.io/docs/<path>.md also still returns th
 
 - [mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/): The flagship MESA server — iRODS Data Store tools, OBO/OLS ontology AVUs, DataCite, and DuckLake metadata history. Markdown twin: https://idss-mesa.github.io/docs/servers/mesa-mcp/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/mesa-mcp.md
 - [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/): The AVU metadata-history library that backs mesa-mcp — DuckLake snapshots, provenance, and time-travel. Markdown twin: https://idss-mesa.github.io/docs/servers/mesa-ducklake/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/mesa-ducklake.md
+- [mesa-anyjev](https://idss-mesa.github.io/docs/servers/mesa-anyjev/): Calibrated, declarative ontology and schema decisions for MESA — a plugin that adds the mesa_decide_* tools to mesa-mcp and records every decision next to the DuckLake history. (draft) Markdown twin: https://idss-mesa.github.io/docs/servers/mesa-anyjev/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/mesa-anyjev.md
 - [irods-mcp-server](https://idss-mesa.github.io/docs/servers/irods-mcp-server/): The reference Go MCP server for the CyVerse Data Store (iRODS), registered as irods. Markdown twin: https://idss-mesa.github.io/docs/servers/irods-mcp-server/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/irods-mcp-server.md
 - [formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/): Go MCP server for the CyVerse Discovery Environment via the Formation API — launch apps, monitor analyses. Markdown twin: https://idss-mesa.github.io/docs/servers/formation-mcp/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/formation-mcp.md
 
@@ -43,7 +44,7 @@ The legacy form https://idss-mesa.github.io/docs/<path>.md also still returns th
 
 ## Meta
 
-- [Full corpus in one file](https://idss-mesa.github.io/docs/llms-full.txt): every page's Markdown with frontmatter, links made absolute; about 61 KB, roughly 16,000 tokens. Prefer it over fetching pages one at a time.
+- [Full corpus in one file](https://idss-mesa.github.io/docs/llms-full.txt): every page's Markdown with frontmatter, links made absolute; about 64 KB, roughly 17,000 tokens. Prefer it over fetching pages one at a time.
 - [Documentation update log](https://idss-mesa.github.io/docs/log/): dated history of changes to this bundle.
 - [For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/): endpoints, trust signals, and what to do if you cannot fetch this site.
 - [Sitemap](https://idss-mesa.github.io/docs/sitemap.xml) and [robots.txt](https://idss-mesa.github.io/docs/robots.txt): crawlers honour only the origin https://idss-mesa.github.io/robots.txt, which is equally permissive.

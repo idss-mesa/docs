@@ -29,6 +29,7 @@ nav = [
       "servers/index.md",
       { "mesa-mcp" = "servers/mesa-mcp.md" },
       { "mesa-ducklake" = "servers/mesa-ducklake.md" },
+      { "mesa-anyjev" = "servers/mesa-anyjev.md" },
       { "irods-mcp-server" = "servers/irods-mcp-server.md" },
       { "formation-mcp" = "servers/formation-mcp.md" },
   ] },

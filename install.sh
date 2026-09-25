@@ -15,6 +15,8 @@
 #
 # mesa-ducklake (the AVU metadata-history library) is installed alongside
 # mesa-mcp, which imports it — it is not a standalone MCP server.
+# mesa-anyjev (calibrated ontology/schema decisions) is a plugin installed into
+# the same venv; mesa-mcp loads its mesa_decide_* tools through an entry point.
 #
 # Supported platforms: Linux, macOS, and Windows Subsystem for Linux (WSL).
 #
@@ -46,6 +48,7 @@ set -euo pipefail
 MESA_HOME="${MESA_HOME:-$HOME/.mesa}"
 MESA_GIT_ORG="${MESA_GIT_ORG:-idss-mesa}"
 MESA_MCP_REF="${MESA_MCP_REF:-main}"
+ANYJEV_REF="${ANYJEV_REF:-795a4970b47218b7c0686cd579d691fc2cf8df2f}"
 MCP_SCOPE="${MCP_SCOPE:-user}"            # Claude Code only
 CLIENTS_ALL="claude codex antigravity opencode"
 CLIENT_FILTER="${MESA_CLIENTS:-}"         # --for overrides this
@@ -397,12 +400,17 @@ install_python() {
   # UV_VENV_CLEAR: newer uv refuses to replace an existing venv without it;
   # older uv clears by default and ignores the variable — keeps re-runs idempotent.
   UV_VENV_CLEAR=1 uv venv --python 3.11 "$MESA_HOME/.venv" >/dev/null
-  # ducklake first so mesa-mcp resolves its in-tree dependency, then mesa-mcp.
+  # One resolve for the three editables so mesa-anyjev's bare mesa-mcp/mesa-ducklake
+  # requirements are met by the checkouts; AnyJev is pinned to the commit mesa-anyjev was
+  # designed against (PyPI's 0.0.2 lacks the L2 heads).
   VIRTUAL_ENV="$MESA_HOME/.venv" uv pip install --python "$MESA_HOME/.venv/bin/python" \
     -e "$MESA_HOME/repos/mesa-ducklake" \
-    -e "$MESA_HOME/repos/mesa-mcp"
+    -e "$MESA_HOME/repos/mesa-mcp" \
+    -e "$MESA_HOME/repos/mesa-anyjev" \
+    "anyjev @ git+https://github.com/nokia-applied-research/AnyJev@$ANYJEV_REF"
   [ -x "$MESA_HOME/.venv/bin/mesa-mcp" ] || die "mesa-mcp entry point missing after install"
-  ok "mesa-mcp + mesa-ducklake installed (editable)"
+  [ -x "$MESA_HOME/.venv/bin/mesa-anyjev" ] || die "mesa-anyjev entry point missing after install"
+  ok "mesa-mcp + mesa-ducklake + mesa-anyjev installed (editable)"
 }
 
 # ---------------------------------------------------------------------------
@@ -579,6 +587,7 @@ main() {
 
   clone_or_update mesa-ducklake main
   clone_or_update mesa-mcp "$MESA_MCP_REF"
+  clone_or_update mesa-anyjev main
   if [ "$BUILD_GO" -eq 1 ]; then
     clone_or_update irods-mcp-server main
     clone_or_update formation-mcp main

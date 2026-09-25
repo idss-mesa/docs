@@ -65,7 +65,7 @@ This will:
 
 1. Detect your platform (Linux / macOS / WSL).
 2. Clone the four repos from `idss-mesa` into `~/.mesa/repos/`.
-3. Create a Python venv at `~/.mesa/.venv` and install `mesa-ducklake` + `mesa-mcp`.
+3. Create a Python venv at `~/.mesa/.venv` and install `mesa-ducklake` + `mesa-mcp` + `mesa-anyjev`.
 4. Build the Go servers into `~/.mesa/bin/`.
 5. Register `mesa-mcp`, `irods`, and `formation` with **every detected client** —
    Claude Code at user scope, Codex globally, Antigravity and OpenCode via their config
