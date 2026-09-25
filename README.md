@@ -22,6 +22,7 @@ Codex CLI, Antigravity, and OpenCode. Restrict targets with
 |---|---|---|
 | [`mesa-mcp`](https://github.com/idss-mesa/mesa-mcp) | Python | iRODS Data Store (`ds_*`) + OBO/OLS ontology AVUs + DataCite + DuckLake history |
 | [`mesa-ducklake`](https://github.com/idss-mesa/mesa-ducklake) | Python | AVU metadata-history library backing `mesa-mcp` (installed with it, not a standalone server) |
+| [`mesa-anyjev`](https://github.com/idss-mesa/mesa-anyjev) | Python | Calibrated ontology/schema decisions; a plugin that adds the `mesa_decide_*` tools to `mesa-mcp` (installed with it) |
 | [`irods-mcp-server`](https://github.com/idss-mesa/irods-mcp-server) | Go | reference iRODS Data Store server |
 | [`formation-mcp`](https://github.com/idss-mesa/formation-mcp) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
 

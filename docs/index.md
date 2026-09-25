@@ -38,6 +38,7 @@ anonymous public CyVerse access — no credentials required to get started.
 |---|---|---|
 | [**mesa-mcp**](servers/mesa-mcp.md) | Python | iRODS Data Store (`ds_*`) + OBO/OLS ontology AVUs (`mesa_ols_*`, `mesa_avu_*`) + DataCite + DuckLake metadata history |
 | [**mesa-ducklake**](servers/mesa-ducklake.md) | Python | AVU metadata-history library that backs mesa-mcp (installed alongside it — not a standalone server) |
+| [**mesa-anyjev**](servers/mesa-anyjev.md) | Python | Calibrated ontology and schema decisions; a plugin that adds the `mesa_decide_*` tools to mesa-mcp (installed alongside it) |
 | [**irods-mcp-server**](servers/irods-mcp-server.md) | Go | Reference iRODS Data Store MCP server |
 | [**formation-mcp**](servers/formation-mcp.md) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
 
@@ -60,6 +61,8 @@ graph LR
   clients -->|stdio| I[irods-mcp-server]
   clients -->|stdio| F[formation-mcp]
   M -->|imports| D[mesa-ducklake]
+  A[mesa-anyjev] -->|plugin: mesa_decide_* tools| M
+  A -->|sidecar next to the history| D
   M --> IR[(CyVerse iRODS<br/>data.cyverse.org)]
   I --> IR
   F --> DE[(Discovery Environment<br/>Formation API)]
