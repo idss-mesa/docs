@@ -7,15 +7,15 @@ tags:
   - go
   - data-store
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/irods-mcp-server"
     title: "irods-mcp-server source repository"
     author: "team:idss-mesa"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # irods-mcp-server
@@ -42,7 +42,7 @@ It is registered under the name `irods` with every detected client — see
 registration each one gets.
 
 `make build` produces a static (`CGO_ENABLED=0`) binary; Go ≥ 1.25 is required. Pass
-`--no-go` to the installer to skip this server (and `formation`).
+`--no-go` to the installer to skip this server.
 
 ## Capabilities
 

@@ -19,9 +19,9 @@ see the [portal guide](https://idss-mesa.github.io/docs/portal/) and the
 
 ## What it installs
 
-One installer clones and builds four CyVerse repos, then registers three of them as
-local **stdio** MCP servers in every supported agent client it detects — Claude Code,
-Codex CLI, Antigravity, and OpenCode. Restrict targets with
+One installer clones and builds four CyVerse repos and registers two local **stdio** MCP
+servers, plus CyVerse's hosted Formation server by URL, in every supported agent client it
+detects — Claude Code, Codex CLI, Antigravity, and OpenCode. Restrict targets with
 `--for claude,codex,antigravity,opencode`:
 
 | Server | Lang | Role |
@@ -30,19 +30,28 @@ Codex CLI, Antigravity, and OpenCode. Restrict targets with
 | [`mesa-ducklake`](https://github.com/idss-mesa/mesa-ducklake) | Python | AVU metadata-history library backing `mesa-mcp` (installed with it, not a standalone server) |
 | [`mesa-anyjev`](https://github.com/idss-mesa/mesa-anyjev) | Python | Calibrated ontology/schema decisions; a plugin that adds the `mesa_decide_*` tools to `mesa-mcp` (installed with it) |
 | [`irods-mcp-server`](https://github.com/idss-mesa/irods-mcp-server) | Go | reference iRODS Data Store server |
-| [`formation-mcp`](https://github.com/idss-mesa/formation-mcp) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
+| [Formation](https://github.com/cyverse-de/formation) | hosted | CyVerse Discovery Environment — launch apps, manage analyses; served by CyVerse at <https://de.cyverse.org/formation/mcp>, nothing to build |
 
 After install, `mesa-mcp`, `irods`, and `formation` are registered with each detected
 client — verify with `claude mcp list` / `codex mcp list` / `opencode mcp list`, or
 Antigravity's **Manage MCP Servers** panel. Ask your agent to *"ping the CyVerse Data
-Store"* to confirm.
+Store"* to confirm, then sign in to `formation` with your CyVerse account once in each
+client (`/mcp` in Claude Code, `codex mcp login formation`, `opencode mcp auth formation`).
+The sign-in callbacks CyVerse documents are claude.ai's and Claude Code's; Codex, OpenCode,
+and Antigravity sign-in is not yet confirmed — see the
+[Formation docs](https://idss-mesa.github.io/docs/servers/formation-mcp/).
+
+Formation also works without the installer: add `https://de.cyverse.org/formation/mcp` as a
+custom connector on claude.ai or in Claude Desktop — see
+[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) and
+[claude.ai and Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/).
 
 ## Requirements
 
 - at least one supported agent client — [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), [Codex CLI](https://developers.openai.com/codex/cli/), [Antigravity](https://antigravity.google/), or [OpenCode](https://opencode.ai) — the installer refuses to run if none is found
 - `git`, `curl`
 - `uv` — auto-installed if missing
-- Go ≥ 1.25 — only for the two Go servers; pass `--no-go` to skip them
+- Go ≥ 1.25 — only for `irods-mcp-server`; pass `--no-go` to skip it
 
 ## Common usage
 
@@ -50,7 +59,7 @@ Store"* to confirm.
 # authenticated install
 CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••' bash install.sh
 
-# Python-only (no Go toolchain)
+# no Go toolchain: mesa-mcp and the hosted formation only
 bash install.sh --no-go
 
 # register with specific clients only

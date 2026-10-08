@@ -1,7 +1,7 @@
 ---
 okf_version: "0.2"
 title: MESA
-description: MESA documentation — the MESA Portal at mesa.cyverse.org, its featured CyVerse apps, and the one-line install of the MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
+description: MESA documentation — the MESA Portal at mesa.cyverse.org, its featured CyVerse apps, the one-line install of the MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode, and CyVerse's hosted Formation server for claude.ai.
 icon: lucide/rocket
 ---
 
@@ -20,7 +20,8 @@ CyVerse data and computing three ways:
   your CyVerse Data Store files, apps, and analyses;
 - the **[featured apps](apps/index.md)** — JupyterLab, RStudio, VS Code, a terminal, and a
   Linux desktop in the cloud, each with AI coding agents already set up;
-- the **MESA MCP stack**, which wires the CyVerse data-management MCP servers into your AI
+- the **MESA MCP stack**, which wires the CyVerse data-management MCP servers — two local
+  ones and CyVerse's hosted [Formation](servers/formation-mcp.md) — into your AI
   coding agent — [Claude Code](claude-code.md), [Codex CLI](codex.md),
   [Antigravity](antigravity.md), or [OpenCode](opencode.md) — with a single command, so
   you can browse and curate the CyVerse Data Store (iRODS), apply ontology-backed
@@ -66,8 +67,10 @@ AI Verde or local models inside any of them.
 curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
-Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. By default it uses
-anonymous public CyVerse access — no credentials required to get started.
+Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. The Data Store servers use
+anonymous public CyVerse access by default — no credentials required to get started — and
+the hosted Discovery Environment server asks you to sign in with your CyVerse account once
+in each client.
 
 [Get started :material-arrow-right:](quickstart.md){ .md-button .md-button--primary }
 [Install reference](install.md){ .md-button }
@@ -80,10 +83,12 @@ anonymous public CyVerse access — no credentials required to get started.
 | [**mesa-ducklake**](servers/mesa-ducklake.md) | Python | AVU metadata-history library that backs mesa-mcp (installed alongside it — not a standalone server) |
 | [**mesa-anyjev**](servers/mesa-anyjev.md) | Python | Calibrated ontology and schema decisions; a plugin that adds the `mesa_decide_*` tools to mesa-mcp (installed alongside it) |
 | [**irods-mcp-server**](servers/irods-mcp-server.md) | Go | Reference iRODS Data Store MCP server |
-| [**formation-mcp**](servers/formation-mcp.md) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
+| [**Formation**](servers/formation-mcp.md) | hosted by CyVerse | CyVerse Discovery Environment — launch apps, manage analyses, read and write Data Store files. Nothing to build: registered by URL, <https://de.cyverse.org/formation/mcp> |
 
 After install, the three servers (`mesa-mcp`, `irods`, `formation`) are registered with
-every client the installer detected. Open your agent and ask it to *"ping the CyVerse
+every client the installer detected; sign in to `formation` with your CyVerse account
+once in each client. Formation also works on its own as a
+[custom connector on claude.ai and in Claude Desktop](claude-ai.md). Open your agent and ask it to *"ping the CyVerse
 Data Store"* to confirm the link — see the [Quickstart](quickstart.md) for per-client
 verification.
 
@@ -99,13 +104,13 @@ graph LR
   end
   clients -->|stdio| M[mesa-mcp]
   clients -->|stdio| I[irods-mcp-server]
-  clients -->|stdio| F[formation-mcp]
+  clients -->|HTTPS + CyVerse sign-in| F[Formation<br/>hosted by CyVerse]
   M -->|imports| D[mesa-ducklake]
   A[mesa-anyjev] -->|plugin: mesa_decide_* tools| M
   A -->|sidecar next to the history| D
   M --> IR[(CyVerse iRODS<br/>data.cyverse.org)]
   I --> IR
-  F --> DE[(Discovery Environment<br/>Formation API)]
+  F --> DE[(Discovery Environment<br/>apps, analyses, Data Store)]
   D --> PQ[(DuckLake catalog<br/>+ Parquet)]
 ```
 

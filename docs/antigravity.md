@@ -8,8 +8,8 @@ tags:
   - mcp
   - registration
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: antigravity-mcp
     resource: "https://antigravity.google/docs/mcp"
@@ -19,15 +19,21 @@ sources:
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
+  - id: formation
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation source repository (landing page client instructions)"
+    author: "team:cyverse-de"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Antigravity integration
 
 [Google Antigravity](https://antigravity.google/) is Google's agentic IDE, paired with
 the `agy` CLI. Antigravity has **no non-interactive `add` command**, so the MESA
-installer writes its MCP config file directly. See also the sibling pages for
+installer writes its MCP config file directly: `mesa-mcp` and `irods` as local servers,
+and `formation` as a remote server pointing at CyVerse's hosted
+[Formation](servers/formation-mcp.md). See also the sibling pages for
 [Claude Code](claude-code.md), [Codex CLI](codex.md), and [OpenCode](opencode.md).
 
 ## Where the config lives
@@ -63,15 +69,18 @@ entries from the JSON — or run `install.sh --uninstall`, which does it for you
       "args": ["-c", "/home/you/.mesa/repos/irods-mcp-server/config-stdio.yaml"]
     },
     "formation": {
-      "command": "/home/you/.mesa/bin/formation-mcp",
-      "args": ["--transport", "stdio"],
-      "env": { "FORMATION_USERNAME": "you", "FORMATION_PASSWORD": "••••••" }
+      "serverUrl": "https://de.cyverse.org/formation/mcp"
     }
   }
 }
 ```
 
-The `env` objects only appear when you installed with [credentials](credentials.md).
+The `env` object on `mesa-mcp` only appears when you installed with
+[credentials](credentials.md). A remote server uses `serverUrl`, not `url`, and takes
+no credentials: Formation asks you to sign in with your CyVerse account. Formation's own
+setup page documents this form for Antigravity and `agy`[^formation]; the MESA team has
+not tested Antigravity's sign-in to it, so if it fails, use another client such as
+Claude Code or the [claude.ai connector](claude-ai.md).
 The installer **merges** its entries into an existing file — any other MCP servers you
 have configured are left untouched.
 
@@ -91,3 +100,5 @@ have configured are left untouched.
   were written).
 
 More in the general [Troubleshooting](troubleshooting.md) page.
+
+[^formation]: Formation client setup instructions, <https://github.com/cyverse-de/formation>.

@@ -59,9 +59,10 @@ agent next to your CyVerse data.
 ## First steps
 
 ```bash
-cyverse-login          # give the tools and agents your CyVerse access
-aiverde-setup          # optional: connect AI Verde models
-claude                 # or codex, opencode, goose, agy
+cyverse-login                             # give the tools and agents your Data Store access
+claude mcp login formation --no-browser   # sign in to the hosted Discovery Environment server
+aiverde-setup                             # optional: connect AI Verde models
+claude                                    # or codex, opencode, goose, agy
 ```
 
 See [AI agents in the MESA apps](agents.md) for what each step does. Save files you want

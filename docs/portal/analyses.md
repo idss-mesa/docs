@@ -28,8 +28,9 @@ stale_after: "2027-04-08T00:00:00Z"
 Every app you run on CyVerse becomes an **analysis**: an interactive session such as a
 JupyterLab notebook, or a batch job. The **Analyses** page
 (<https://mesa.cyverse.org/analyses/>) lists them all, whether you started them in the
-portal, in the Discovery Environment, or from an AI agent through
-[formation-mcp](../servers/formation-mcp.md)[^portal].
+portal, in the Discovery Environment, or from an AI agent through CyVerse's hosted
+[Formation](../servers/formation-mcp.md) server (in any MCP client, including a claude.ai
+connector)[^portal].
 
 ![The Analyses page: quota badges, status cards, and running analyses](../assets/portal/analyses-overview.webp)
 
