@@ -61,7 +61,7 @@ The legacy form https://idss-mesa.github.io/docs/<path>.md also still returns th
 
 ## Meta
 
-- [Full corpus in one file](https://idss-mesa.github.io/docs/llms-full.txt): every page's Markdown with frontmatter, links made absolute; about 168 KB, roughly 43,000 tokens. Prefer it over fetching pages one at a time.
+- [Full corpus in one file](https://idss-mesa.github.io/docs/llms-full.txt): every page's Markdown with frontmatter, links made absolute; about 169 KB, roughly 43,000 tokens. Prefer it over fetching pages one at a time.
 - [Documentation update log](https://idss-mesa.github.io/docs/log/): dated history of changes to this bundle.
 - [For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/): endpoints, trust signals, and what to do if you cannot fetch this site.
 - [Sitemap](https://idss-mesa.github.io/docs/sitemap.xml) and [robots.txt](https://idss-mesa.github.io/docs/robots.txt): crawlers honour only the origin https://idss-mesa.github.io/robots.txt, which is equally permissive.

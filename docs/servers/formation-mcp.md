@@ -49,10 +49,12 @@ in with your CyVerse account. Your agent can then find and launch Discovery Envi
 apps, follow and stop analyses, and read, write, and describe files in the CyVerse Data
 Store, always as **you** and with your own permissions.
 
-CyVerse documents it for Claude Code and as a **custom connector** on claude.ai and in
-Claude Desktop. You can register it in every client MESA supports, but whether Codex,
-OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed (see
-[Troubleshooting](#troubleshooting)).
+CyVerse's setup page covers Claude Code, a **custom connector** on claude.ai and in
+Claude Desktop, Antigravity, and other clients that take an `mcpServers` block. The
+sign-in callbacks CyVerse documents, though, are claude.ai's and Claude Code's
+(`http://localhost…`). You can register it in every client MESA supports, but whether
+Codex, OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed
+(see [Troubleshooting](#troubleshooting)).
 
 !!! tip "Enter the URL exactly"
     Use `https://de.cyverse.org/formation/mcp`, with `https` and no trailing slash. The
@@ -126,8 +128,8 @@ OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed 
 
     Then sign in with `opencode mcp auth formation`; `opencode mcp auth list` shows the
     status. OpenCode waits for the browser to come back to its own port 19876, so on a
-    remote machine, such as a MESA app, the sign-in cannot finish: use Claude Code or
-    Codex with `--no-browser` there.
+    remote machine, such as a MESA app, the sign-in cannot finish: use Claude Code with
+    `--no-browser` there.
 
 === "Antigravity"
 
@@ -155,8 +157,8 @@ OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed 
     The [MESA featured apps](../apps/agents.md) come with Formation already registered
     for every agent, but an app's home folder is not kept between analyses, so sign in
     again in each new analysis as described in
-    [Sign in to Formation](../apps/agents.md#sign-in-to-formation) (Claude Code and Codex
-    with `--no-browser`). OpenCode and Goose cannot complete the sign-in in the apps.
+    [Sign in to Formation](../apps/agents.md#sign-in-to-formation) (Claude Code with
+    `--no-browser`; Codex's sign-in is not yet confirmed by CyVerse). OpenCode and Goose cannot complete the sign-in in the apps.
 
 ## Sign in
 

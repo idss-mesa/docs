@@ -35,8 +35,11 @@ detects — Claude Code, Codex CLI, Antigravity, and OpenCode. Restrict targets 
 After install, `mesa-mcp`, `irods`, and `formation` are registered with each detected
 client — verify with `claude mcp list` / `codex mcp list` / `opencode mcp list`, or
 Antigravity's **Manage MCP Servers** panel. Ask your agent to *"ping the CyVerse Data
-Store"* to confirm, then sign in to `formation` once with your CyVerse account (`/mcp` in
-Claude Code, `codex mcp login formation`, `opencode mcp auth formation`).
+Store"* to confirm, then sign in to `formation` with your CyVerse account once in each
+client (`/mcp` in Claude Code, `codex mcp login formation`, `opencode mcp auth formation`).
+The sign-in callbacks CyVerse documents are claude.ai's and Claude Code's; Codex, OpenCode,
+and Antigravity sign-in is not yet confirmed — see the
+[Formation docs](https://idss-mesa.github.io/docs/servers/formation-mcp/).
 
 Formation also works without the installer: add `https://de.cyverse.org/formation/mcp` as a
 custom connector on claude.ai or in Claude Desktop — see

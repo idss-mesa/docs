@@ -283,7 +283,7 @@ hosted by CyVerse and needs a one-time sign-in with your
     opencode mcp auth formation
     ```
 
-CyVerse documents this sign-in for Claude Code and claude.ai; if another client's
+The sign-in callbacks CyVerse documents are claude.ai's and Claude Code's; if another client's
 sign-in page says `Invalid parameter: redirect_uri`, see
 [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection).
 
@@ -1751,7 +1751,7 @@ app's home folder is not kept between analyses, so sign in again in each new ana
 | Agent | Sign in |
 |---|---|
 | Claude Code | `claude mcp login formation --no-browser`, then open the printed address in your browser and paste the address you land on back into the terminal |
-| Codex | `codex mcp login formation --no-browser`, then the same: open the address, and paste the address you land on back |
+| Codex | `codex mcp login formation --no-browser`, then the same: open the address, and paste the address you land on back (CyVerse has not yet confirmed Codex's sign-in; see [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection)) |
 
 `--no-browser` needs Codex 0.156 or newer. If Codex answers
 `unexpected argument '--no-browser'`, the app's Codex is older: run
@@ -1759,7 +1759,8 @@ app's home folder is not kept between analyses, so sign in again in each new ana
 
 OpenCode, and Goose in the [MESA CLI](https://idss-mesa.github.io/docs/apps/cli/), cannot finish this sign-in from your own
 browser: each waits for the browser to come back to the container, which your browser
-cannot reach. Use Claude Code or Codex for Formation there. Antigravity (`agy`) has not
+cannot reach. Use Claude Code for Formation there (Codex too, once CyVerse accepts its
+`http://127.0.0.1` callback). Antigravity (`agy`) has not
 been tested by MESA and probably has the same problem. On the [KASM desktop](https://idss-mesa.github.io/docs/apps/kasm/) the
 browser runs inside the app, so you can also sign in normally by opening the address in
 the desktop's Chrome or Firefox.
@@ -2332,6 +2333,11 @@ it on this computer; it stores the result in `~/.local/share/opencode/mcp-auth.j
 Until you sign in, OpenCode marks `formation` as needing authentication and tells you to
 run that command.
 
+CyVerse has not confirmed that its sign-in accepts OpenCode's callback address
+(`http://127.0.0.1:19876/mcp/oauth/callback`). If the CyVerse page says
+`Invalid parameter: redirect_uri`, see
+[Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection).
+
 Because the sign-in has to return to the computer OpenCode runs on, it does not complete
 when OpenCode runs on a remote machine (such as a MESA app on CyVerse) and the browser on
 yours. There, use Claude Code: `claude mcp login formation --no-browser` lets you paste
@@ -2393,7 +2399,7 @@ The main MESA server you can add this way is **[Formation](https://idss-mesa.git
 CyVerse's hosted MCP server for the Discovery Environment, at
 <https://de.cyverse.org/formation/mcp>. With it, Claude can launch Discovery Environment
 apps, follow your analyses, and read and write your Data Store files, as you. CyVerse also
-hosts a public, read-only Data Store server at `https://mcp-public.cyverse.ai/mcp`, which
+hosts a public, read-only Data Store server at <https://mcp-public.cyverse.ai/mcp>, which
 you can add the same way ([below](#optional-public-data-store-connector)). The installer's
 `mesa-mcp` and `irods` servers run on your own computer and are for
 [Claude Code](https://idss-mesa.github.io/docs/claude-code/) and the other agent clients.
@@ -2618,7 +2624,7 @@ refreshes it.
 
 No password is stored in any config file, and `CYVERSE_USERNAME`, `~/.irods`, and
 `cyverse-login` do not apply. Sign in with a CyVerse user account; service-account tokens
-are refused. CyVerse documents this sign-in for Claude Code and claude.ai; for other
+are refused. The sign-in callbacks CyVerse documents are claude.ai's and Claude Code's; for other
 clients see [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection) if it
 fails.
 
@@ -2948,10 +2954,12 @@ in with your CyVerse account. Your agent can then find and launch Discovery Envi
 apps, follow and stop analyses, and read, write, and describe files in the CyVerse Data
 Store, always as **you** and with your own permissions.
 
-CyVerse documents it for Claude Code and as a **custom connector** on claude.ai and in
-Claude Desktop. You can register it in every client MESA supports, but whether Codex,
-OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed (see
-[Troubleshooting](#troubleshooting)).
+CyVerse's setup page covers Claude Code, a **custom connector** on claude.ai and in
+Claude Desktop, Antigravity, and other clients that take an `mcpServers` block. The
+sign-in callbacks CyVerse documents, though, are claude.ai's and Claude Code's
+(`http://localhost…`). You can register it in every client MESA supports, but whether
+Codex, OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed
+(see [Troubleshooting](#troubleshooting)).
 
 !!! tip "Enter the URL exactly"
     Use `https://de.cyverse.org/formation/mcp`, with `https` and no trailing slash. The
@@ -3025,8 +3033,8 @@ OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed 
 
     Then sign in with `opencode mcp auth formation`; `opencode mcp auth list` shows the
     status. OpenCode waits for the browser to come back to its own port 19876, so on a
-    remote machine, such as a MESA app, the sign-in cannot finish: use Claude Code or
-    Codex with `--no-browser` there.
+    remote machine, such as a MESA app, the sign-in cannot finish: use Claude Code with
+    `--no-browser` there.
 
 === "Antigravity"
 
@@ -3054,8 +3062,8 @@ OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed 
     The [MESA featured apps](https://idss-mesa.github.io/docs/apps/agents/) come with Formation already registered
     for every agent, but an app's home folder is not kept between analyses, so sign in
     again in each new analysis as described in
-    [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation) (Claude Code and Codex
-    with `--no-browser`). OpenCode and Goose cannot complete the sign-in in the apps.
+    [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation) (Claude Code with
+    `--no-browser`; Codex's sign-in is not yet confirmed by CyVerse). OpenCode and Goose cannot complete the sign-in in the apps.
 
 ## Sign in
 
@@ -3554,6 +3562,13 @@ The same agent conventions cover the rest of the origin and its neighbours:
   Formation is not yet confirmed by CyVerse, and that OpenCode and Goose cannot sign in
   inside the MESA apps. The authenticated-install one-liner in [Quickstart](quickstart.md)
   and [Credentials](credentials.md) now passes the credentials to `bash`, not `curl`.
+* **Update**: `install.sh` finds a Claude Code local-scope `formation` entry under the key
+  Claude uses (the git root, or the physical directory), removes an old Codex `formation`
+  entry even when Codex is too old for the hosted one, treats a Codex source build
+  (`0.0.0`) as current, and says per client when `formation` was not registered.
+  [OpenCode](opencode.md), [Servers](servers/index.md), and `README.md` carry the same
+  sign-in caveats; Claude Code is the stated fallback where OpenCode and Goose cannot sign
+  in.
 * **Update**: `install.sh` now registers `formation` by URL with every client (Claude Code
   `--transport http`, Codex `url` with `tool_timeout_sec = 600`, OpenCode `remote`,
   Antigravity `serverUrl`) instead of building `formation-mcp`, even with `--no-go`; a re-run

@@ -39,7 +39,7 @@ The main MESA server you can add this way is **[Formation](servers/formation-mcp
 CyVerse's hosted MCP server for the Discovery Environment, at
 <https://de.cyverse.org/formation/mcp>. With it, Claude can launch Discovery Environment
 apps, follow your analyses, and read and write your Data Store files, as you. CyVerse also
-hosts a public, read-only Data Store server at `https://mcp-public.cyverse.ai/mcp`, which
+hosts a public, read-only Data Store server at <https://mcp-public.cyverse.ai/mcp>, which
 you can add the same way ([below](#optional-public-data-store-connector)). The installer's
 `mesa-mcp` and `irods` servers run on your own computer and are for
 [Claude Code](claude-code.md) and the other agent clients.

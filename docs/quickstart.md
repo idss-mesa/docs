@@ -137,7 +137,7 @@ hosted by CyVerse and needs a one-time sign-in with your
     opencode mcp auth formation
     ```
 
-CyVerse documents this sign-in for Claude Code and claude.ai; if another client's
+The sign-in callbacks CyVerse documents are claude.ai's and Claude Code's; if another client's
 sign-in page says `Invalid parameter: redirect_uri`, see
 [Troubleshooting](troubleshooting.md#formation-sign-in-and-connection).
 

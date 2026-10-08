@@ -118,7 +118,7 @@ refreshes it.
 
 No password is stored in any config file, and `CYVERSE_USERNAME`, `~/.irods`, and
 `cyverse-login` do not apply. Sign in with a CyVerse user account; service-account tokens
-are refused. CyVerse documents this sign-in for Claude Code and claude.ai; for other
+are refused. The sign-in callbacks CyVerse documents are claude.ai's and Claude Code's; for other
 clients see [Troubleshooting](troubleshooting.md#formation-sign-in-and-connection) if it
 fails.
 

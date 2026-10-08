@@ -526,9 +526,19 @@ env_flags() {   # env_flags <flag>  ->  FLAGGED_ENV=( <flag> K=V ... )
 # Claude Code leaves an identical hosted entry alone: `claude mcp remove` also
 # deletes the server's stored sign-in.
 # ---------------------------------------------------------------------------
+claude_project_key() {   # the projects[] key Claude Code files local-scope servers under
+  local d
+  if d="$(git rev-parse --git-common-dir 2>/dev/null)"; then
+    ( cd "$d/.." && pwd -P )   # the git root; a worktree maps to its main checkout
+  else
+    pwd -P                     # no repo: the physical cwd
+  fi
+}
+
 claude_has_remote() {   # claude_has_remote <name> <url>: already the hosted entry in $MCP_SCOPE?
-  local py; py="$(mesa_python)" || return 1
-  "$py" - "$1" "$2" "$MCP_SCOPE" "$PWD" <<'PY'
+  local py key="$PWD"; py="$(mesa_python)" || return 1
+  [ "$MCP_SCOPE" = local ] && key="$(claude_project_key)"
+  "$py" - "$1" "$2" "$MCP_SCOPE" "$key" <<'PY'
 import json, os, sys
 name, url, scope, cwd = sys.argv[1:]
 try:
@@ -574,6 +584,7 @@ codex_supports_remote() {   # true unless `codex --version` is older than 0.77
   local v major minor
   v="$(codex --version 2>/dev/null | awk 'NR==1 {print $NF}')"
   case "$v" in [0-9]*.[0-9]*) ;; *) return 0 ;; esac   # unknown format: don't block
+  case "$v" in 0.0.0|0.0.0[-+]*) return 0 ;; esac      # a source build: newer than any release
   IFS=. read -r major minor _ <<<"$v"
   minor="${minor%%[!0-9]*}"
   [ "$major" -gt 0 ] || [ "${minor:-0}" -ge 77 ]
@@ -585,12 +596,14 @@ add_codex() {
   local name
   if [ "$1" = --url ]; then
     name="$2"
+    # Always drop the existing entry: it may be the retired stdio formation-mcp,
+    # whose binary main() deletes and whose env may hold a CyVerse password.
+    codex mcp remove "$name" >/dev/null 2>&1 || true
     if ! codex_supports_remote; then
       CODEX_REMOTE_SKIPPED=1
-      warn "codex: $(codex --version 2>/dev/null) is older than 0.77 — $name not registered. Update Codex (npm install -g @openai/codex@latest) and re-run with --for codex."
+      warn "codex: $(codex --version 2>/dev/null) is older than 0.77 — removed any old $name entry; the hosted one was not registered. Update Codex (npm install -g @openai/codex@latest) and re-run with --for codex."
       return 0
     fi
-    codex mcp remove "$name" >/dev/null 2>&1 || true
     codex_add_remote "$name" "$3"
     ok "codex: registered $name → $3"
     return
@@ -699,14 +712,17 @@ summary() {
   else
     echo "  • mesa-mcp uses anonymous public access by default (data.cyverse.org, zone iplant)."
     echo "    To authenticate it, re-run with CYVERSE_USERNAME / CYVERSE_PASSWORD set."
-    echo "    (irods was not installed: install Go >= 1.${GO_MIN_MINOR} and re-run without --no-go to add it.)"
+    echo "    (irods was not built or registered in this run: install Go >= 1.${GO_MIN_MINOR} and re-run without --no-go.)"
   fi
   echo "  • formation ($FORMATION_URL) needs a one-time sign-in with your CyVerse account in each client:"
   for client in $CLIENTS_SELECTED; do
     case "$client" in
       claude)      echo "      Claude Code:  run /mcp inside Claude Code, or: claude mcp login formation" ;;
-      codex)       [ "$CODEX_REMOTE_SKIPPED" -eq 1 ] \
-                     || echo "      Codex:        codex mcp login formation" ;;
+      codex)       if [ "$CODEX_REMOTE_SKIPPED" -eq 1 ]; then
+                     echo "      Codex:        not registered (Codex older than 0.77): update Codex and re-run with --for codex"
+                   else
+                     echo "      Codex:        codex mcp login formation"
+                   fi ;;
       antigravity) echo "      Antigravity:  run /mcp in agy (or refresh the IDE's MCP panel) and sign in to formation (untested by MESA)" ;;
       opencode)    echo "      OpenCode:     opencode mcp auth formation" ;;
     esac

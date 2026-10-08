@@ -22,6 +22,13 @@
   Formation is not yet confirmed by CyVerse, and that OpenCode and Goose cannot sign in
   inside the MESA apps. The authenticated-install one-liner in [Quickstart](quickstart.md)
   and [Credentials](credentials.md) now passes the credentials to `bash`, not `curl`.
+* **Update**: `install.sh` finds a Claude Code local-scope `formation` entry under the key
+  Claude uses (the git root, or the physical directory), removes an old Codex `formation`
+  entry even when Codex is too old for the hosted one, treats a Codex source build
+  (`0.0.0`) as current, and says per client when `formation` was not registered.
+  [OpenCode](opencode.md), [Servers](servers/index.md), and `README.md` carry the same
+  sign-in caveats; Claude Code is the stated fallback where OpenCode and Goose cannot sign
+  in.
 * **Update**: `install.sh` now registers `formation` by URL with every client (Claude Code
   `--transport http`, Codex `url` with `tool_timeout_sec = 600`, OpenCode `remote`,
   Antigravity `serverUrl`) instead of building `formation-mcp`, even with `--no-go`; a re-run

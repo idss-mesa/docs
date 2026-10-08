@@ -105,6 +105,11 @@ it on this computer; it stores the result in `~/.local/share/opencode/mcp-auth.j
 Until you sign in, OpenCode marks `formation` as needing authentication and tells you to
 run that command.
 
+CyVerse has not confirmed that its sign-in accepts OpenCode's callback address
+(`http://127.0.0.1:19876/mcp/oauth/callback`). If the CyVerse page says
+`Invalid parameter: redirect_uri`, see
+[Troubleshooting](troubleshooting.md#formation-sign-in-and-connection).
+
 Because the sign-in has to return to the computer OpenCode runs on, it does not complete
 when OpenCode runs on a remote machine (such as a MESA app on CyVerse) and the browser on
 yours. There, use Claude Code: `claude mcp login formation --no-browser` lets you paste

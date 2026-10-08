@@ -98,7 +98,7 @@ app's home folder is not kept between analyses, so sign in again in each new ana
 | Agent | Sign in |
 |---|---|
 | Claude Code | `claude mcp login formation --no-browser`, then open the printed address in your browser and paste the address you land on back into the terminal |
-| Codex | `codex mcp login formation --no-browser`, then the same: open the address, and paste the address you land on back |
+| Codex | `codex mcp login formation --no-browser`, then the same: open the address, and paste the address you land on back (CyVerse has not yet confirmed Codex's sign-in; see [Troubleshooting](../troubleshooting.md#formation-sign-in-and-connection)) |
 
 `--no-browser` needs Codex 0.156 or newer. If Codex answers
 `unexpected argument '--no-browser'`, the app's Codex is older: run
@@ -106,7 +106,8 @@ app's home folder is not kept between analyses, so sign in again in each new ana
 
 OpenCode, and Goose in the [MESA CLI](cli.md), cannot finish this sign-in from your own
 browser: each waits for the browser to come back to the container, which your browser
-cannot reach. Use Claude Code or Codex for Formation there. Antigravity (`agy`) has not
+cannot reach. Use Claude Code for Formation there (Codex too, once CyVerse accepts its
+`http://127.0.0.1` callback). Antigravity (`agy`) has not
 been tested by MESA and probably has the same problem. On the [KASM desktop](kasm.md) the
 browser runs inside the app, so you can also sign in normally by opening the address in
 the desktop's Chrome or Firefox.
