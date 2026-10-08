@@ -92,8 +92,12 @@ Every step is safe to repeat:
 - The Go binary is rebuilt.
 - For the CLI clients (Claude Code, Codex), each `mcp add` is preceded by an
   `mcp remove`, so re-running updates the registration in place rather than duplicating it.
-  For Codex, `formation` is written straight into `~/.codex/config.toml`, because
-  `codex mcp add --url` would start an interactive sign-in.
+  Claude Code's hosted `formation` entry is left alone when it is already right, because
+  removing it would also delete your Formation sign-in. For Codex, `formation` is written
+  straight into `~/.codex/config.toml`, because `codex mcp add --url` would start an
+  interactive sign-in; Codex older than 0.77 is skipped with a warning.
+- Config files the installer rewrites keep their permissions (a new one is created
+  readable by you only), and a symlinked config is written through the link.
 - For the config-file clients (Antigravity, OpenCode), the installer rewrites its own
   entries in the JSON, leaving any other servers you have configured untouched.
 
@@ -133,6 +137,10 @@ Then register the servers with your client:
     codex mcp add irods     -- ~/.mesa/bin/irods-mcp-server -c .../config-stdio.yaml
     codex mcp add formation --url https://de.cyverse.org/formation/mcp   # signs you in now
     ```
+
+    `codex mcp add` does not set a tool timeout. Add `tool_timeout_sec = 600` under
+    `[mcp_servers.formation]` in `~/.codex/config.toml`, or launches that wait longer than
+    Codex's default limit are cut off.
 
 === "Antigravity"
 

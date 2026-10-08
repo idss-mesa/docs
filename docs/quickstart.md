@@ -122,15 +122,24 @@ hosted by CyVerse and needs a one-time sign-in with your
     codex mcp login formation
     ```
 
+    On a remote machine add `--no-browser` (Codex 0.156 or newer) and paste back the
+    address your browser lands on.
+
 === "Antigravity"
 
-    Sign in to `formation` from the IDE's MCP servers panel.
+    Run `/mcp` in `agy`, or refresh the IDE's MCP servers panel, and sign in to
+    `formation`. The MESA team has not tested Antigravity's sign-in to Formation; if it
+    fails, use another client.
 
 === "OpenCode"
 
     ```bash
     opencode mcp auth formation
     ```
+
+CyVerse documents this sign-in for Claude Code and claude.ai; if another client's
+sign-in page says `Invalid parameter: redirect_uri`, see
+[Troubleshooting](troubleshooting.md#formation-sign-in-and-connection).
 
 Then try: *"Which Discovery Environment apps can I run for JupyterLab?"*
 
@@ -140,8 +149,8 @@ Anonymous access is read-only on public collections. To let `mesa-mcp` act as yo
 re-run with your [CyVerse](https://cyverse.org) credentials:
 
 ```bash
-CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
-  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh \
+  | CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' bash
 ```
 
 The credentials are threaded into the `mesa-mcp` registration of **every** client the
@@ -151,7 +160,8 @@ installer configures. See [Credentials](credentials.md) for all the options (env
 ## Updating & uninstalling
 
 Re-running the one-liner pulls the latest code and rebuilds — it is safe to run again,
-and it replaces the local `formation` server older installs created with the hosted one.
+keeps your Formation sign-ins, and replaces the local `formation` server older installs
+created with the hosted one.
 Uninstalling removes the three servers from every detected client and (after
 confirmation) deletes `~/.mesa`:
 

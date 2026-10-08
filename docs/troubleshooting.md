@@ -105,17 +105,24 @@ account.
 - **`MCP server formation already exists in user config`** when adding the hosted server
   to Claude Code: remove the old entry first, `claude mcp remove formation -s user`.
 - **The CyVerse sign-in page says `Invalid parameter: redirect_uri`**: CyVerse does not
-  accept that client's sign-in callback yet. Report the client and its version to
-  [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the
+  accept that client's sign-in callback yet. CyVerse documents claude.ai's callback and
+  `http://localhost…` (Claude Code); Codex and OpenCode call back to
+  `http://127.0.0.1…`, which that list does not cover. Report the client and its version
+  to [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the
   [claude.ai connector](claude-ai.md) meanwhile.
-- **OpenCode's sign-in never finishes on a remote machine**: OpenCode waits for the
-  browser to return to the machine it runs on. Sign in from Claude Code there instead
-  (`claude mcp login formation --no-browser`).
+- **OpenCode's (or Goose's) sign-in never finishes on a remote machine**: they wait for
+  the browser to return to the machine they run on. Sign in from Claude Code there
+  instead (`claude mcp login formation --no-browser`).
+- **`codex mcp login` says `unexpected argument '--no-browser'`**: that option needs
+  Codex 0.156 or newer. Update with `npm install -g @openai/codex@latest`.
+- **The installer says Codex is older than 0.77 and `formation` was not registered**:
+  update Codex (`npm install -g @openai/codex@latest`) and re-run with `--for codex`.
 - **`authentication error`** (HTTP 500) from Formation: its connection to CyVerse's
   sign-in service failed. Try again later and check <https://status.cyverse.org>.
-- **A launch times out in Codex**: Codex stops waiting for a tool after 5 minutes by
-  default; add `tool_timeout_sec = 600` under `[mcp_servers.formation]` in
-  `~/.codex/config.toml` (the installer sets it).
+- **A launch times out in Codex**: Codex stops waiting for a tool after its default limit
+  (300 seconds from Codex 0.141, 60 or 120 seconds before); add `tool_timeout_sec = 600`
+  under `[mcp_servers.formation]` in `~/.codex/config.toml` (the installer sets it;
+  `codex mcp add` does not).
 
 ## iRODS calls return permission errors
 

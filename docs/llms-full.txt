@@ -75,7 +75,8 @@ curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | ba
 
 Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. The Data Store servers use
 anonymous public CyVerse access by default — no credentials required to get started — and
-the hosted Discovery Environment server asks you to sign in once with your CyVerse account.
+the hosted Discovery Environment server asks you to sign in with your CyVerse account once
+in each client.
 
 [Get started :material-arrow-right:](https://idss-mesa.github.io/docs/quickstart/){ .md-button .md-button--primary }
 [Install reference](https://idss-mesa.github.io/docs/install/){ .md-button }
@@ -91,8 +92,8 @@ the hosted Discovery Environment server asks you to sign in once with your CyVer
 | [**Formation**](https://idss-mesa.github.io/docs/servers/formation-mcp/) | hosted by CyVerse | CyVerse Discovery Environment — launch apps, manage analyses, read and write Data Store files. Nothing to build: registered by URL, <https://de.cyverse.org/formation/mcp> |
 
 After install, the three servers (`mesa-mcp`, `irods`, `formation`) are registered with
-every client the installer detected; sign in to `formation` once with your CyVerse
-account. Formation also works on its own as a
+every client the installer detected; sign in to `formation` with your CyVerse account
+once in each client. Formation also works on its own as a
 [custom connector on claude.ai and in Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/). Open your agent and ask it to *"ping the CyVerse
 Data Store"* to confirm the link — see the [Quickstart](https://idss-mesa.github.io/docs/quickstart/) for per-client
 verification.
@@ -267,15 +268,24 @@ hosted by CyVerse and needs a one-time sign-in with your
     codex mcp login formation
     ```
 
+    On a remote machine add `--no-browser` (Codex 0.156 or newer) and paste back the
+    address your browser lands on.
+
 === "Antigravity"
 
-    Sign in to `formation` from the IDE's MCP servers panel.
+    Run `/mcp` in `agy`, or refresh the IDE's MCP servers panel, and sign in to
+    `formation`. The MESA team has not tested Antigravity's sign-in to Formation; if it
+    fails, use another client.
 
 === "OpenCode"
 
     ```bash
     opencode mcp auth formation
     ```
+
+CyVerse documents this sign-in for Claude Code and claude.ai; if another client's
+sign-in page says `Invalid parameter: redirect_uri`, see
+[Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection).
 
 Then try: *"Which Discovery Environment apps can I run for JupyterLab?"*
 
@@ -285,8 +295,8 @@ Anonymous access is read-only on public collections. To let `mesa-mcp` act as yo
 re-run with your [CyVerse](https://cyverse.org) credentials:
 
 ```bash
-CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
-  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh \
+  | CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' bash
 ```
 
 The credentials are threaded into the `mesa-mcp` registration of **every** client the
@@ -296,7 +306,8 @@ installer configures. See [Credentials](https://idss-mesa.github.io/docs/credent
 ## Updating & uninstalling
 
 Re-running the one-liner pulls the latest code and rebuilds — it is safe to run again,
-and it replaces the local `formation` server older installs created with the hosted one.
+keeps your Formation sign-ins, and replaces the local `formation` server older installs
+created with the hosted one.
 Uninstalling removes the three servers from every detected client and (after
 confirmation) deletes `~/.mesa`:
 
@@ -400,8 +411,12 @@ Every step is safe to repeat:
 - The Go binary is rebuilt.
 - For the CLI clients (Claude Code, Codex), each `mcp add` is preceded by an
   `mcp remove`, so re-running updates the registration in place rather than duplicating it.
-  For Codex, `formation` is written straight into `~/.codex/config.toml`, because
-  `codex mcp add --url` would start an interactive sign-in.
+  Claude Code's hosted `formation` entry is left alone when it is already right, because
+  removing it would also delete your Formation sign-in. For Codex, `formation` is written
+  straight into `~/.codex/config.toml`, because `codex mcp add --url` would start an
+  interactive sign-in; Codex older than 0.77 is skipped with a warning.
+- Config files the installer rewrites keep their permissions (a new one is created
+  readable by you only), and a symlinked config is written through the link.
 - For the config-file clients (Antigravity, OpenCode), the installer rewrites its own
   entries in the JSON, leaving any other servers you have configured untouched.
 
@@ -441,6 +456,10 @@ Then register the servers with your client:
     codex mcp add irods     -- ~/.mesa/bin/irods-mcp-server -c .../config-stdio.yaml
     codex mcp add formation --url https://de.cyverse.org/formation/mcp   # signs you in now
     ```
+
+    `codex mcp add` does not set a tool timeout. Add `tool_timeout_sec = 600` under
+    `[mcp_servers.formation]` in `~/.codex/config.toml`, or launches that wait longer than
+    Codex's default limit are cut off.
 
 === "Antigravity"
 
@@ -1733,12 +1752,17 @@ app's home folder is not kept between analyses, so sign in again in each new ana
 |---|---|
 | Claude Code | `claude mcp login formation --no-browser`, then open the printed address in your browser and paste the address you land on back into the terminal |
 | Codex | `codex mcp login formation --no-browser`, then the same: open the address, and paste the address you land on back |
-| Antigravity (KASM desktop) | from the IDE's MCP servers panel |
 
-OpenCode cannot finish this sign-in from your own browser: it waits for the browser to
-come back to the container, which your browser cannot reach. Use another agent for
-Formation there. On the [KASM desktop](https://idss-mesa.github.io/docs/apps/kasm/) the browser runs inside the app, so you can
-also sign in normally by opening the address in the desktop's Chrome or Firefox.
+`--no-browser` needs Codex 0.156 or newer. If Codex answers
+`unexpected argument '--no-browser'`, the app's Codex is older: run
+`npm install -g @openai/codex@latest` first (no root needed).
+
+OpenCode, and Goose in the [MESA CLI](https://idss-mesa.github.io/docs/apps/cli/), cannot finish this sign-in from your own
+browser: each waits for the browser to come back to the container, which your browser
+cannot reach. Use Claude Code or Codex for Formation there. Antigravity (`agy`) has not
+been tested by MESA and probably has the same problem. On the [KASM desktop](https://idss-mesa.github.io/docs/apps/kasm/) the
+browser runs inside the app, so you can also sign in normally by opening the address in
+the desktop's Chrome or Firefox.
 
 ## 2. Connect a language model
 
@@ -2015,8 +2039,8 @@ table: `command`, `args`, and `env` keys for a local server, `url` for a remote 
 codex mcp list               # show all servers, with their sign-in status
 codex mcp get mesa-mcp       # show one server's config
 codex mcp remove mesa-mcp
-codex mcp login formation    # sign in to Formation (add --no-browser on a remote machine)
-codex mcp logout formation
+codex mcp login formation    # sign in to Formation (add --no-browser on a remote machine; Codex 0.156+)
+codex mcp logout formation   # sign out; run it before removing formation, it needs the entry
 ```
 
 Inside a Codex TUI session, run `/mcp` to verify the servers and their tools loaded.
@@ -2048,7 +2072,8 @@ tool_timeout_sec = 600
 The `env` table on `mesa-mcp` only appears when you installed with
 [credentials](https://idss-mesa.github.io/docs/credentials/); anonymous installs omit it. `formation` never takes
 credentials. `tool_timeout_sec = 600` lets `launch_app_and_wait` wait for an app for up to
-the 9 minutes Formation allows; Codex's default limit is 5 minutes.
+the 9 minutes Formation allows. Codex's default limit is 300 seconds from Codex 0.141, and
+60 or 120 seconds in older releases, which can be shorter than a VICE app takes to start.
 
 !!! note "mesa-ducklake is not listed here"
     `mesa-ducklake` is a **library** imported by `mesa-mcp`, not a separate MCP server. Its
@@ -2057,15 +2082,24 @@ the 9 minutes Formation allows; Codex's default limit is 5 minutes.
 
 ## Signing in to Formation
 
-Run `codex mcp login formation`. Codex opens the CyVerse sign-in page in your browser
-(`--no-browser` prints the address instead). Until you sign in, Codex tells you at startup
-to run `codex mcp login formation`. Remote servers with OAuth sign-in need Codex 0.77 or
-newer.
+Run `codex mcp login formation`. Codex opens the CyVerse sign-in page in your browser.
+On Codex 0.156 or newer, `--no-browser` prints the address instead and takes back the
+address your browser lands on; with an older Codex, update it first with
+`npm install -g @openai/codex@latest`. Until you sign in, Codex tells you at startup to
+run `codex mcp login formation`. Remote servers with OAuth sign-in need Codex 0.77 or
+newer; the installer skips `formation` for an older Codex and says so.
 
-To add Formation by hand instead of through the installer, either run
-`codex mcp add formation --url https://de.cyverse.org/formation/mcp` (it signs you in
-immediately) or paste the `[mcp_servers.formation]` table above into
-`~/.codex/config.toml`.
+CyVerse has not confirmed that its sign-in accepts Codex's callback address
+(`http://127.0.0.1:<port>/callback`). If the CyVerse page says
+`Invalid parameter: redirect_uri`, see
+[Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection).
+
+To add Formation by hand instead of through the installer, paste the
+`[mcp_servers.formation]` table above into `~/.codex/config.toml` and run
+`codex mcp login formation`. Or run
+`codex mcp add formation --url https://de.cyverse.org/formation/mcp` (it starts the
+sign-in straight away) and add `tool_timeout_sec = 600` under the
+`[mcp_servers.formation]` table it writes, because the command does not set a timeout.
 
 ## Troubleshooting notes
 
@@ -2074,7 +2108,8 @@ immediately) or paste the `[mcp_servers.formation]` table above into
 - `/mcp` shows nothing → `codex mcp list`, then inspect `~/.codex/config.toml`.
 - Re-running the installer updates the entries in place (it removes and re-adds each
   server), so a stale path after moving `~/.mesa` is fixed by a re-run. It also replaces
-  the local `formation` entry older installs created with the hosted one.
+  the local `formation` entry older installs created with the hosted one, and keeps your
+  Formation sign-in.
 - `formation` needs sign-in → `codex mcp login formation`.
 
 More in the general [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/) page.
@@ -2320,7 +2355,7 @@ More in the general [Troubleshooting](https://idss-mesa.github.io/docs/troublesh
 ---
 type: Integration Guide
 title: claude.ai and Claude Desktop
-description: Add CyVerse's hosted Formation MCP server to claude.ai and Claude Desktop as a custom connector, sign in with your CyVerse account, and use it in chats and in Claude Code.
+description: Add CyVerse's hosted Formation MCP server (and, optionally, CyVerse's public Data Store server) to claude.ai and Claude Desktop as a custom connector, sign in with your CyVerse account, and use it in chats and in Claude Code.
 tags:
   - claude-ai
   - claude-desktop
@@ -2354,19 +2389,21 @@ On claude.ai and in Claude Desktop, MCP servers are added as **connectors**. A c
 connector points Claude at a remote MCP server on the internet; Claude connects to it from
 Anthropic's cloud, not from your computer[^claude-connectors].
 
-The MESA server you can add this way is **[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/)**,
+The main MESA server you can add this way is **[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/)**,
 CyVerse's hosted MCP server for the Discovery Environment, at
 <https://de.cyverse.org/formation/mcp>. With it, Claude can launch Discovery Environment
-apps, follow your analyses, and read and write your Data Store files, as you. The other
-MESA servers run on your own computer and are for [Claude Code](https://idss-mesa.github.io/docs/claude-code/) and the
-other agent clients.
+apps, follow your analyses, and read and write your Data Store files, as you. CyVerse also
+hosts a public, read-only Data Store server at `https://mcp-public.cyverse.ai/mcp`, which
+you can add the same way ([below](#optional-public-data-store-connector)). The installer's
+`mesa-mcp` and `irods` servers run on your own computer and are for
+[Claude Code](https://idss-mesa.github.io/docs/claude-code/) and the other agent clients.
 
 Custom connectors are available on the Free, Pro, Max, Team, and Enterprise plans; the Free
-plan allows one custom connector.
+plan allows one custom connector, so pick the one you need.
 
 ## Add the Formation connector
 
-=== "Pro and Max"
+=== "Free, Pro, and Max"
 
     1. Go to **Customize > Connectors**. In Claude Desktop, choose **Customize** in the
        sidebar, then **Connectors**.
@@ -2376,8 +2413,9 @@ plan allows one custom connector.
        and click **Continue**.
     5. Review the authentication settings Claude detected and click **Continue**.
     6. Under **Authentication**, choose **Sign in now** (or **Sign in when needed**).
-    7. Under **OAuth client**, choose **Register automatically**. Formation registers
-       Claude for you; there is no client ID or secret to enter.
+    7. Under **OAuth client**, choose **Register automatically** (not the default
+       **Use Claude's published identity**). Formation registers Claude for you; there
+       is no client ID or secret to enter.
     8. Leave **Request headers** empty and click **Add**.
     9. Sign in with your CyVerse username and password on the CyVerse page that opens.
 
@@ -2405,6 +2443,17 @@ plan allows one custom connector.
     in CyVerse.
 
 To change a connector's settings later, remove it and add it again.
+
+## Optional: public Data Store connector
+
+CyVerse's public Data Store server reads the public collections under
+`/iplant/home/shared` with no sign-in. Add it as above, with these values:
+
+- **Name:** `CyVerse Data Store (public)`
+- **URL:** `https://mcp-public.cyverse.ai/mcp`
+- **Authentication:** **No sign in**
+
+It cannot reach your own home folder; Formation's `browse_data` and `upload_file` do that.
 
 ## Use it in a chat
 
@@ -2442,7 +2491,6 @@ installer does not count as the same server, so you would see both; re-run the
 |---|---|
 | **Connect** fails or the CyVerse sign-in page shows an error | Check the URL is exactly `https://de.cyverse.org/formation/mcp`. If it is, remove the connector, add it again, and choose **Register automatically**. |
 | Tools fail with authentication errors after a while | Go to **Customize > Connectors**, open **CyVerse Formation**, and connect again. |
-| Calls fail with "service accounts are not supported" | Formation accepts personal CyVerse accounts only; connect again and sign in with your own account. |
 | Formation does not answer at all | Check <https://status.cyverse.org> for a CyVerse outage. |
 
 [^claude-connectors]: https://idss-mesa.github.io/docs/Getting started with custom connectors using remote MCP, <https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp>.
@@ -2499,8 +2547,8 @@ to it with your CyVerse account in the browser — see
 ## Quickest path — env vars at install time
 
 ```bash
-CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
-  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh \
+  | CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' bash
 ```
 
 The installer threads these into the `mesa-mcp` registration of **every client** it
@@ -2511,7 +2559,8 @@ configures, as `MESA_MCP_IRODS__USER` and `MESA_MCP_IRODS__PASSWORD`.
     user scope), `~/.codex/config.toml`, `$HOME/.gemini/config/mcp_config.json`, and
     `${XDG_CONFIG_HOME:-~/.config}/opencode/opencode.json`. Prefer the `~/.irods` method below if you don't
     want the password stored there, and never commit a `project`-scope `.mcp.json`
-    containing secrets.
+    containing secrets. The files the installer writes keep their permissions, and a new
+    one is readable by you only; on a shared machine, check them with `ls -l`.
 
 ## mesa-mcp & irods — native iRODS auth
 
@@ -2554,19 +2603,24 @@ The full list is in [`mesa-mcp/.env.example`](https://github.com/idss-mesa/mesa-
 
 [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) is hosted by CyVerse at
 <https://de.cyverse.org/formation/mcp> and uses the standard MCP sign-in: OAuth 2.1 with
-PKCE against CyVerse's Keycloak[^formation]. The first time a client connects, it opens the
-CyVerse sign-in page in your browser; the client then stores the sign-in and refreshes it.
+PKCE against CyVerse's Keycloak[^formation]. Until you sign in, the client shows
+`formation` as needing authentication; its sign-in command (table below) opens the
+CyVerse sign-in page in your browser, and the client then stores the sign-in and
+refreshes it.
 
 | Client | Sign in |
 |---|---|
 | Claude Code | `/mcp` inside Claude Code, or `claude mcp login formation` (`--no-browser` on a remote machine) |
-| Codex | `codex mcp login formation` |
-| OpenCode | `opencode mcp auth formation` |
-| Antigravity | the IDE's MCP servers panel |
+| Codex | `codex mcp login formation` (`--no-browser` on a remote machine, Codex 0.156 or newer) |
+| OpenCode | `opencode mcp auth formation` (not on a remote machine) |
+| Antigravity | `/mcp` in `agy` or the IDE's MCP servers panel (not tested by MESA) |
 | claude.ai and Claude Desktop | **Connect** on the connector — see [claude.ai and Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/) |
 
 No password is stored in any config file, and `CYVERSE_USERNAME`, `~/.irods`, and
-`cyverse-login` do not apply. Only personal CyVerse accounts can sign in.
+`cyverse-login` do not apply. Sign in with a CyVerse user account; service-account tokens
+are refused. CyVerse documents this sign-in for Claude Code and claude.ai; for other
+clients see [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection) if it
+fails.
 
 The `~/.formation-mcp.yaml` file and the `FORMATION_*` variables belonged to the old local
 `formation-mcp` server and are no longer used; see
@@ -2791,15 +2845,15 @@ tags:
   - go
   - data-store
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/irods-mcp-server"
     title: "irods-mcp-server source repository"
     author: "team:idss-mesa"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # irods-mcp-server
@@ -2846,7 +2900,7 @@ Edit `config-stdio.yaml` to switch from anonymous to a named account — see
 ---
 type: MCP Server
 title: Formation (hosted)
-description: CyVerse's hosted MCP server for the Discovery Environment at https://de.cyverse.org/formation/mcp — launch apps, manage analyses, and work with the Data Store from claude.ai, Claude Code, Codex, OpenCode, or Antigravity.
+description: CyVerse's hosted MCP server for the Discovery Environment at https://de.cyverse.org/formation/mcp — launch apps, manage analyses, and work with the Data Store from claude.ai or Claude Code; Codex, OpenCode, and Antigravity can be set up too, but their sign-in is not yet confirmed.
 tags:
   - formation
   - discovery-environment
@@ -2894,8 +2948,10 @@ in with your CyVerse account. Your agent can then find and launch Discovery Envi
 apps, follow and stop analyses, and read, write, and describe files in the CyVerse Data
 Store, always as **you** and with your own permissions.
 
-It works in every client MESA supports and as a **custom connector** on claude.ai and in
-Claude Desktop.
+CyVerse documents it for Claude Code and as a **custom connector** on claude.ai and in
+Claude Desktop. You can register it in every client MESA supports, but whether Codex,
+OpenCode, and Antigravity can complete the CyVerse sign-in is not yet confirmed (see
+[Troubleshooting](#troubleshooting)).
 
 !!! tip "Enter the URL exactly"
     Use `https://de.cyverse.org/formation/mcp`, with `https` and no trailing slash. The
@@ -2908,8 +2964,9 @@ Claude Desktop.
     1. Go to **Customize > Connectors**, click **+ Add**, then **Add custom connector**.
     2. Name it `CyVerse Formation`, paste `https://de.cyverse.org/formation/mcp`, and
        click **Continue**.
-    3. Keep sign-in on, choose **Register automatically** under **OAuth client**, and
-       click **Add**.
+    3. Review the detected authentication and click **Continue**. Under **Authentication**
+       choose **Sign in now**, under **OAuth client** choose **Register automatically**
+       (not the default **Use Claude's published identity**), and click **Add**.
     4. Sign in with your CyVerse account when asked.
 
     On Team and Enterprise plans an owner adds the connector once and each member clicks
@@ -2930,19 +2987,23 @@ Claude Desktop.
 
 === "Codex"
 
-    ```bash
-    codex mcp add formation --url https://de.cyverse.org/formation/mcp
-    ```
-
-    Codex detects that Formation needs a sign-in and opens the CyVerse login straight
-    away; later, sign in again with `codex mcp login formation` (`--no-browser` on a
-    remote machine). The same entry in `~/.codex/config.toml`:
+    In `~/.codex/config.toml`:
 
     ```toml
     [mcp_servers.formation]
     url = "https://de.cyverse.org/formation/mcp"
-    tool_timeout_sec = 600   # launches can wait up to 9 minutes; Codex's default is 5
+    tool_timeout_sec = 600   # launches can wait up to 9 minutes
     ```
+
+    Then sign in with `codex mcp login formation`. On a remote machine add `--no-browser`
+    (Codex 0.156 or newer): Codex prints the sign-in address, and you paste back the
+    address your browser lands on.
+
+    Or run `codex mcp add formation --url https://de.cyverse.org/formation/mcp`, which
+    starts the sign-in straight away, and then add `tool_timeout_sec = 600` to the
+    `[mcp_servers.formation]` table it wrote. The command sets no timeout, and Codex's
+    default (300 seconds from Codex 0.141, 60 or 120 seconds before) can cut a launch
+    off.
 
     Needs Codex 0.77 or newer.
 
@@ -2963,7 +3024,9 @@ Claude Desktop.
     ```
 
     Then sign in with `opencode mcp auth formation`; `opencode mcp auth list` shows the
-    status.
+    status. OpenCode waits for the browser to come back to its own port 19876, so on a
+    remote machine, such as a MESA app, the sign-in cannot finish: use Claude Code or
+    Codex with `--no-browser` there.
 
 === "Antigravity"
 
@@ -2985,23 +3048,31 @@ Claude Desktop.
 === "MESA installer and apps"
 
     The [MESA installer](https://idss-mesa.github.io/docs/install/) registers Formation by URL with every client it
-    detects, and the [MESA featured apps](https://idss-mesa.github.io/docs/apps/agents/) come with it already
-    registered for every agent. Either way, sign in once per client as shown in the
-    other tabs.
+    detects; then sign in once in each client as shown in the other tabs. Re-running the
+    installer keeps those sign-ins.
+
+    The [MESA featured apps](https://idss-mesa.github.io/docs/apps/agents/) come with Formation already registered
+    for every agent, but an app's home folder is not kept between analyses, so sign in
+    again in each new analysis as described in
+    [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation) (Claude Code and Codex
+    with `--no-browser`). OpenCode and Goose cannot complete the sign-in in the apps.
 
 ## Sign in
 
-The first time a client connects, it opens the CyVerse sign-in page in your browser. Log
-in with your CyVerse username and password and you are sent back to the client. Behind
+Until you sign in, the client lists `formation` as needing authentication. Run its
+sign-in command (in your client's tab above, or the list below), which opens the CyVerse
+sign-in page in your browser. Log in with your CyVerse username and password and you are
+sent back to the client. Behind
 this is standard MCP sign-in: OAuth 2.1 with PKCE against CyVerse's Keycloak, and
 automatic client registration, so there is no API key or client ID to set up[^formation].
 
 - No password, environment variable, `~/.irods` file, or `cyverse-login` is involved.
-- The client stores the sign-in and refreshes it. If calls start failing with
-  authentication errors later, sign in again (`/mcp` or `claude mcp login formation`,
-  `codex mcp login formation`, `opencode mcp auth formation`, or **Connect** on
-  claude.ai).
-- Only personal CyVerse accounts can sign in; service accounts are refused.
+- Sign in, and later sign in again if calls fail with authentication errors, with
+  `/mcp` or `claude mcp login formation`, `codex mcp login formation`,
+  `opencode mcp auth formation`, or **Connect** on claude.ai. The client stores the
+  sign-in and refreshes it.
+- Sign in with a CyVerse user account. Keycloak service-account (client-credentials)
+  tokens are refused.
 - No CyVerse account yet? Register for free at <https://user.cyverse.org>.
 
 ## Tools
@@ -3024,9 +3095,11 @@ automatic client registration, so there is no API key or client ID to set up[^fo
 ## Good to know
 
 - **Launching apps.** `launch_app_and_wait` waits up to 5 minutes by default and never
-  more than 9 minutes. If an app needs parameters the request did not supply, the tool
-  lists them instead of launching, so the agent can ask you. Batch (non-interactive) jobs return as soon as
-  they are submitted; check them with `get_analysis_status`.
+  more than 9 minutes. Unless the agent passes `overall_job_type`, the tool first checks
+  for required parameters the request did not supply and lists them instead of
+  launching, so the agent can ask you; with `overall_job_type` it launches directly.
+  Batch (non-interactive) jobs return as soon as they are submitted; check them with
+  `get_analysis_status`.
 - **Text only.** `browse_data` returns file contents into the conversation, so whatever it
   reads is sent to your model provider. It reads at most 1 MiB at a time and continues
   with `offset` and `limit`; images, archives, and other binary files cannot be read.
@@ -3046,7 +3119,7 @@ automatic client registration, so there is no API key or client ID to set up[^fo
 
 Earlier versions of the MESA installer built [formation-mcp](https://github.com/idss-mesa/formation-mcp)
 and registered it as a local stdio server that called Formation's REST API. CyVerse
-replaced that API with this hosted MCP server in June 2026, so the local server no longer
+replaced that API with this hosted MCP server in mid-2026, so the local server no longer
 works: it exits with `Configuration error: FORMATION_BASE_URL is required`, or its tools
 fail with `login failed with status 404`.
 
@@ -3076,9 +3149,10 @@ you can delete them, along with `~/.mesa/repos/formation-mcp`.
 |---|---|
 | **Needs authentication** in `claude mcp list` or `/mcp` | Expected until you sign in: run `/mcp` or `claude mcp login formation`. |
 | `formation` appears twice in Claude Code | You have the old local entry and a claude.ai connector. Remove the local one: `claude mcp remove formation -s user`. |
-| The CyVerse page says `Invalid parameter: redirect_uri` | CyVerse does not yet accept that client's sign-in callback. Report it to [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the claude.ai connector meanwhile. |
+| The CyVerse page says `Invalid parameter: redirect_uri` | CyVerse does not yet accept that client's sign-in callback. CyVerse's documented callbacks are claude.ai's and `http://localhost…` (Claude Code); Codex and OpenCode call back to `http://127.0.0.1…`. Report it to [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the claude.ai connector meanwhile. |
 | `authentication error` (HTTP 500) | CyVerse's sign-in service is unreachable from Formation; try again later and check <https://status.cyverse.org>. |
 | A launch times out in Codex | Add `tool_timeout_sec = 600` to `[mcp_servers.formation]` in `~/.codex/config.toml`. |
+| `codex mcp login` says `unexpected argument '--no-browser'` | Your Codex is older than 0.156. Update it with `npm install -g @openai/codex@latest`. |
 
 More in [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection).
 
@@ -3194,17 +3268,24 @@ account.
 - **`MCP server formation already exists in user config`** when adding the hosted server
   to Claude Code: remove the old entry first, `claude mcp remove formation -s user`.
 - **The CyVerse sign-in page says `Invalid parameter: redirect_uri`**: CyVerse does not
-  accept that client's sign-in callback yet. Report the client and its version to
-  [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the
+  accept that client's sign-in callback yet. CyVerse documents claude.ai's callback and
+  `http://localhost…` (Claude Code); Codex and OpenCode call back to
+  `http://127.0.0.1…`, which that list does not cover. Report the client and its version
+  to [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the
   [claude.ai connector](https://idss-mesa.github.io/docs/claude-ai/) meanwhile.
-- **OpenCode's sign-in never finishes on a remote machine**: OpenCode waits for the
-  browser to return to the machine it runs on. Sign in from Claude Code there instead
-  (`claude mcp login formation --no-browser`).
+- **OpenCode's (or Goose's) sign-in never finishes on a remote machine**: they wait for
+  the browser to return to the machine they run on. Sign in from Claude Code there
+  instead (`claude mcp login formation --no-browser`).
+- **`codex mcp login` says `unexpected argument '--no-browser'`**: that option needs
+  Codex 0.156 or newer. Update with `npm install -g @openai/codex@latest`.
+- **The installer says Codex is older than 0.77 and `formation` was not registered**:
+  update Codex (`npm install -g @openai/codex@latest`) and re-run with `--for codex`.
 - **`authentication error`** (HTTP 500) from Formation: its connection to CyVerse's
   sign-in service failed. Try again later and check <https://status.cyverse.org>.
-- **A launch times out in Codex**: Codex stops waiting for a tool after 5 minutes by
-  default; add `tool_timeout_sec = 600` under `[mcp_servers.formation]` in
-  `~/.codex/config.toml` (the installer sets it).
+- **A launch times out in Codex**: Codex stops waiting for a tool after its default limit
+  (300 seconds from Codex 0.141, 60 or 120 seconds before); add `tool_timeout_sec = 600`
+  under `[mcp_servers.formation]` in `~/.codex/config.toml` (the installer sets it;
+  `codex mcp add` does not).
 
 ## iRODS calls return permission errors
 
@@ -3253,7 +3334,7 @@ sources:
     title: "Model Context Protocol specification"
     author: "team:modelcontextprotocol"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # For AI agents
@@ -3457,11 +3538,22 @@ The same agent conventions cover the rest of the origin and its neighbours:
   CyVerse's hosted Formation MCP server at <https://de.cyverse.org/formation/mcp>: per-client
   setup (claude.ai and Claude Desktop, Claude Code, Codex, OpenCode, Antigravity), browser
   sign-in with a CyVerse account, the 12 tools and their limits, and how to move off the
-  local `formation-mcp`. CyVerse removed the REST API that server called on 2026-06-11, so it
-  no longer works.
+  local `formation-mcp`. CyVerse has since removed the REST API that server called
+  (Formation source change of 2026-06-11, first released in Formation v2026.07.07), so it no
+  longer works.
 * **Creation**: Added [claude.ai and Claude Desktop](claude-ai.md), adding Formation as a
-  custom connector (Pro and Max, Team and Enterprise owners and members), using it in chats
-  and in Claude Code.
+  custom connector (Free, Pro and Max; Team and Enterprise owners and members), the optional
+  public Data Store connector, using it in chats and in Claude Code.
+* **Update**: `install.sh` keeps the permissions of the client configs it rewrites (a new
+  one is created readable by you only) and writes through a symlinked config; leaves an
+  identical Claude Code `formation` entry alone so a re-run keeps the sign-in; skips
+  `formation` for Codex older than 0.77; signs Codex and OpenCode out of Formation on
+  `--uninstall`; and its summary matches `--no-go` and `CODEX_HOME`. The pages now note
+  that Codex's `--no-browser` needs 0.156, Codex's default tool timeout by version, that
+  `codex mcp add` sets no timeout, that Codex, OpenCode, and Antigravity sign-in to
+  Formation is not yet confirmed by CyVerse, and that OpenCode and Goose cannot sign in
+  inside the MESA apps. The authenticated-install one-liner in [Quickstart](quickstart.md)
+  and [Credentials](credentials.md) now passes the credentials to `bash`, not `curl`.
 * **Update**: `install.sh` now registers `formation` by URL with every client (Claude Code
   `--transport http`, Codex `url` with `tool_timeout_sec = 600`, OpenCode `remote`,
   Antigravity `serverUrl`) instead of building `formation-mcp`, even with `--no-go`; a re-run

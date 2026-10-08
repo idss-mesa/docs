@@ -47,8 +47,8 @@ to it with your CyVerse account in the browser — see
 ## Quickest path — env vars at install time
 
 ```bash
-CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
-  curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh \
+  | CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' bash
 ```
 
 The installer threads these into the `mesa-mcp` registration of **every client** it
@@ -59,7 +59,8 @@ configures, as `MESA_MCP_IRODS__USER` and `MESA_MCP_IRODS__PASSWORD`.
     user scope), `~/.codex/config.toml`, `$HOME/.gemini/config/mcp_config.json`, and
     `${XDG_CONFIG_HOME:-~/.config}/opencode/opencode.json`. Prefer the `~/.irods` method below if you don't
     want the password stored there, and never commit a `project`-scope `.mcp.json`
-    containing secrets.
+    containing secrets. The files the installer writes keep their permissions, and a new
+    one is readable by you only; on a shared machine, check them with `ls -l`.
 
 ## mesa-mcp & irods — native iRODS auth
 
@@ -102,19 +103,24 @@ The full list is in [`mesa-mcp/.env.example`](https://github.com/idss-mesa/mesa-
 
 [Formation](servers/formation-mcp.md) is hosted by CyVerse at
 <https://de.cyverse.org/formation/mcp> and uses the standard MCP sign-in: OAuth 2.1 with
-PKCE against CyVerse's Keycloak[^formation]. The first time a client connects, it opens the
-CyVerse sign-in page in your browser; the client then stores the sign-in and refreshes it.
+PKCE against CyVerse's Keycloak[^formation]. Until you sign in, the client shows
+`formation` as needing authentication; its sign-in command (table below) opens the
+CyVerse sign-in page in your browser, and the client then stores the sign-in and
+refreshes it.
 
 | Client | Sign in |
 |---|---|
 | Claude Code | `/mcp` inside Claude Code, or `claude mcp login formation` (`--no-browser` on a remote machine) |
-| Codex | `codex mcp login formation` |
-| OpenCode | `opencode mcp auth formation` |
-| Antigravity | the IDE's MCP servers panel |
+| Codex | `codex mcp login formation` (`--no-browser` on a remote machine, Codex 0.156 or newer) |
+| OpenCode | `opencode mcp auth formation` (not on a remote machine) |
+| Antigravity | `/mcp` in `agy` or the IDE's MCP servers panel (not tested by MESA) |
 | claude.ai and Claude Desktop | **Connect** on the connector — see [claude.ai and Claude Desktop](claude-ai.md) |
 
 No password is stored in any config file, and `CYVERSE_USERNAME`, `~/.irods`, and
-`cyverse-login` do not apply. Only personal CyVerse accounts can sign in.
+`cyverse-login` do not apply. Sign in with a CyVerse user account; service-account tokens
+are refused. CyVerse documents this sign-in for Claude Code and claude.ai; for other
+clients see [Troubleshooting](troubleshooting.md#formation-sign-in-and-connection) if it
+fails.
 
 The `~/.formation-mcp.yaml` file and the `FORMATION_*` variables belonged to the old local
 `formation-mcp` server and are no longer used; see

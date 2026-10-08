@@ -6,11 +6,22 @@
   CyVerse's hosted Formation MCP server at <https://de.cyverse.org/formation/mcp>: per-client
   setup (claude.ai and Claude Desktop, Claude Code, Codex, OpenCode, Antigravity), browser
   sign-in with a CyVerse account, the 12 tools and their limits, and how to move off the
-  local `formation-mcp`. CyVerse removed the REST API that server called on 2026-06-11, so it
-  no longer works.
+  local `formation-mcp`. CyVerse has since removed the REST API that server called
+  (Formation source change of 2026-06-11, first released in Formation v2026.07.07), so it no
+  longer works.
 * **Creation**: Added [claude.ai and Claude Desktop](claude-ai.md), adding Formation as a
-  custom connector (Pro and Max, Team and Enterprise owners and members), using it in chats
-  and in Claude Code.
+  custom connector (Free, Pro and Max; Team and Enterprise owners and members), the optional
+  public Data Store connector, using it in chats and in Claude Code.
+* **Update**: `install.sh` keeps the permissions of the client configs it rewrites (a new
+  one is created readable by you only) and writes through a symlinked config; leaves an
+  identical Claude Code `formation` entry alone so a re-run keeps the sign-in; skips
+  `formation` for Codex older than 0.77; signs Codex and OpenCode out of Formation on
+  `--uninstall`; and its summary matches `--no-go` and `CODEX_HOME`. The pages now note
+  that Codex's `--no-browser` needs 0.156, Codex's default tool timeout by version, that
+  `codex mcp add` sets no timeout, that Codex, OpenCode, and Antigravity sign-in to
+  Formation is not yet confirmed by CyVerse, and that OpenCode and Goose cannot sign in
+  inside the MESA apps. The authenticated-install one-liner in [Quickstart](quickstart.md)
+  and [Credentials](credentials.md) now passes the credentials to `bash`, not `curl`.
 * **Update**: `install.sh` now registers `formation` by URL with every client (Claude Code
   `--transport http`, Codex `url` with `tool_timeout_sec = 600`, OpenCode `remote`,
   Antigravity `serverUrl`) instead of building `formation-mcp`, even with `--no-go`; a re-run

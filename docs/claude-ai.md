@@ -1,7 +1,7 @@
 ---
 type: Integration Guide
 title: claude.ai and Claude Desktop
-description: Add CyVerse's hosted Formation MCP server to claude.ai and Claude Desktop as a custom connector, sign in with your CyVerse account, and use it in chats and in Claude Code.
+description: Add CyVerse's hosted Formation MCP server (and, optionally, CyVerse's public Data Store server) to claude.ai and Claude Desktop as a custom connector, sign in with your CyVerse account, and use it in chats and in Claude Code.
 tags:
   - claude-ai
   - claude-desktop
@@ -35,19 +35,21 @@ On claude.ai and in Claude Desktop, MCP servers are added as **connectors**. A c
 connector points Claude at a remote MCP server on the internet; Claude connects to it from
 Anthropic's cloud, not from your computer[^claude-connectors].
 
-The MESA server you can add this way is **[Formation](servers/formation-mcp.md)**,
+The main MESA server you can add this way is **[Formation](servers/formation-mcp.md)**,
 CyVerse's hosted MCP server for the Discovery Environment, at
 <https://de.cyverse.org/formation/mcp>. With it, Claude can launch Discovery Environment
-apps, follow your analyses, and read and write your Data Store files, as you. The other
-MESA servers run on your own computer and are for [Claude Code](claude-code.md) and the
-other agent clients.
+apps, follow your analyses, and read and write your Data Store files, as you. CyVerse also
+hosts a public, read-only Data Store server at `https://mcp-public.cyverse.ai/mcp`, which
+you can add the same way ([below](#optional-public-data-store-connector)). The installer's
+`mesa-mcp` and `irods` servers run on your own computer and are for
+[Claude Code](claude-code.md) and the other agent clients.
 
 Custom connectors are available on the Free, Pro, Max, Team, and Enterprise plans; the Free
-plan allows one custom connector.
+plan allows one custom connector, so pick the one you need.
 
 ## Add the Formation connector
 
-=== "Pro and Max"
+=== "Free, Pro, and Max"
 
     1. Go to **Customize > Connectors**. In Claude Desktop, choose **Customize** in the
        sidebar, then **Connectors**.
@@ -57,8 +59,9 @@ plan allows one custom connector.
        and click **Continue**.
     5. Review the authentication settings Claude detected and click **Continue**.
     6. Under **Authentication**, choose **Sign in now** (or **Sign in when needed**).
-    7. Under **OAuth client**, choose **Register automatically**. Formation registers
-       Claude for you; there is no client ID or secret to enter.
+    7. Under **OAuth client**, choose **Register automatically** (not the default
+       **Use Claude's published identity**). Formation registers Claude for you; there
+       is no client ID or secret to enter.
     8. Leave **Request headers** empty and click **Add**.
     9. Sign in with your CyVerse username and password on the CyVerse page that opens.
 
@@ -86,6 +89,17 @@ plan allows one custom connector.
     in CyVerse.
 
 To change a connector's settings later, remove it and add it again.
+
+## Optional: public Data Store connector
+
+CyVerse's public Data Store server reads the public collections under
+`/iplant/home/shared` with no sign-in. Add it as above, with these values:
+
+- **Name:** `CyVerse Data Store (public)`
+- **URL:** `https://mcp-public.cyverse.ai/mcp`
+- **Authentication:** **No sign in**
+
+It cannot reach your own home folder; Formation's `browse_data` and `upload_file` do that.
 
 ## Use it in a chat
 
@@ -123,7 +137,6 @@ installer does not count as the same server, so you would see both; re-run the
 |---|---|
 | **Connect** fails or the CyVerse sign-in page shows an error | Check the URL is exactly `https://de.cyverse.org/formation/mcp`. If it is, remove the connector, add it again, and choose **Register automatically**. |
 | Tools fail with authentication errors after a while | Go to **Customize > Connectors**, open **CyVerse Formation**, and connect again. |
-| Calls fail with "service accounts are not supported" | Formation accepts personal CyVerse accounts only; connect again and sign in with your own account. |
 | Formation does not answer at all | Check <https://status.cyverse.org> for a CyVerse outage. |
 
 [^claude-connectors]: Getting started with custom connectors using remote MCP, <https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp>.

@@ -61,6 +61,7 @@ CLIENT_FILTER="${MESA_CLIENTS:-}"         # --for overrides this
 CLIENTS_SELECTED=""                       # resolved by select_clients()
 OPENCODE_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/opencode/opencode.json"
 ANTIGRAVITY_WRITTEN=""                    # config paths written; summary reads it
+CODEX_REMOTE_SKIPPED=0                    # 1 when Codex is too old for formation; summary reads it
 GO_MIN_MINOR=25            # require Go >= 1.25
 BUILD_GO=1
 DO_UNINSTALL=0
@@ -223,6 +224,7 @@ json_add_server() {   # json_add_server <file> <flavor> <name> <cmd> [args...]
 import json, os, sys
 
 path, flavor, name = sys.argv[1], sys.argv[2], sys.argv[3]
+path = os.path.realpath(path)            # write through a symlinked config, as the clients do
 rest = sys.argv[4:]
 sep = rest.index('--')
 env = dict(kv.partition('=')[::2] for kv in rest[:sep])
@@ -256,13 +258,17 @@ else:  # opencode
         entry['environment'] = env
     data.setdefault('mcp', {})[name] = entry
 
-d = os.path.dirname(path)
-if d:
-    os.makedirs(d, exist_ok=True)
+os.makedirs(os.path.dirname(path), exist_ok=True)
+try:
+    mode = os.stat(path).st_mode & 0o777
+except FileNotFoundError:
+    mode = 0o600                         # it may hold credentials: owner-only
 tmp = f"{path}.mesa-tmp.{os.getpid()}"
-with open(tmp, 'w') as f:
+fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+with os.fdopen(fd, 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
+os.chmod(tmp, mode)                      # os.replace swaps the inode: keep the old mode
 os.replace(tmp, path)
 PY
 }
@@ -277,6 +283,7 @@ codex_add_remote() {   # codex_add_remote <name> <url>
   "$py" - "${CODEX_HOME:-$HOME/.codex}/config.toml" "$name" "$url" <<'PY'
 import json, os, sys
 path, name, url = sys.argv[1], sys.argv[2], sys.argv[3]
+path = os.path.realpath(path)            # write through a symlinked config, as codex does
 try:
     import tomllib
 except ImportError:              # python < 3.11: write without the parse check
@@ -298,9 +305,15 @@ new = (text.rstrip('\n') + '\n\n' if text.strip() else '') + block
 if tomllib:
     tomllib.loads(new)
 os.makedirs(os.path.dirname(path), exist_ok=True)
+try:
+    mode = os.stat(path).st_mode & 0o777
+except FileNotFoundError:
+    mode = 0o600                         # codex writes config.toml owner-only too
 tmp = f"{path}.mesa-tmp.{os.getpid()}"
-with open(tmp, 'w') as f:
+fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+with os.fdopen(fd, 'w') as f:
     f.write(new)
+os.chmod(tmp, mode)                      # os.replace swaps the inode: keep the old mode
 os.replace(tmp, path)
 PY
 }
@@ -312,6 +325,7 @@ json_remove_server() {   # json_remove_server <file> <flavor> <name>  (never fai
   "$py" - "$file" "$flavor" "$name" <<'PY' || warn "could not update $file — remove '$name' manually"
 import json, os, sys
 path, flavor, name = sys.argv[1], sys.argv[2], sys.argv[3]
+path = os.path.realpath(path)            # write through a symlinked config
 key = 'mcpServers' if flavor == 'antigravity' else 'mcp'
 try:
     with open(path) as f:
@@ -328,10 +342,13 @@ except json.JSONDecodeError:
 if not (isinstance(data, dict) and name in data.get(key, {})):
     sys.exit(0)
 del data[key][name]
+mode = os.stat(path).st_mode & 0o777
 tmp = f"{path}.mesa-tmp.{os.getpid()}"
-with open(tmp, 'w') as f:
+fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+with os.fdopen(fd, 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
+os.chmod(tmp, mode)                      # os.replace swaps the inode: keep the old mode
 os.replace(tmp, path)
 PY
   return 0
@@ -355,6 +372,8 @@ uninstall() {
         fi ;;
       codex)
         if have codex; then
+          # Sign out of formation first: `codex mcp logout` needs the entry to exist.
+          codex mcp logout formation >/dev/null 2>&1 || true
           for name in $SERVERS; do   # serial on purpose: config.toml read-modify-write
             codex mcp remove "$name" >/dev/null 2>&1 && ok "codex: removed $name" || true
           done
@@ -367,6 +386,7 @@ uninstall() {
           fi
         done < <(antigravity_candidate_paths) ;;
       opencode)
+        have opencode && { opencode mcp logout formation >/dev/null 2>&1 </dev/null || true; }
         if [ -e "$OPENCODE_CONFIG" ]; then
           for name in $SERVERS; do json_remove_server "$OPENCODE_CONFIG" opencode "$name"; done
           ok "opencode: cleaned $OPENCODE_CONFIG"
@@ -503,11 +523,39 @@ env_flags() {   # env_flags <flag>  ->  FLAGGED_ENV=( <flag> K=V ... )
 #   <add> --url <name> <url>       remote (streamable HTTP + OAuth) server
 # Each adapter removes or overwrites an existing entry of the same name, so a
 # re-run replaces an older local `formation` registration with the hosted one.
+# Claude Code leaves an identical hosted entry alone: `claude mcp remove` also
+# deletes the server's stored sign-in.
 # ---------------------------------------------------------------------------
+claude_has_remote() {   # claude_has_remote <name> <url>: already the hosted entry in $MCP_SCOPE?
+  local py; py="$(mesa_python)" || return 1
+  "$py" - "$1" "$2" "$MCP_SCOPE" "$PWD" <<'PY'
+import json, os, sys
+name, url, scope, cwd = sys.argv[1:]
+try:
+    if scope == 'project':
+        with open(os.path.join(cwd, '.mcp.json')) as f:
+            data = json.load(f)
+    else:
+        base = os.environ.get('CLAUDE_CONFIG_DIR') or os.path.expanduser('~')
+        with open(os.path.join(base, '.claude.json')) as f:
+            data = json.load(f)
+        if scope == 'local':
+            data = data.get('projects', {}).get(cwd, {})
+    entry = (data.get('mcpServers') or {}).get(name) or {}
+    sys.exit(0 if entry.get('type') == 'http' and entry.get('url') == url else 1)
+except Exception:
+    sys.exit(1)
+PY
+}
+
 add_claude() {
   local name
   if [ "$1" = --url ]; then
     name="$2"
+    if claude_has_remote "$name" "$3"; then
+      ok "claude: $name already registered → $3 (scope: $MCP_SCOPE; sign-in kept)"
+      return
+    fi
     claude mcp remove "$name" -s "$MCP_SCOPE" >/dev/null 2>&1 || true
     claude mcp add --transport http -s "$MCP_SCOPE" "$name" "$3"
     ok "claude: registered $name → $3 (scope: $MCP_SCOPE)"
@@ -520,12 +568,28 @@ add_claude() {
   ok "claude: registered $name (scope: $MCP_SCOPE)"
 }
 
+codex_supports_remote() {   # true unless `codex --version` is older than 0.77
+  # Older releases cannot read a `url` server table (before 0.43 it breaks the
+  # whole config.toml) or sign in to it without an experimental flag.
+  local v major minor
+  v="$(codex --version 2>/dev/null | awk 'NR==1 {print $NF}')"
+  case "$v" in [0-9]*.[0-9]*) ;; *) return 0 ;; esac   # unknown format: don't block
+  IFS=. read -r major minor _ <<<"$v"
+  minor="${minor%%[!0-9]*}"
+  [ "$major" -gt 0 ] || [ "${minor:-0}" -ge 77 ]
+}
+
 add_codex() {
   # Always remove first (re-add idempotency is not guaranteed); calls stay
   # strictly serial — codex does a read-modify-write on config.toml.
   local name
   if [ "$1" = --url ]; then
     name="$2"
+    if ! codex_supports_remote; then
+      CODEX_REMOTE_SKIPPED=1
+      warn "codex: $(codex --version 2>/dev/null) is older than 0.77 — $name not registered. Update Codex (npm install -g @openai/codex@latest) and re-run with --for codex."
+      return 0
+    fi
     codex mcp remove "$name" >/dev/null 2>&1 || true
     codex_add_remote "$name" "$3"
     ok "codex: registered $name → $3"
@@ -614,7 +678,7 @@ summary() {
         say "Claude Code (scope: $MCP_SCOPE):"
         claude mcp list 2>/dev/null || true ;;
       codex)
-        say "Codex CLI: servers written to ~/.codex/config.toml"
+        say "Codex CLI: servers written to ${CODEX_HOME:-~/.codex}/config.toml"
         echo "    verify with: codex mcp list   (restart any running codex session)" ;;
       antigravity)
         say "Antigravity: servers written to:"
@@ -628,15 +692,22 @@ summary() {
   echo
   say "Next steps"
   echo "  • Open your agent and try a tool, e.g. ask it to 'ping the CyVerse Data Store' (mesa-mcp ds_ping)."
-  echo "  • mesa-mcp and irods use anonymous public access by default (data.cyverse.org, zone iplant)."
-  echo "    To authenticate them, re-run with CYVERSE_USERNAME / CYVERSE_PASSWORD set, or edit"
-  echo "    $MESA_HOME/repos/irods-mcp-server/config-stdio.yaml and your ~/.irods/irods_environment.json."
-  echo "  • formation ($FORMATION_URL) needs a one-time sign-in with your CyVerse account:"
+  if [ "$BUILD_GO" -eq 1 ]; then
+    echo "  • mesa-mcp and irods use anonymous public access by default (data.cyverse.org, zone iplant)."
+    echo "    To authenticate mesa-mcp, re-run with CYVERSE_USERNAME / CYVERSE_PASSWORD set; for irods, edit"
+    echo "    $MESA_HOME/repos/irods-mcp-server/config-stdio.yaml and your ~/.irods/irods_environment.json."
+  else
+    echo "  • mesa-mcp uses anonymous public access by default (data.cyverse.org, zone iplant)."
+    echo "    To authenticate it, re-run with CYVERSE_USERNAME / CYVERSE_PASSWORD set."
+    echo "    (irods was not installed: install Go >= 1.${GO_MIN_MINOR} and re-run without --no-go to add it.)"
+  fi
+  echo "  • formation ($FORMATION_URL) needs a one-time sign-in with your CyVerse account in each client:"
   for client in $CLIENTS_SELECTED; do
     case "$client" in
       claude)      echo "      Claude Code:  run /mcp inside Claude Code, or: claude mcp login formation" ;;
-      codex)       echo "      Codex:        codex mcp login formation" ;;
-      antigravity) echo "      Antigravity:  open the MCP servers panel and sign in to formation" ;;
+      codex)       [ "$CODEX_REMOTE_SKIPPED" -eq 1 ] \
+                     || echo "      Codex:        codex mcp login formation" ;;
+      antigravity) echo "      Antigravity:  run /mcp in agy (or refresh the IDE's MCP panel) and sign in to formation (untested by MESA)" ;;
       opencode)    echo "      OpenCode:     opencode mcp auth formation" ;;
     esac
   done

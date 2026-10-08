@@ -45,7 +45,7 @@ The legacy form https://idss-mesa.github.io/docs/<path>.md also still returns th
 - [Codex CLI integration](https://idss-mesa.github.io/docs/codex/): How MESA registers its MCP servers with the OpenAI Codex CLI, and how to manage them there. Markdown twin: https://idss-mesa.github.io/docs/codex/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/codex.md
 - [Antigravity integration](https://idss-mesa.github.io/docs/antigravity/): How MESA registers its MCP servers with Google Antigravity (IDE and agy CLI) by writing mcp_config.json. Markdown twin: https://idss-mesa.github.io/docs/antigravity/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/antigravity.md
 - [OpenCode integration](https://idss-mesa.github.io/docs/opencode/): How MESA registers its MCP servers in OpenCode's global opencode.json, and how to verify them. Markdown twin: https://idss-mesa.github.io/docs/opencode/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/opencode.md
-- [claude.ai and Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/): Add CyVerse's hosted Formation MCP server to claude.ai and Claude Desktop as a custom connector, sign in with your CyVerse account, and use it in chats and in Claude Code. Markdown twin: https://idss-mesa.github.io/docs/claude-ai/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/claude-ai.md
+- [claude.ai and Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/): Add CyVerse's hosted Formation MCP server (and, optionally, CyVerse's public Data Store server) to claude.ai and Claude Desktop as a custom connector, sign in with your CyVerse account, and use it in chats and in Claude Code. Markdown twin: https://idss-mesa.github.io/docs/claude-ai/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/claude-ai.md
 
 ## Servers
 
@@ -53,7 +53,7 @@ The legacy form https://idss-mesa.github.io/docs/<path>.md also still returns th
 - [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/): The AVU metadata-history library that backs mesa-mcp — DuckLake snapshots, provenance, and time-travel. Markdown twin: https://idss-mesa.github.io/docs/servers/mesa-ducklake/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/mesa-ducklake.md
 - [mesa-anyjev](https://idss-mesa.github.io/docs/servers/mesa-anyjev/): Calibrated, declarative ontology and schema decisions for MESA — a plugin that adds the mesa_decide_* tools to mesa-mcp and records every decision next to the DuckLake history. (draft) Markdown twin: https://idss-mesa.github.io/docs/servers/mesa-anyjev/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/mesa-anyjev.md
 - [irods-mcp-server](https://idss-mesa.github.io/docs/servers/irods-mcp-server/): The reference Go MCP server for the CyVerse Data Store (iRODS), registered as irods. Markdown twin: https://idss-mesa.github.io/docs/servers/irods-mcp-server/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/irods-mcp-server.md
-- [Formation (hosted)](https://idss-mesa.github.io/docs/servers/formation-mcp/): CyVerse's hosted MCP server for the Discovery Environment at https://de.cyverse.org/formation/mcp — launch apps, manage analyses, and work with the Data Store from claude.ai, Claude Code, Codex, OpenCode, or Antigravity. Markdown twin: https://idss-mesa.github.io/docs/servers/formation-mcp/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/formation-mcp.md
+- [Formation (hosted)](https://idss-mesa.github.io/docs/servers/formation-mcp/): CyVerse's hosted MCP server for the Discovery Environment at https://de.cyverse.org/formation/mcp — launch apps, manage analyses, and work with the Data Store from claude.ai or Claude Code; Codex, OpenCode, and Antigravity can be set up too, but their sign-in is not yet confirmed. Markdown twin: https://idss-mesa.github.io/docs/servers/formation-mcp/index.md Raw source: https://raw.githubusercontent.com/idss-mesa/docs/main/docs/servers/formation-mcp.md
 
 ## About
 
@@ -61,7 +61,7 @@ The legacy form https://idss-mesa.github.io/docs/<path>.md also still returns th
 
 ## Meta
 
-- [Full corpus in one file](https://idss-mesa.github.io/docs/llms-full.txt): every page's Markdown with frontmatter, links made absolute; about 161 KB, roughly 41,000 tokens. Prefer it over fetching pages one at a time.
+- [Full corpus in one file](https://idss-mesa.github.io/docs/llms-full.txt): every page's Markdown with frontmatter, links made absolute; about 168 KB, roughly 43,000 tokens. Prefer it over fetching pages one at a time.
 - [Documentation update log](https://idss-mesa.github.io/docs/log/): dated history of changes to this bundle.
 - [For AI agents](https://idss-mesa.github.io/docs/about/ai-agents/): endpoints, trust signals, and what to do if you cannot fetch this site.
 - [Sitemap](https://idss-mesa.github.io/docs/sitemap.xml) and [robots.txt](https://idss-mesa.github.io/docs/robots.txt): crawlers honour only the origin https://idss-mesa.github.io/robots.txt, which is equally permissive.

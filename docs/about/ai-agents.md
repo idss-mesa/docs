@@ -24,7 +24,7 @@ sources:
     title: "Model Context Protocol specification"
     author: "team:modelcontextprotocol"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # For AI agents

@@ -53,8 +53,8 @@ table: `command`, `args`, and `env` keys for a local server, `url` for a remote 
 codex mcp list               # show all servers, with their sign-in status
 codex mcp get mesa-mcp       # show one server's config
 codex mcp remove mesa-mcp
-codex mcp login formation    # sign in to Formation (add --no-browser on a remote machine)
-codex mcp logout formation
+codex mcp login formation    # sign in to Formation (add --no-browser on a remote machine; Codex 0.156+)
+codex mcp logout formation   # sign out; run it before removing formation, it needs the entry
 ```
 
 Inside a Codex TUI session, run `/mcp` to verify the servers and their tools loaded.
@@ -86,7 +86,8 @@ tool_timeout_sec = 600
 The `env` table on `mesa-mcp` only appears when you installed with
 [credentials](credentials.md); anonymous installs omit it. `formation` never takes
 credentials. `tool_timeout_sec = 600` lets `launch_app_and_wait` wait for an app for up to
-the 9 minutes Formation allows; Codex's default limit is 5 minutes.
+the 9 minutes Formation allows. Codex's default limit is 300 seconds from Codex 0.141, and
+60 or 120 seconds in older releases, which can be shorter than a VICE app takes to start.
 
 !!! note "mesa-ducklake is not listed here"
     `mesa-ducklake` is a **library** imported by `mesa-mcp`, not a separate MCP server. Its
@@ -95,15 +96,24 @@ the 9 minutes Formation allows; Codex's default limit is 5 minutes.
 
 ## Signing in to Formation
 
-Run `codex mcp login formation`. Codex opens the CyVerse sign-in page in your browser
-(`--no-browser` prints the address instead). Until you sign in, Codex tells you at startup
-to run `codex mcp login formation`. Remote servers with OAuth sign-in need Codex 0.77 or
-newer.
+Run `codex mcp login formation`. Codex opens the CyVerse sign-in page in your browser.
+On Codex 0.156 or newer, `--no-browser` prints the address instead and takes back the
+address your browser lands on; with an older Codex, update it first with
+`npm install -g @openai/codex@latest`. Until you sign in, Codex tells you at startup to
+run `codex mcp login formation`. Remote servers with OAuth sign-in need Codex 0.77 or
+newer; the installer skips `formation` for an older Codex and says so.
 
-To add Formation by hand instead of through the installer, either run
-`codex mcp add formation --url https://de.cyverse.org/formation/mcp` (it signs you in
-immediately) or paste the `[mcp_servers.formation]` table above into
-`~/.codex/config.toml`.
+CyVerse has not confirmed that its sign-in accepts Codex's callback address
+(`http://127.0.0.1:<port>/callback`). If the CyVerse page says
+`Invalid parameter: redirect_uri`, see
+[Troubleshooting](troubleshooting.md#formation-sign-in-and-connection).
+
+To add Formation by hand instead of through the installer, paste the
+`[mcp_servers.formation]` table above into `~/.codex/config.toml` and run
+`codex mcp login formation`. Or run
+`codex mcp add formation --url https://de.cyverse.org/formation/mcp` (it starts the
+sign-in straight away) and add `tool_timeout_sec = 600` under the
+`[mcp_servers.formation]` table it writes, because the command does not set a timeout.
 
 ## Troubleshooting notes
 
@@ -112,7 +122,8 @@ immediately) or paste the `[mcp_servers.formation]` table above into
 - `/mcp` shows nothing → `codex mcp list`, then inspect `~/.codex/config.toml`.
 - Re-running the installer updates the entries in place (it removes and re-adds each
   server), so a stale path after moving `~/.mesa` is fixed by a re-run. It also replaces
-  the local `formation` entry older installs created with the hosted one.
+  the local `formation` entry older installs created with the hosted one, and keeps your
+  Formation sign-in.
 - `formation` needs sign-in → `codex mcp login formation`.
 
 More in the general [Troubleshooting](troubleshooting.md) page.

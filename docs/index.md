@@ -69,7 +69,8 @@ curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | ba
 
 Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. The Data Store servers use
 anonymous public CyVerse access by default — no credentials required to get started — and
-the hosted Discovery Environment server asks you to sign in once with your CyVerse account.
+the hosted Discovery Environment server asks you to sign in with your CyVerse account once
+in each client.
 
 [Get started :material-arrow-right:](quickstart.md){ .md-button .md-button--primary }
 [Install reference](install.md){ .md-button }
@@ -85,8 +86,8 @@ the hosted Discovery Environment server asks you to sign in once with your CyVer
 | [**Formation**](servers/formation-mcp.md) | hosted by CyVerse | CyVerse Discovery Environment — launch apps, manage analyses, read and write Data Store files. Nothing to build: registered by URL, <https://de.cyverse.org/formation/mcp> |
 
 After install, the three servers (`mesa-mcp`, `irods`, `formation`) are registered with
-every client the installer detected; sign in to `formation` once with your CyVerse
-account. Formation also works on its own as a
+every client the installer detected; sign in to `formation` with your CyVerse account
+once in each client. Formation also works on its own as a
 [custom connector on claude.ai and in Claude Desktop](claude-ai.md). Open your agent and ask it to *"ping the CyVerse
 Data Store"* to confirm the link — see the [Quickstart](quickstart.md) for per-client
 verification.
