@@ -1,5 +1,24 @@
 # Directory Update Log
 
+## 2026-10-08
+
+* **Creation**: Added the [MESA Portal](portal/index.md) section, end-user guides for
+  <https://mesa.cyverse.org>: [Overview](portal/overview.md) (signing in, navigation,
+  dashboard, themes), [Managing data](portal/data.md) (Data Browser views, upload, move,
+  trash, sharing, AVU metadata, search), [Starting applications](portal/applications.md)
+  (catalog sections, filters, Instant Launch, Launch with Options, CPU or GPU builds), and
+  [Managing analyses](portal/analyses.md) (statuses, Open App, Extend Time, Monitor, Save &
+  Exit, Terminate, results). Adapted from the portal's own user guides, with 21
+  screenshots in `assets/portal/` rendered from the portal's sample data.
+* **Creation**: Added the [Featured apps](apps/index.md) section with a page for each MESA
+  VICE app — [MESA CLI (Cloud Shell)](apps/cli.md), [MESA JupyterLab](apps/jupyterlab.md),
+  [MESA RStudio Geospatial](apps/rstudio.md), [MESA VS Code](apps/vscode.md), and
+  [MESA KASM Ubuntu Desktop](apps/kasm.md) — and [AI agents in the MESA apps](apps/agents.md)
+  for the agent CLIs, `cyverse-login`, AI Verde, and local Ollama models they share.
+* **Update**: The [home page](index.md), the site description, and [llms.txt](llms.txt)
+  now cover the portal and the featured apps alongside the MCP stack;
+  [For AI agents](about/ai-agents.md) points to the new sections.
+
 ## 2026-09-12
 
 * **Update**: Made the Markdown easier for agents to find, following

@@ -7,7 +7,7 @@ Each page below begins with its canonical URL followed by its original Markdown,
 ---
 okf_version: "0.2"
 title: MESA
-description: One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
+description: MESA documentation — the MESA Portal at mesa.cyverse.org, its featured CyVerse apps, and the one-line install of the MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
 icon: lucide/rocket
 ---
 
@@ -19,14 +19,54 @@ icon: lucide/rocket
 
 # MESA
 
-**MESA** wires the CyVerse data-management MCP servers into your AI coding agent —
-[Claude Code](https://idss-mesa.github.io/docs/claude-code/), [Codex CLI](https://idss-mesa.github.io/docs/codex/), [Antigravity](https://idss-mesa.github.io/docs/antigravity/), or
-[OpenCode](https://idss-mesa.github.io/docs/opencode/) — with a single command. One installer clones, builds, and
-registers everything you need to browse and curate the CyVerse Data Store (iRODS), apply
-ontology-backed metadata, and launch Discovery Environment apps — all from natural
-language.
+**MESA** (Multidisciplinary Environment for Scientific Advancement) connects you to
+CyVerse data and computing three ways:
 
-## Install
+- the **[MESA Portal](https://idss-mesa.github.io/docs/portal/)** at <https://mesa.cyverse.org>, a web site for
+  your CyVerse Data Store files, apps, and analyses;
+- the **[featured apps](https://idss-mesa.github.io/docs/apps/)** — JupyterLab, RStudio, VS Code, a terminal, and a
+  Linux desktop in the cloud, each with AI coding agents already set up;
+- the **MESA MCP stack**, which wires the CyVerse data-management MCP servers into your AI
+  coding agent — [Claude Code](https://idss-mesa.github.io/docs/claude-code/), [Codex CLI](https://idss-mesa.github.io/docs/codex/),
+  [Antigravity](https://idss-mesa.github.io/docs/antigravity/), or [OpenCode](https://idss-mesa.github.io/docs/opencode/) — with a single command, so
+  you can browse and curate the CyVerse Data Store (iRODS), apply ontology-backed
+  metadata, and launch Discovery Environment apps from natural language.
+
+## MESA Portal
+
+Sign in at <https://mesa.cyverse.org> with your CyVerse account (free at
+<https://user.cyverse.org>). Nothing to install.
+
+![The MESA Portal Applications page listing the five MESA featured apps](https://idss-mesa.github.io/docs/assets/portal/apps-mesa-apps.webp)
+
+| I want to… | Guide |
+|---|---|
+| Find my way around and sign in | [Overview](https://idss-mesa.github.io/docs/portal/overview/) |
+| Browse, upload, share, and describe my files | [Managing data](https://idss-mesa.github.io/docs/portal/data/) |
+| Start JupyterLab, RStudio, VS Code, or another app | [Starting applications](https://idss-mesa.github.io/docs/portal/applications/) |
+| Get back to a running app, extend it, stop it, find its results | [Managing analyses](https://idss-mesa.github.io/docs/portal/analyses/) |
+
+[Open the MESA Portal :material-arrow-right:](https://mesa.cyverse.org){ .md-button .md-button--primary }
+[Portal guide](https://idss-mesa.github.io/docs/portal/overview/){ .md-button }
+
+## Featured apps
+
+Each featured app runs on CyVerse VICE with your Data Store mounted, the AI coding-agent
+CLIs installed, and the MESA MCP servers registered. Each also has a GPU build with CUDA
+PyTorch and a local [Ollama](https://ollama.com) server.
+
+| App | What it is |
+|---|---|
+| [**MESA CLI**](https://idss-mesa.github.io/docs/apps/cli/) (*MESA Cloud Shell*) | A terminal in the browser, with Claude Code, Codex, OpenCode, Goose, and Antigravity |
+| [**MESA JupyterLab**](https://idss-mesa.github.io/docs/apps/jupyterlab/) | Python, R, and Julia notebooks, with RStudio and VS Code in the Launcher |
+| [**MESA RStudio Geospatial**](https://idss-mesa.github.io/docs/apps/rstudio/) | RStudio on the Rocker geospatial stack (sf, terra, stars, GDAL) |
+| [**MESA VS Code**](https://idss-mesa.github.io/docs/apps/vscode/) | VS Code in the browser, with Cline wired to the MESA MCP servers |
+| [**MESA KASM Ubuntu Desktop**](https://idss-mesa.github.io/docs/apps/kasm/) | A full Ubuntu desktop in the browser |
+
+See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) for signing in to CyVerse and connecting
+AI Verde or local models inside any of them.
+
+## Install the MCP stack
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
@@ -366,6 +406,1325 @@ Then register the servers with your client:
     Add the servers to `~/.config/opencode/opencode.json` (respecting
     `$XDG_CONFIG_HOME`) under the `mcp` key. See
     [the registration MESA creates](https://idss-mesa.github.io/docs/opencode/#the-registration-mesa-creates).
+
+---8<--- https://idss-mesa.github.io/docs/portal/overview/
+
+---
+type: Guide
+title: MESA Portal overview
+description: What the MESA Portal at mesa.cyverse.org is, how to sign in with a CyVerse account, and how its navigation, dashboard, and themes work.
+tags:
+  - portal
+  - mesa.cyverse.org
+  - cyverse
+  - getting-started
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: portal
+    resource: "https://mesa.cyverse.org/"
+    title: "MESA Portal"
+    author: "team:idss-mesa"
+  - id: portal-docs
+    resource: "https://mesa.cyverse.org/docs/"
+    title: "MESA Portal documentation (Portal Overview user guide)"
+    author: "team:idss-mesa"
+  - id: cyverse-account
+    resource: "https://user.cyverse.org"
+    title: "CyVerse user portal (account sign-up)"
+    author: "team:cyverse"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# MESA Portal overview
+
+The **MESA Portal** at **<https://mesa.cyverse.org>** is the web front end of MESA. It
+puts your CyVerse Data Store files, the CyVerse Discovery Environment (DE) apps, and your
+running analyses on one site, with the MESA [featured apps](https://idss-mesa.github.io/docs/apps/) one click
+away[^portal]. You need nothing installed: a browser and a CyVerse account are enough.
+
+Everything you do in the portal acts on your own CyVerse account. Files you upload land in
+your Data Store home folder, and analyses you launch appear in the Discovery Environment
+too, and the other way round. The portal is an alternative view on the same account, not a
+separate copy.
+
+![The MESA Portal landing page, with Sign in with CyVerse and Create Account buttons](https://idss-mesa.github.io/docs/assets/portal/portal-landing.webp)
+
+!!! note "About the screenshots"
+    The screenshots in this section show the portal with sample data (a user called
+    `testuser` and a NEON field-site folder). Your own files, apps, and analyses appear in
+    their place.
+
+## Sign in
+
+The portal uses CyVerse single sign-on.
+
+1. Open <https://mesa.cyverse.org>.
+2. Click **Sign in with CyVerse** (or **Login** in the top bar).
+3. Enter your CyVerse username and password on the CyVerse sign-in page.
+4. You return to the portal on your [dashboard](#dashboard).
+
+No CyVerse account yet? Click **Create Account**, or register at
+<https://user.cyverse.org>[^cyverse-account]. Registration is free.
+
+On your first sign-in the portal creates your portal profile, links it to your CyVerse
+account, and reads your CyVerse team memberships and resource quotas.
+
+### What works without signing in
+
+You can look around before you sign in:
+
+| Page | Signed out | Signed in |
+|---|---|---|
+| Data Browser | **Community** and **Public** data, read only | Also **My Files**, **Shared**, and **User Shared**, with upload, sharing, and metadata editing |
+| Applications (open <https://mesa.cyverse.org/applications/>) | The public **MESA Apps**, **Featured Apps**, and **Browse All Apps** (with search) | Every section, plus launching |
+| Analyses | — | Your analyses |
+
+Signed out, the sidebar lists only **Home** and **Data Browser**; the landing page's
+**View Community Data** link opens the MESA community folder.
+
+## Find your way around
+
+![The portal dashboard: Recent Analyses, Resource Usage, My Working Groups, and Quick Actions](https://idss-mesa.github.io/docs/assets/portal/portal-dashboard.webp)
+
+The **sidebar** on the left groups the pages:
+
+| Section | Pages |
+|---|---|
+| **Portal navigation** | **Home** (your dashboard), **Events** (workshops and seminars), **Working Groups** (MESA research groups you can join) |
+| **Data & Apps** | **Data Browser** — see [Managing data](https://idss-mesa.github.io/docs/portal/data/); **Applications** — see [Starting applications](https://idss-mesa.github.io/docs/portal/applications/); **Analyses** — see [Managing analyses](https://idss-mesa.github.io/docs/portal/analyses/) |
+| **Help & Docs** | **Documentation** — the portal's own user guides (signed-in users) |
+
+The **top bar** links to the [MESA website](https://idss-mesa.github.io/), the
+[Discovery Environment](https://de.cyverse.org), and these docs, and holds the theme
+switch and your user menu (profile, settings, quotas, sign out). On a phone or tablet the
+sidebar folds into the ☰ menu button.
+
+## Dashboard
+
+**Home** is your dashboard. It shows, at a glance:
+
+- **Recent Analyses**: your latest analyses with their status. A running interactive app
+  has an **Open** link; **View all** goes to the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page.
+- **Resource Usage**: CPU hours and Data Store space used against your CyVerse quota.
+- **My Working Groups**: the MESA working groups you belong to and your role in each.
+- **Quick Actions**: shortcuts to launch an app, browse data, check analyses, and open
+  working groups.
+
+## Light, dark, or automatic theme
+
+Click the theme button in the top bar to cycle **Light → Dark → Auto**. *Auto* follows
+your operating system's setting. You can also choose a theme under **Settings** in the
+user menu. Your choice is kept in your browser.
+
+## The portal, the apps, and the MCP stack
+
+MESA offers three ways in to the same CyVerse account:
+
+| Way in | Best for | Start here |
+|---|---|---|
+| **MESA Portal** (this section) | Browsing and sharing data, launching apps, and watching analyses from a web browser | <https://mesa.cyverse.org> |
+| **Featured apps** | Working in JupyterLab, RStudio, VS Code, a terminal, or a full Linux desktop in the cloud, with AI coding agents already set up | [Featured apps](https://idss-mesa.github.io/docs/apps/) |
+| **MESA MCP stack** | Driving the Data Store and the Discovery Environment from an AI agent on your own computer | [Quickstart](https://idss-mesa.github.io/docs/quickstart/) |
+
+## Getting help
+
+- Something in the portal not working? See the troubleshooting notes at the end of
+  [Managing data](https://idss-mesa.github.io/docs/portal/data/#troubleshooting), [Starting applications](https://idss-mesa.github.io/docs/portal/applications/#troubleshooting),
+  and [Managing analyses](https://idss-mesa.github.io/docs/portal/analyses/#troubleshooting).
+- Signed-in users can read the portal's own user guides from **Documentation** in the
+  sidebar[^portal-docs].
+- CyVerse service status and support: <https://status.cyverse.org> and
+  <https://user.cyverse.org/support>.
+
+[^portal]: https://idss-mesa.github.io/docs/portal/MESA Portal, <https://mesa.cyverse.org/>.
+[^portal-docs]: https://idss-mesa.github.io/docs/portal/MESA Portal documentation, <https://mesa.cyverse.org/docs/> (sign-in required).
+[^cyverse-account]: https://idss-mesa.github.io/docs/portal/CyVerse user portal, <https://user.cyverse.org>.
+
+---8<--- https://idss-mesa.github.io/docs/portal/data/
+
+---
+type: Guide
+title: Managing data in the MESA Portal
+description: Browse, upload, organise, share, and describe your CyVerse Data Store files with the MESA Portal Data Browser.
+tags:
+  - portal
+  - data-browser
+  - data-store
+  - sharing
+  - metadata
+  - avu
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: portal
+    resource: "https://mesa.cyverse.org/data/"
+    title: "MESA Portal Data Browser"
+    author: "team:idss-mesa"
+  - id: portal-docs
+    resource: "https://mesa.cyverse.org/docs/"
+    title: "MESA Portal documentation (Data Browser user guide)"
+    author: "team:idss-mesa"
+  - id: cyverse-data-store
+    resource: "https://learning.cyverse.org/ds/"
+    title: "CyVerse Data Store documentation"
+    author: "team:cyverse"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# Managing data
+
+The **Data Browser** (<https://mesa.cyverse.org/data/>) is the portal's window on the
+CyVerse Data Store[^portal]. Use it to browse your files and MESA's shared datasets, upload
+and organise files, share them with collaborators, and read or edit their metadata.
+
+![The Data Browser showing a folder in My Files as cards, with the folder header above](https://idss-mesa.github.io/docs/assets/portal/data-my-files.webp)
+
+## Open the Data Browser
+
+Click **Data Browser** in the sidebar. Signed in, it opens your home folder
+(`/iplant/home/<your username>`); signed out, it opens the MESA community data.
+
+## Choose where to look
+
+The row of buttons under the header switches between five places:
+
+| View | What it shows | Who sees it |
+|---|---|---|
+| **My Files** | Your Data Store home folder, `/iplant/home/<username>` | Signed-in users |
+| **Shared** | The CyVerse community project tree, `/iplant/home/shared` | Signed-in users |
+| **User Shared** | One folder per person who has shared something with you or with a group you belong to | Signed-in users |
+| **Community** | The MESA community folder, `/iplant/home/shared/mesa` | Everyone |
+| **Public** | Public CyVerse data collections, read only | Everyone |
+
+![The MESA Community folder as a signed-out visitor sees it: read only, with Community and Public views](https://idss-mesa.github.io/docs/assets/portal/data-community.webp)
+
+![User Shared lists one folder for each person who has shared data with you](https://idss-mesa.github.io/docs/assets/portal/data-user-shared.webp)
+
+**User Shared** names people, not folders: open a person to see what they let you open.
+It is the same list as *Shared With Me* in the Discovery Environment. The list is
+refreshed every few minutes, so something shared a moment ago can take a little while to
+appear.
+
+## Read the folder header
+
+The dark band at the top describes the folder you are in:
+
+- **Trail and name**: the path from the view's starting folder. Click any part to jump
+  back to it, or drag a file onto a part to move the file there.
+- **Counts**: folders, files, and total size.
+- **Path**: the full Data Store path, with a copy button. Paste it into iCommands,
+  GoCommands, or an AI agent using the [MESA MCP servers](https://idss-mesa.github.io/docs/servers/).
+- **AVUs**: the folder's own metadata, with a count (see [Metadata](#describe-data-with-metadata-avus)).
+- **Share**: share the folder itself (shown when you own it).
+- **Ownership and access**: whose folder it is, your permission (**Owner**, **Can edit**,
+  or **Read only**), and how many others can open it (**Shared · N** or **Private**).
+- **Relationship chips**, when they apply: **DuckLake** (the folder belongs to a MESA
+  DuckLake project), **DOI** (a DOI was minted for it or a parent), DataCite relations
+  such as **Part of** or **Derived from**, the **Working group** or **Team** it belongs to,
+  and **Analysis output** for folders under your `analyses` folder. **+N more** shows the
+  rest.
+
+## Browse and find files
+
+- Click a folder's name to open it. Each file card shows its size, type, and buttons:
+  **View** (open it in the built-in viewer), download, and open in a new tab.
+- Switch between **cards** and a **list** with the two buttons at the right.
+- Sort with the **Name A–Z** menu (name or date, either way).
+- **Hidden** shows dot-files; the portal may ask you to sign in again first.
+- Large folders are split into pages; use **Next**, **Previous**, and **Per page** at the
+  bottom.
+
+![The Data Browser in list view](https://idss-mesa.github.io/docs/assets/portal/data-list-view.webp)
+
+### Search
+
+Type in the **Search files and folders** box to find items by name in the folder you are
+in and the folders below it. The menu beside the box limits the results to **Files** or
+**Folders**. Each result shows its full path; **Clear search** (or **×**) returns to the
+folder.
+
+![Search results for "plot" in the SRER folder](https://idss-mesa.github.io/docs/assets/portal/data-search.webp)
+
+### View files in the browser
+
+**View** opens supported files without downloading them: Jupyter notebooks, R Markdown,
+Quarto, and Markdown documents; PDF, HTML, JSON, and YAML; images (JPEG, PNG, GIF, SVG,
+WebP, BMP); and more, such as GeoJSON, video, and DuckDB or Parquet tables. A folder of
+images can also be opened as a gallery. For anything else, download the file or open it in
+the Discovery Environment.
+
+## Upload, create, move, and delete
+
+The action row (signed in, in folders you can write to) has **Upload**, **New File**, and
+**New Folder**.
+
+![The Upload Files dialog with two files selected](https://idss-mesa.github.io/docs/assets/portal/data-upload.webp){ width="420" }
+
+- **Upload**: click **Upload** and choose files, or drag files from your computer onto the
+  listing. A progress panel tracks each upload.
+- **New Folder**: type a name and click **Create**. Avoid spaces; use `-` or `_`.
+- **New File**: start a new file from a template, for example a Python script or a
+  Markdown note.
+- **Rename** and **Trash**: in each card's **⋮** menu. **Trash** moves the item to your
+  Data Store trash, from which the Discovery Environment can restore it.
+- **Move**: drag a card onto a folder in the trail, or select several items and click
+  **Move**.
+
+![A file's ⋮ menu: Rename, Metadata, Full Metadata Page, Share, and Trash](https://idss-mesa.github.io/docs/assets/portal/data-card-menu.webp)
+
+### Work on several items at once
+
+Tick the box on each card (or **Select All**). A toolbar appears with **Trash**, **Move**,
+**Share**, and **Clear**.
+
+## Share data
+
+1. Open the share dialog: **Share** in the folder header for the folder you are in, or
+   **Share** in an item's **⋮** menu, or **Share** in the toolbar for several selected
+   items.
+2. Choose who gets access:
+    - **All CyVerse Users (public)**: every signed-in CyVerse user can read it.
+    - **Anyone without login (anonymous)**: anyone on the internet can read it.
+    - **Share with User**: type a complete CyVerse username or email address, pick
+      **Read**, **Write**, or **Own**, and click **Share**.
+3. **Current Permissions** lists everyone who has access. Change a level or click
+   **Remove** to take access away.
+
+![The share dialog for a folder: public access options, Share with User, and Current Permissions](https://idss-mesa.github.io/docs/assets/portal/data-share.webp){ width="520" }
+
+Sharing a folder shares everything in it, including files added later. The people you
+share with find it under **User Shared**.
+
+## Describe data with metadata (AVUs)
+
+Data Store metadata is stored as **AVUs**, attribute–value–unit triples: for example the
+attribute `depth`, the value `0.06`, and the unit `m`.
+
+1. Click the small **AVUs** button under a file or folder's name (or **AVUs** in the folder
+   header for the current folder).
+2. The panel lists the item's AVUs. If you own the item or can write to it, edit any
+   field in place, **Add row** for a new AVU, or use the bin icon to remove one.
+3. Click **Save**.
+
+![The AVU panel for data.csv, with editable attribute, value, and unit fields](https://idss-mesa.github.io/docs/assets/portal/data-avus.webp){ width="560" }
+
+Good to know:
+
+- Every AVU needs an attribute and a value; the unit is optional.
+- Attribute names starting with `ipc` are reserved by CyVerse.
+- AVUs from Discovery Environment metadata templates are kept but not shown; edit those in
+  the DE.
+- **Open full metadata page** (at the bottom of the panel) shows the schema views
+  (DataCite, Dublin Core, EML, Local Contexts, ontology terms) and DOI information.
+- AVUs are what the [mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/) server reads and writes, so an AI
+  agent can find and curate the same metadata.
+
+## Data in the apps
+
+Interactive apps you start from the portal see your Data Store under `~/data-store`, and
+batch analyses write their results under `/iplant/home/<username>/analyses/` unless you
+choose another folder. Open **Analysis output** folders here, or use **View Results** on
+the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page.
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| **My Files** asks for a password | Your CyVerse single sign-on token is missing or expired. Sign out and sign in again with **Sign in with CyVerse**. If you are asked for a WebDAV password, set one in [CyVerse user settings](https://user.cyverse.org); **Clear Session** forgets it. |
+| Upload, share, or AVU buttons are missing | You are signed out, or you only have **Read only** access to the folder (see the folder header). |
+| A new file does not appear | Wait a few seconds and refresh the page. |
+| "Permission denied" | Ask the owner to share the item with you, with **Write** if you need to change it. |
+| "Some details unavailable" in the header | Part of the folder information did not load. Click **Retry**. |
+| The Data Store does not answer | Check <https://status.cyverse.org> for an outage. |
+
+[^portal]: https://idss-mesa.github.io/docs/portal/MESA Portal Data Browser, <https://mesa.cyverse.org/data/>; MESA Portal Data Browser user guide, <https://mesa.cyverse.org/docs/>.
+
+---8<--- https://idss-mesa.github.io/docs/portal/applications/
+
+---
+type: Guide
+title: Starting applications in the MESA Portal
+description: Find an app in the MESA Portal catalog, launch it with Instant Launch or Launch with Options, choose CPU or GPU, and open the running app.
+tags:
+  - portal
+  - applications
+  - vice
+  - discovery-environment
+  - launch
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: portal
+    resource: "https://mesa.cyverse.org/applications/"
+    title: "MESA Portal Applications catalog"
+    author: "team:idss-mesa"
+  - id: portal-docs
+    resource: "https://mesa.cyverse.org/docs/"
+    title: "MESA Portal documentation (Applications user guide)"
+    author: "team:idss-mesa"
+  - id: cyverse-vice
+    resource: "https://learning.cyverse.org/vice/"
+    title: "CyVerse VICE (Visual Interactive Computing Environment) documentation"
+    author: "team:cyverse"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# Starting applications
+
+The **Applications** page (<https://mesa.cyverse.org/applications/>) is a catalog of
+everything you can run on CyVerse: the MESA [featured apps](https://idss-mesa.github.io/docs/apps/) and the
+whole Discovery Environment (DE) catalog[^portal]. Interactive apps (*VICE* apps such as
+JupyterLab, RStudio, VS Code, a terminal, or a Linux desktop) start from the portal and
+open in a new browser tab; batch apps open in the Discovery Environment.
+
+![The MESA Apps tab: MESA JupyterLab, MESA Cloud Shell, MESA RStudio Geospatial, MESA VS Code, and MESA KASM Ubuntu Desktop](https://idss-mesa.github.io/docs/assets/portal/apps-mesa-apps.webp)
+
+## Quick start
+
+1. Click **Applications** in the sidebar. The **MESA Apps** tab opens.
+2. On the app you want, click **Instant Launch**.
+3. A new tab shows the launch progress and opens the app when it is ready, usually within
+   one to three minutes.
+4. Later, return to the app from the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page with **Open App**.
+
+You must be signed in to launch. Signed out, the cards show **Sign in to launch**.
+
+## Find an app
+
+### Sections
+
+The tabs above the catalog mirror the sections of the DE apps page:
+
+| Tab | What it shows | Sign-in needed |
+|---|---|---|
+| **MESA Apps** | The apps curated for MESA: the [featured apps](https://idss-mesa.github.io/docs/apps/) and any group apps you have access to | No (group apps: yes) |
+| **Featured Apps** | CyVerse's own featured apps | No |
+| **Apps Under Development** | Apps you created in the DE and have not published | Yes |
+| **Favorite Apps** | Apps you starred | Yes |
+| **My Public Apps** | Apps you published | Yes |
+| **Shared with Me** | Apps other CyVerse users shared with you | Yes |
+| **High-Performance Computing** | HPC apps that run on Tapis systems (needs a one-time Tapis authorization) | Yes |
+| **My Collections** | App collections of the CyVerse communities you belong to | Yes |
+| **Browse All Apps** | The complete CyVerse catalog; search results appear here | No |
+
+The address bar follows the tab, so you can bookmark a section: for example
+`https://mesa.cyverse.org/applications/?section=featured`.
+
+![The Featured Apps tab, with the All, VICE, DE, and OSG type filter](https://idss-mesa.github.io/docs/assets/portal/apps-featured.webp)
+
+### Filters
+
+- On **MESA Apps**, the chips filter by **GPU-enabled**, **Private Group Shared**,
+  **Analysis**, **Development**, **Desktop**, and **Featured**. Chips combine.
+- On the CyVerse sections, **All / VICE / DE / OSG** filters by how an app runs: **VICE**
+  apps are interactive and start in the portal, **DE** apps are batch jobs, and **OSG**
+  apps run on the Open Science Grid.
+- Switch between cards and a list with the buttons at the right.
+
+### Search
+
+Type in the search box and press **Enter**. The search covers the whole CyVerse catalog
+(app name, description, integrator, and the tool the app wraps) and shows the results on
+**Browse All Apps**. The type filter narrows the results. Click **×** to clear.
+
+![Search results for "hydrology" on Browse All Apps](https://idss-mesa.github.io/docs/assets/portal/apps-search.webp)
+
+### Favorites
+
+On the CyVerse sections, click the ☆ on a card to star the app; click again to remove it.
+Stars are saved to your CyVerse account, so the DE shows the same favorites. Find them
+under **Favorite Apps**.
+
+## Launch an app
+
+What a card offers depends on the kind of app:
+
+| App | Buttons | Where it runs |
+|---|---|---|
+| Interactive (VICE), including every MESA app | **Instant Launch**, **Launch with Options** | Starts from the portal, opens in a new tab |
+| Batch (DE) and OSG | **Open in Discovery Environment** | The DE, in a new tab |
+| HPC | **Open in Discovery Environment**, **Docs** | The DE |
+
+### Instant Launch
+
+**Instant Launch** starts the app with its default settings. A launch page opens in a new
+tab and steps through **Submitting**, **Queued**, **Container Starting**, **Initializing**,
+and **Running**; then it switches to the app.
+
+![The launch page stepping through Submitting, Queued, Container Starting, Initializing, and Running](https://idss-mesa.github.io/docs/assets/portal/apps-launching.webp){ width="640" }
+
+### Launch with Options
+
+**Launch with Options** opens a dialog where you choose:
+
+- **Compute**: **CPU** or **GPU**, for apps that have a GPU build (see below).
+- **Analysis Name**: a name that helps you find the analysis later.
+- **Resource Configuration**: CPU cores, memory, the number of GPUs (GPU builds), and the
+  time limit, within the app's limits.
+- The app's own **parameters**, filled in with its defaults.
+
+Click **Launch**. The same launch page opens as for Instant Launch.
+
+<div class="grid" markdown>
+
+![The Launch MESA JupyterLab dialog with CPU selected](https://idss-mesa.github.io/docs/assets/portal/apps-launch-options.webp)
+
+![The same dialog with GPU selected, showing the GPU build's GPU, CPU, and memory range](https://idss-mesa.github.io/docs/assets/portal/apps-launch-gpu.webp)
+
+</div>
+
+Choosing Data Store input files with a file picker is only available in the Discovery
+Environment: use **Open in Discovery Environment** for apps that need inputs selected up
+front. Interactive apps launched from the portal see your whole Data Store under
+`~/data-store` anyway.
+
+### CPU or GPU
+
+Some MESA apps come in two builds, a standard one and a GPU one (the same image with the
+`:gpu` tag, published in CyVerse as "*App name* (GPU)"). The portal shows them as **one
+card** with a **CPU | GPU** switch above the launch buttons. Pick **GPU** and the card's
+buttons start the GPU build. The analysis is named after the build you launched, for
+example *MESA JupyterLab (GPU)*, so you can tell them apart on the Analyses page. GPU
+builds run on NVIDIA A16 nodes; see each [featured app](https://idss-mesa.github.io/docs/apps/) for what its GPU
+build adds.
+
+## High-Performance Computing apps
+
+The **High-Performance Computing** tab needs a one-time link to Tapis:
+
+1. Open the tab. If you have not linked Tapis, it shows **Connect your Tapis account**.
+2. Click **Authorize with Tapis**, sign in, and approve in the new tab.
+3. Return to the portal and click **Try again**.
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| **Sign in to launch** on every card | Sign in. If you were signed in, your CyVerse session expired: sign in again. |
+| "Sign in to see …" on a tab | That section is personal; click **Sign in with CyVerse** and you return to it. |
+| "Showing public apps; sign in again to see your own" | Your CyVerse session expired. Sign in again. |
+| "CyVerse is busy" or "Couldn't load …" | CyVerse did not answer. Wait a minute and click **Try again**. |
+| "Too many requests" | The catalog limits requests per minute. Wait a minute; signing in gives you your own allowance. |
+| An app is not in the list | Check the tab (**Browse All Apps** is the full catalog), clear the type filter and the search box, or search by name. |
+| The app does not open | Wait until the launch page shows **Running**, allow pop-ups for mesa.cyverse.org, then use **Open App** on the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page. |
+| The launch fails | Check your CPU-hour quota on the dashboard, and try smaller resources with **Launch with Options**. |
+
+[^portal]: https://idss-mesa.github.io/docs/portal/MESA Portal Applications catalog, <https://mesa.cyverse.org/applications/>; MESA Portal Applications user guide, <https://mesa.cyverse.org/docs/>.
+
+---8<--- https://idss-mesa.github.io/docs/portal/analyses/
+
+---
+type: Guide
+title: Managing analyses in the MESA Portal
+description: Follow your CyVerse analyses in the MESA Portal — open running apps, extend their time, watch logs, share them, stop them, and find their results.
+tags:
+  - portal
+  - analyses
+  - vice
+  - discovery-environment
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: portal
+    resource: "https://mesa.cyverse.org/analyses/"
+    title: "MESA Portal Analyses page"
+    author: "team:idss-mesa"
+  - id: portal-docs
+    resource: "https://mesa.cyverse.org/docs/"
+    title: "MESA Portal documentation (Analyses user guide)"
+    author: "team:idss-mesa"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# Managing analyses
+
+Every app you run on CyVerse becomes an **analysis**: an interactive session such as a
+JupyterLab notebook, or a batch job. The **Analyses** page
+(<https://mesa.cyverse.org/analyses/>) lists them all, whether you started them in the
+portal, in the Discovery Environment, or from an AI agent through
+[formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/)[^portal].
+
+![The Analyses page: quota badges, status cards, and running analyses](https://idss-mesa.github.io/docs/assets/portal/analyses-overview.webp)
+
+## Read the page
+
+- The **header** shows the CPU hours you have left and your Data Store use against your
+  quota, plus **Refresh**, **Show All**, and a link to the **Discovery Environment**.
+- The **status cards** count your analyses by status: **Running**, **Pending**,
+  **Submitted**, **Completed**, **Failed**, and **Canceled**. Click a card, or use the menu
+  above them, to show only that status. A count such as `100+` means CyVerse did not
+  report an exact total.
+- Below, each status has its own list, newest first. Each card shows the analysis name,
+  the app, the analysis ID, its description, when it started, how long it has run, and,
+  for interactive apps, the **time remaining**. A **VICE** badge marks interactive apps.
+- Each list shows up to 100 analyses. Longer lists of completed, failed, or canceled
+  analyses have **Newer** and **Older** links.
+
+## Statuses and actions
+
+| Status | Meaning | Actions |
+|---|---|---|
+| **Submitted** | CyVerse received the request | **Cancel** |
+| **Pending** | Waiting for compute resources | **Cancel** |
+| **Running** | The app is running | **Open App**, **Extend Time**, **Save & Exit**, **Share**, **Monitor**, **Terminate** |
+| **Stopping…** | You asked it to stop; CyVerse is shutting it down (10–30 seconds) | None; the page updates by itself |
+| **Completed** | Finished | **View Results**, **Relaunch**, **Share** |
+| **Failed** | Ended with an error | **View Logs**, **Retry** |
+| **Canceled** | Stopped before it finished | **Relaunch** |
+
+## Work with a running app
+
+![A running JupyterLab analysis with the Monitor panel open on the Logs tab](https://idss-mesa.github.io/docs/assets/portal/analyses-monitor.webp)
+
+- **Open App** opens the running app in a new tab. This is how you get back to a
+  JupyterLab, RStudio, VS Code, terminal, or desktop session you started earlier.
+- **Monitor** opens a panel under the card with three tabs: **Logs** (the app's output,
+  with a filter box, pause, and download), **Resources** (the CPU, memory, and other
+  resources of the analysis), and **Steps** (its execution steps and their status).
+- **Share** lets other CyVerse users see the analysis (read only or with write access).
+
+![Sharing a running analysis with another CyVerse user](https://idss-mesa.github.io/docs/assets/portal/analyses-share.webp){ width="520" }
+
+### Keep an eye on the time limit
+
+Interactive apps have a time limit. **Time Remaining** turns yellow with an hour or less
+left and red with 30 minutes or less, and the **Extend Time** button shows **LOW**. Click
+**Extend Time** to add time before it runs out. When the limit is reached, the app stops.
+
+### Stop an app
+
+- **Save & Exit** saves the app's outputs to your Data Store and then ends it; it shows as
+  **Completed**.
+- **Terminate** ends it at once; it shows as **Canceled**. Anything not saved in your Data
+  Store is lost.
+
+After either, the card reads **Stopping…** until CyVerse confirms; you do not need to
+click again. Before you stop an app, save your notebooks and files under `~/data-store`,
+and commit and push code you want to keep.
+
+Stopping apps you no longer use frees CPU hours on your quota.
+
+## Find the results
+
+![Completed, Failed, and Canceled analyses with View Results, Relaunch, View Logs, and Retry](https://idss-mesa.github.io/docs/assets/portal/analyses-completed.webp)
+
+- **View Results** on a completed analysis opens its output folder in the
+  [Data Browser](https://idss-mesa.github.io/docs/portal/data/). Unless you chose another folder, results are under
+  `/iplant/home/<username>/analyses/`.
+- **Relaunch** starts the app again with the same settings, which you can change first.
+- On a failed analysis, **View Logs** shows what went wrong (look for errors such as
+  "out of memory" or a missing file); **Retry** runs it again.
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| Stuck in **Pending** | CyVerse is waiting for resources. Wait, or cancel and launch with fewer CPU cores, less memory, or no GPU. If it lasts more than 30 minutes, contact support. |
+| **Open App** does nothing | Wait for **Running**, allow pop-ups for mesa.cyverse.org, and try again. |
+| "Your CyVerse session has ended" | Click **Sign in again**, then retry. A stop you already sent still goes ahead. |
+| The app stopped unexpectedly | Check whether the time limit ran out, and look in **Monitor → Logs** for memory errors. |
+| No **Extend Time** button | It is offered only for running interactive apps, and not while the app is still starting. |
+| Results are missing | Make sure the analysis completed, then refresh the Data Browser; a job may still be writing files. |
+
+[^portal]: https://idss-mesa.github.io/docs/portal/MESA Portal Analyses page, <https://mesa.cyverse.org/analyses/>; MESA Portal Analyses user guide, <https://mesa.cyverse.org/docs/>.
+
+---8<--- https://idss-mesa.github.io/docs/apps/cli/
+
+---
+type: Guide
+title: MESA CLI (Cloud Shell)
+description: The MESA CLI app, listed as MESA Cloud Shell — a browser terminal on CyVerse VICE with five AI coding-agent CLIs, the MESA MCP servers, CyVerse Data Store tools, and a geospatial conda environment.
+tags:
+  - apps
+  - vice
+  - cli
+  - cloud-shell
+  - terminal
+  - agents
+  - gpu
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/cli"
+    title: "MESA CLI image source repository"
+    author: "team:idss-mesa"
+  - id: ttyd
+    resource: "https://github.com/tsl0922/ttyd"
+    title: "ttyd (terminal in the browser)"
+    author: "team:tsl0922"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# MESA CLI (Cloud Shell)
+
+**Repo:** [idss-mesa/cli](https://github.com/idss-mesa/cli) ·
+**Image:** `harbor.cyverse.org/vice/mesa-cli:latest` (GPU: `:gpu`; Apple Silicon:
+`:arm64`) · **In the portal:** Applications → MESA Apps → **MESA Cloud Shell**
+
+A terminal in your browser — `bash` inside `tmux`, served by
+[ttyd](https://github.com/tsl0922/ttyd) — with everything MESA needs for working from the
+command line[^repo]. It is the lightest MESA app and the quickest way to put an AI coding
+agent next to your CyVerse data.
+
+## What's inside
+
+| Category | Tools |
+|---|---|
+| **AI agent CLIs** | Claude Code (`claude`), Codex (`codex`), OpenCode (`opencode`), Goose (`goose`), Antigravity (`agy`), Claude Code Router (`ccr`) |
+| **MCP servers** | `irods`, `mesa`, `formation`, and `filesystem`, registered for every agent — see [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) |
+| **Science** | A `geospatial` conda environment (GDAL, PDAL, GeoPandas, NumPy, SciPy, …); Miniconda and Mamba |
+| **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
+| **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
+
+## Start it
+
+1. In the [MESA Portal](https://mesa.cyverse.org/applications/), open **Applications →
+   MESA Apps**.
+2. On **MESA Cloud Shell**, click **Instant Launch** or **Launch with Options**. See
+   [Starting applications](https://idss-mesa.github.io/docs/portal/applications/).
+3. The terminal opens in a new tab, in `~/data-store` (your Data Store), with a MESA
+   welcome screen.
+
+## First steps
+
+```bash
+cyverse-login          # give the tools and agents your CyVerse access
+aiverde-setup          # optional: connect AI Verde models
+claude                 # or codex, opencode, goose, agy
+```
+
+See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) for what each step does. Save files you want
+to keep under `~/data-store`; the rest of the container is deleted when the analysis ends.
+
+**tmux.** The terminal runs inside `tmux`, so a dropped connection does not stop your
+work: reopen the app from the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page and you are back in
+the same session. `Ctrl-b c` opens a new window and `Ctrl-b %` or `Ctrl-b "` splits the
+current one.
+
+## GPU build
+
+`harbor.cyverse.org/vice/mesa-cli:gpu` is the same terminal on an NVIDIA A16 GPU. It adds:
+
+| Adds | Details |
+|---|---|
+| **PyTorch** | `torch` 2.14 and `torchvision` 0.29 (CUDA 12.6) in the conda **base** environment, which the first terminal window uses |
+| **ML libraries** | transformers, accelerate, `huggingface_hub` (`hf`) |
+| **Local LLMs** | An Ollama server on the GPU — see [Local models on a GPU](https://idss-mesa.github.io/docs/apps/agents/#local-models-on-a-gpu) |
+| **GPU tools** | `mesa-gpu-check`, `nvtop`, `nvitop` |
+
+```bash
+python -c 'import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))'
+```
+
+New `tmux` windows and panes start in the `geospatial` environment, which has no PyTorch.
+Run `conda activate base` there (check with `which python`) to get back to the GPU
+PyTorch.
+
+## Run it on your own computer
+
+```bash
+docker run --rm -p 7681:7681 harbor.cyverse.org/vice/mesa-cli:latest
+```
+
+Open <http://localhost:7681>. `:latest` is built for `linux/amd64`; on an Apple Silicon Mac
+use `:arm64`. Outside CyVerse the terminal has no password, so publish the port only on
+your own machine.
+
+[^repo]: https://idss-mesa.github.io/docs/apps/MESA CLI README, <https://github.com/idss-mesa/cli>.
+
+---8<--- https://idss-mesa.github.io/docs/apps/jupyterlab/
+
+---
+type: Guide
+title: MESA JupyterLab
+description: The MESA JupyterLab app — a Python, R, and Julia data-science workbench on CyVerse VICE with RStudio, Shiny, VS Code, AI coding agents, and the MESA MCP servers.
+tags:
+  - apps
+  - vice
+  - jupyterlab
+  - python
+  - r
+  - julia
+  - gpu
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/jupyterlab"
+    title: "MESA JupyterLab image source repository"
+    author: "team:idss-mesa"
+  - id: docker-stacks
+    resource: "https://github.com/jupyter/docker-stacks"
+    title: "Jupyter Docker Stacks (datascience-notebook base image)"
+    author: "team:project-jupyter"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# MESA JupyterLab
+
+**Repo:** [idss-mesa/jupyterlab](https://github.com/idss-mesa/jupyterlab) ·
+**Image:** `harbor.cyverse.org/vice/mesa-jupyterlab:latest` (GPU: `:gpu`) ·
+**In the portal:** Applications → MESA Apps → **MESA JupyterLab**
+
+A [JupyterLab](https://jupyterlab.readthedocs.io/) workbench for Python, R, and Julia,
+built on the Project Jupyter *datascience-notebook* image[^repo]. RStudio Server, Shiny
+Server, and VS Code open from the JupyterLab **Launcher**, and the AI coding agents and
+MESA MCP servers are ready in every terminal.
+
+## What's inside
+
+| Category | Tools |
+|---|---|
+| **IDEs** | JupyterLab; RStudio Server, Shiny Server, and VS Code (code-server) as Launcher cards |
+| **Science** | Python 3.13, R, and Julia with the datascience stack (NumPy, SciPy, pandas, tidyverse, …); Miniconda and Mamba |
+| **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) |
+| **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
+| **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
+
+## Start it
+
+1. In the [MESA Portal](https://mesa.cyverse.org/applications/), open **Applications →
+   MESA Apps**.
+2. On **MESA JupyterLab**, click **Instant Launch**, or **Launch with Options** to pick
+   CPU cores, memory, the time limit, or the **GPU** build. See
+   [Starting applications](https://idss-mesa.github.io/docs/portal/applications/).
+3. The app opens in a new tab at the JupyterLab interface, in `~/data-store` (your Data
+   Store).
+
+You can also start it from the [Discovery Environment](https://de.cyverse.org) by
+searching for *MESA JupyterLab*.
+
+## First steps
+
+1. Open a **Terminal** from the Launcher.
+2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+3. Optionally run `aiverde-setup` to connect AI Verde models.
+4. Start an agent: `claude`, `codex`, `opencode`, or `agy`.
+
+The details are in [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/). Keep notebooks and results
+under `~/data-store`: the rest of the container is deleted when the analysis ends.
+
+**RStudio inside JupyterLab.** Click the **RStudio** card in the Launcher to open RStudio
+Server in a new tab, with the same files and R installation.
+
+## GPU build
+
+`harbor.cyverse.org/vice/mesa-jupyterlab:gpu` is the same workbench on an NVIDIA GPU.
+Choose **GPU** on the app's card in the portal. It adds:
+
+| Adds | Details |
+|---|---|
+| **PyTorch** | `torch` 2.14 and `torchvision` 0.29 (CUDA 12.6) in the default **Python 3** kernel |
+| **ML libraries** | transformers, accelerate, peft, sentence-transformers, safetensors, bitsandbytes, Lightning, timm, torchmetrics, TorchGeo, CuPy, `huggingface_hub` |
+| **JupyterLab** | **GPU Dashboards** (NVDashboard) in the left sidebar; Jupyter AI chat with an `@OpenCode` persona |
+| **Local LLMs** | An Ollama server on the GPU — see [Local models on a GPU](https://idss-mesa.github.io/docs/apps/agents/#local-models-on-a-gpu) |
+| **GPU tools** | `nvidia-smi`, `nvtop`, `nvitop`, `mesa-gpu-check` |
+
+Check the GPU from a notebook or terminal:
+
+```bash
+python -c 'import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))'
+mesa-gpu-check
+```
+
+Jupyter AI's `@OpenCode` starts on an AI Verde model, which cannot read the key that
+`aiverde-setup` saves. To chat with the local model instead, run `ollama-setup` in a
+terminal, then pick `ollama/qwen3.5:9b` in `@OpenCode`'s model picker.
+
+## Run it on your own computer
+
+```bash
+docker run --rm -p 8888:8888 -e IPLANT_USER=$USER harbor.cyverse.org/vice/mesa-jupyterlab:latest
+```
+
+Open <http://localhost:8888/lab>; RStudio is at <http://localhost:8888/rstudio/>. Outside
+CyVerse there is no password, so publish the port only on your own machine. The image is
+built for `linux/amd64`.
+
+[^repo]: https://idss-mesa.github.io/docs/apps/MESA JupyterLab README, <https://github.com/idss-mesa/jupyterlab>.
+
+---8<--- https://idss-mesa.github.io/docs/apps/rstudio/
+
+---
+type: Guide
+title: MESA RStudio Geospatial
+description: The MESA RStudio Geospatial app — RStudio Server on the Rocker geospatial stack (sf, terra, stars, GDAL) on CyVerse VICE, with AI coding agents and the MESA MCP servers.
+tags:
+  - apps
+  - vice
+  - rstudio
+  - r
+  - geospatial
+  - gpu
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/rstudio"
+    title: "MESA RStudio Geospatial image source repository"
+    author: "team:idss-mesa"
+  - id: rocker
+    resource: "https://rocker-project.org/images/versioned/rstudio.html"
+    title: "Rocker geospatial images"
+    author: "team:rocker-project"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# MESA RStudio Geospatial
+
+**Repo:** [idss-mesa/rstudio](https://github.com/idss-mesa/rstudio) ·
+**Image:** `harbor.cyverse.org/vice/mesa-rstudio:latest` (GPU: `:gpu`) ·
+**In the portal:** Applications → MESA Apps → **MESA RStudio Geospatial**
+
+[RStudio Server](https://posit.co/products/open-source/rstudio-server/) on the
+[Rocker geospatial](https://rocker-project.org/images/versioned/rstudio.html) stack, with
+the MESA AI coding agents and CyVerse Data Store tools added[^repo]. There is no RStudio
+login: CyVerse signs you in when the app opens.
+
+## What's inside
+
+| Category | Tools |
+|---|---|
+| **IDE** | RStudio Server |
+| **Science** | R with the tidyverse, sf, terra, and stars; GDAL, PROJ, and GEOS |
+| **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) |
+| **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
+| **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
+
+The agent CLIs are on the `PATH` both in RStudio's **Terminal** tab and in R, for example
+`system("claude --version")`.
+
+## Start it
+
+1. In the [MESA Portal](https://mesa.cyverse.org/applications/), open **Applications →
+   MESA Apps**.
+2. On **MESA RStudio Geospatial**, click **Instant Launch** or **Launch with Options**. See
+   [Starting applications](https://idss-mesa.github.io/docs/portal/applications/).
+3. RStudio opens in a new tab with `~/data-store` (your Data Store) as the working folder.
+
+You can also start it from the [Discovery Environment](https://de.cyverse.org) by
+searching for *MESA RStudio Geospatial*.
+
+## First steps
+
+1. Open the **Terminal** tab in RStudio.
+2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+3. Optionally run `aiverde-setup` to connect AI Verde models.
+4. Start an agent in the terminal: `claude`, `codex`, `opencode`, or `agy`.
+
+See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/). Save scripts, projects, and outputs under
+`~/data-store`; the rest of the container is deleted when the analysis ends.
+
+## GPU build
+
+`harbor.cyverse.org/vice/mesa-rstudio:gpu` adds GPU computing to the same workbench. It
+adds:
+
+| Adds | Details |
+|---|---|
+| **Deep learning in R** | [torch](https://torch.mlverse.org) with its CUDA runtime, luz, torchvision, tabnet, brulee, tidymodels |
+| **GPU xgboost** | xgboost built for the GPU (`device = "cuda"`); lightgbm on the CPU |
+| **Local LLMs** | An Ollama server on the GPU, with the `ollamar`, `ellmer`, and `mall` R packages — see [Local models on a GPU](https://idss-mesa.github.io/docs/apps/agents/#local-models-on-a-gpu) |
+| **Python from R** | reticulate, keras3, and tensorflow; the first `library(keras3)` downloads TensorFlow and its CUDA libraries (about 13 GB, about a minute; kept until the analysis ends) |
+| **GPU tools** | `mesa-gpu-check`, `nvtop`, `nvitop` |
+
+Try it in R:
+
+```r
+library(torch); cuda_is_available()           # TRUE on a GPU node
+ollamar::generate("qwen3.5:9b", "Summarise this abstract: ...", output = "text")   # after ollama-setup
+```
+
+Two cautions:
+
+- `install.packages("torch")` or `install.packages("xgboost")` replaces the GPU builds with
+  CPU-only ones. Leave those two packages as they are.
+- Load keras3 or tensorflow **before** `library(torch)` in a session; R torch and Python
+  torch cannot be loaded in the same R session.
+
+## Run it on your own computer
+
+```bash
+docker run --rm -p 8787:80 -e IPLANT_USER=$USER -e REDIRECT_URL=http://localhost:8787 \
+  harbor.cyverse.org/vice/mesa-rstudio:latest
+```
+
+Open <http://localhost:8787>. If a new browser lands on a "not found" page, open
+<http://localhost:8787/auth-sign-in> once and then <http://localhost:8787/> again. Outside
+CyVerse there is no password, so publish the port only on your own machine. The image is
+built for `linux/amd64`.
+
+[^repo]: https://idss-mesa.github.io/docs/apps/MESA RStudio Geospatial README, <https://github.com/idss-mesa/rstudio>.
+
+---8<--- https://idss-mesa.github.io/docs/apps/vscode/
+
+---
+type: Guide
+title: MESA VS Code
+description: The MESA VS Code app — VS Code in the browser (code-server) on CyVerse VICE with Python, Jupyter, and Cline extensions, AI coding agents, and the MESA MCP servers.
+tags:
+  - apps
+  - vice
+  - vscode
+  - code-server
+  - cline
+  - gpu
+  - cuda
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/vscode"
+    title: "MESA VS Code image source repository"
+    author: "team:idss-mesa"
+  - id: code-server
+    resource: "https://github.com/coder/code-server"
+    title: "code-server (VS Code in the browser)"
+    author: "team:coder"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# MESA VS Code
+
+**Repo:** [idss-mesa/vscode](https://github.com/idss-mesa/vscode) ·
+**Image:** `harbor.cyverse.org/vice/mesa-vscode:latest` (GPU: `:gpu`) ·
+**In the portal:** Applications → MESA Apps → **MESA VS Code**
+
+Visual Studio Code in the browser ([code-server](https://github.com/coder/code-server)),
+with the MESA AI coding agents and CyVerse Data Store tools added[^repo]. The
+[Cline](https://github.com/cline/cline) extension comes with the MESA MCP servers already
+configured, so you can use an agent from the editor's side bar as well as from the
+terminal.
+
+## What's inside
+
+| Category | Tools |
+|---|---|
+| **IDE** | code-server with the Python, Jupyter, vscode-icons, and Cline extensions |
+| **Science** | Miniconda and Mamba (`/opt/conda`) |
+| **Transfer** | Globus Connect Server 5.4 |
+| **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers, for the CLIs and for Cline — see [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) |
+| **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
+| **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
+
+## Start it
+
+1. In the [MESA Portal](https://mesa.cyverse.org/applications/), open **Applications →
+   MESA Apps**.
+2. On **MESA VS Code**, click **Instant Launch** or **Launch with Options**. See
+   [Starting applications](https://idss-mesa.github.io/docs/portal/applications/).
+3. VS Code opens in a new tab on your Data Store home folder.
+
+You can also start it from the [Discovery Environment](https://de.cyverse.org) by
+searching for *MESA VS Code*.
+
+## First steps
+
+1. Open a terminal: **Terminal → New Terminal** (or <kbd>Ctrl</kbd>+<kbd>`</kbd>).
+2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+3. Optionally run `aiverde-setup` to connect AI Verde models.
+4. Start an agent: `claude`, `codex`, `opencode`, or `agy`, or open **Cline** in the side
+   bar and choose a model provider.
+
+See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/). Keep your work in the Data Store folder VS
+Code opened; the rest of the container is deleted when the analysis ends.
+
+## GPU build
+
+For GPU work, launch the **GPU** build (`harbor.cyverse.org/vice/mesa-vscode:gpu`). It adds:
+
+| Adds | Details |
+|---|---|
+| **CUDA** | The CUDA 12.5 toolkit (`nvcc`, `cuda-gdb`, `compute-sanitizer`, Nsight command-line tools) |
+| **PyTorch environment** | `/opt/conda/envs/pytorch` (Python 3.13): PyTorch 2.14 (CUDA 12.6), transformers, accelerate, datasets, peft, sentence-transformers, bitsandbytes, Lightning, timm, CuPy, and more. It is the default VS Code interpreter and a Jupyter kernel named **PyTorch 2.14 (CUDA 12.6)** |
+| **Local LLMs** | An Ollama server on the GPU — see [Local models on a GPU](https://idss-mesa.github.io/docs/apps/agents/#local-models-on-a-gpu); the [Continue](https://continue.dev) extension is set up for the local model |
+| **Extensions** | NVIDIA Nsight (CUDA debugging), clangd for C++/CUDA, CMake Tools |
+| **GPU tools** | `mesa-gpu-check`, `nvtop`, `nvitop` |
+
+Compile CUDA code for the A16 GPUs with, for example,
+`nvcc -gencode arch=compute_86,code=sm_86 kernel.cu`. When you install Python packages
+that depend on PyTorch, add `--extra-index-url https://download.pytorch.org/whl/cu126` so
+pip keeps the CUDA 12.6 build.
+
+## Run it on your own computer
+
+```bash
+docker run --rm -p 8080:8080 -e IPLANT_USER=$USER harbor.cyverse.org/vice/mesa-vscode:latest
+```
+
+Open <http://localhost:8080>. Outside CyVerse there is no password, so publish the port
+only on your own machine. The image is built for `linux/amd64`.
+
+[^repo]: https://idss-mesa.github.io/docs/apps/MESA VS Code README, <https://github.com/idss-mesa/vscode>.
+
+---8<--- https://idss-mesa.github.io/docs/apps/kasm/
+
+---
+type: Guide
+title: MESA KASM Ubuntu Desktop
+description: The MESA KASM Ubuntu Desktop app — a full Ubuntu 24.04 XFCE desktop in the browser on CyVerse VICE, with web browsers, VS Code, AI coding agents, and the MESA MCP servers.
+tags:
+  - apps
+  - vice
+  - kasm
+  - desktop
+  - ubuntu
+  - gpu
+  - opengl
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: repo
+    resource: "https://github.com/idss-mesa/kasm"
+    title: "MESA KASM Ubuntu Desktop image source repository"
+    author: "team:idss-mesa"
+  - id: kasmvnc
+    resource: "https://kasmweb.com/kasmvnc"
+    title: "KasmVNC"
+    author: "team:kasm-technologies"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# MESA KASM Ubuntu Desktop
+
+**Repo:** [idss-mesa/kasm](https://github.com/idss-mesa/kasm) ·
+**Image:** `harbor.cyverse.org/vice/mesa-kasm:latest` (GPU: `:gpu`) ·
+**In the portal:** Applications → MESA Apps → **MESA KASM Ubuntu Desktop**
+
+A complete Ubuntu 24.04 desktop (XFCE) in a browser tab, streamed with
+[KasmVNC](https://kasmweb.com/kasmvnc)[^repo]. Use it for software that needs a
+graphical interface — desktop GIS, 3D viewers, or anything you install yourself — next to
+the MESA AI coding agents and CyVerse Data Store tools.
+
+## What's inside
+
+| Category | Tools |
+|---|---|
+| **Desktop** | XFCE with a terminal, Chrome, Firefox, VS Code, and the rest of the Kasm desktop app set |
+| **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) |
+| **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
+| **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
+
+## Start it
+
+1. In the [MESA Portal](https://mesa.cyverse.org/applications/), open **Applications →
+   MESA Apps**.
+2. On **MESA KASM Ubuntu Desktop**, click **Instant Launch** or **Launch with Options**.
+   See [Starting applications](https://idss-mesa.github.io/docs/portal/applications/).
+3. The desktop opens in a new tab. Your Data Store is in `~/data-store`.
+
+You can also start it from the [Discovery Environment](https://de.cyverse.org) by
+searching for *MESA KASM Ubuntu Desktop*.
+
+## First steps
+
+1. Open a terminal from the desktop.
+2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+3. Optionally run `aiverde-setup` to connect AI Verde models.
+4. Start an agent: `claude`, `codex`, `opencode`, or `agy`.
+
+See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/). Save files you want to keep under
+`~/data-store`; the rest of the desktop is deleted when the analysis ends.
+
+## GPU build
+
+`harbor.cyverse.org/vice/mesa-kasm:gpu` runs the desktop on an NVIDIA GPU. It adds:
+
+| Adds | Details |
+|---|---|
+| **Desktop graphics** | OpenGL on the GPU for the whole desktop (browsers, VS Code, Qt apps, and 3D apps you install such as Blender); `mesa-gl-run <app>` (VirtualGL) for heavy 3D; `glxinfo`, `vulkaninfo`, `glmark2`; **GPU Monitor**, **GPU Check**, and **GLX Spheres** in the menu |
+| **PyTorch** | PyTorch 2.14 (CUDA 12.6) in the conda environment `pytorch`: run `conda activate pytorch` |
+| **Local LLMs** | An Ollama server on the GPU — see [Local models on a GPU](https://idss-mesa.github.io/docs/apps/agents/#local-models-on-a-gpu) |
+| **GPU tools** | `mesa-gpu-check`, `nvtop`, `nvitop` |
+
+If a 3D app is slow or draws incorrectly, start it with `mesa-gl-run <app>` instead, or
+with `__GLX_VENDOR_LIBRARY_NAME=mesa <app>` to fall back to software rendering for that
+app only.
+
+## Run it on your own computer
+
+```bash
+docker run --rm --shm-size=512m -p 6901:6901 -e IPLANT_USER=$USER harbor.cyverse.org/vice/mesa-kasm:latest
+```
+
+Open <http://localhost:6901>. Outside CyVerse there is no password, so publish the port
+only on your own machine. The image is built for `linux/amd64`.
+
+[^repo]: https://idss-mesa.github.io/docs/apps/MESA KASM Ubuntu Desktop README, <https://github.com/idss-mesa/kasm>.
+
+---8<--- https://idss-mesa.github.io/docs/apps/agents/
+
+---
+type: Guide
+title: AI agents in the MESA apps
+description: Use the AI coding agents and MESA MCP servers built into every MESA featured app — sign in to CyVerse, connect AI Verde or local Ollama models, and reach your Data Store.
+tags:
+  - apps
+  - vice
+  - agents
+  - claude-code
+  - codex
+  - opencode
+  - antigravity
+  - ai-verde
+  - ollama
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: jupyterlab
+    resource: "https://github.com/idss-mesa/jupyterlab"
+    title: "MESA JupyterLab image (README: Sign in to CyVerse, Connect AI Verde LLMs, GPU variant)"
+    author: "team:idss-mesa"
+  - id: cli
+    resource: "https://github.com/idss-mesa/cli"
+    title: "MESA CLI image (README)"
+    author: "team:idss-mesa"
+  - id: ai-verde
+    resource: "https://aiverde-docs.cyverse.ai/"
+    title: "CyVerse AI Verde documentation"
+    author: "team:cyverse"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# AI agents in the MESA apps
+
+All five [featured apps](https://idss-mesa.github.io/docs/apps/) share the same *MESA agentic stack*: AI coding-agent
+command-line tools, the MESA MCP servers already registered with each of them, and the
+CyVerse Data Store tools[^jupyterlab]. This page covers what is the same in every app;
+each app's page covers what is different.
+
+## What every app includes
+
+| Category | Tools |
+|---|---|
+| **AI agent CLIs** | Claude Code (`claude`), OpenAI Codex (`codex`), OpenCode (`opencode`), Antigravity (`agy`), and Claude Code Router (`ccr`). The [MESA CLI](https://idss-mesa.github.io/docs/apps/cli/) also has Goose (`goose`). |
+| **MCP servers** | `irods` (CyVerse Data Store), `mesa` ([mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/) with [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/)), `formation` ([formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/), the Discovery Environment), and `filesystem`, registered for every agent CLI |
+| **CyVerse data** | GoCommands (`gocmd`), an iRODS configuration, `osn-mount.sh` for Open Storage Network and other S3 buckets, the AWS CLI |
+| **Developer tools** | GitHub CLI (`gh`), Git Credential Manager, Go 1.25, Node.js 22 |
+
+The agents are command-line tools: open a terminal in the app (a JupyterLab or VS Code
+terminal, the RStudio **Terminal** tab, a terminal on the KASM desktop, or the MESA CLI
+itself) and type `claude`, `codex`, `opencode`, or `agy`.
+
+## Your Data Store inside the app
+
+When the app starts from the portal or the Discovery Environment, your Data Store is
+mounted under `~/data-store`, and the app opens there. Save work you want to keep under
+`~/data-store`: everything else lives on the container's disk and is gone when the
+analysis ends.
+
+At start-up each app also copies `.gitconfig`, `.aws/`, and `.ssh/` from your Data Store
+home folder (`/iplant/home/<username>/`) into the app's home folder, so Git and AWS
+settings you keep there follow you into every session.
+
+## 1. Sign in to CyVerse
+
+```bash
+cyverse-login          # your CyVerse username and password
+```
+
+`cyverse-login` writes the standard iRODS credentials (`~/.irods/`), so GoCommands, the
+`mesa` and `formation` MCP servers, and the agents act as **you**, with access to your home
+folder and to what is shared with you. Without it they have anonymous, read-only access to
+public data. Restart an agent after signing in so its MCP servers pick up the credentials.
+
+**Claude Code** also registers the hosted CyVerse Data Store MCP servers: `irods` (the
+anonymous public endpoint, which works at once) and `irods-auth` (the authenticated
+endpoint). To reach your private home folder through `irods-auth`, sign in once per
+session:
+
+```bash
+claude mcp login irods-auth --no-browser   # opens a kc.cyverse.org URL; paste the redirect back
+```
+
+OpenCode, Codex, and Antigravity use the local servers and `gocmd`, which read the
+`~/.irods` credentials that `cyverse-login` wrote.
+
+## 2. Connect a language model
+
+The images contain no API keys: each person brings their own.
+
+### CyVerse AI Verde
+
+[AI Verde](https://aiverde-docs.cyverse.ai/) is CyVerse's hosted LLM service[^ai-verde].
+Get an API key from <https://chat.cyverse.ai> (**Course → API Key**), then in a terminal:
+
+```bash
+aiverde-setup          # paste your AI Verde key
+```
+
+It checks the key, lists the models your course can use, and saves the settings to
+`~/.config/aiverde/env` (readable only by you). Then:
+
+| Agent | How it uses AI Verde |
+|---|---|
+| **OpenCode** | Through its `aiverde` provider |
+| **Claude Code** | Through Claude Code Router: `ccr code` (or directly, if your course serves Anthropic models) |
+| **Goose** (MESA CLI) | Through its OpenAI-compatible provider: `goose` |
+| **Codex** | Not supported: Codex uses its own OpenAI sign-in |
+
+### Your own accounts
+
+Each agent can also use its vendor's own sign-in, for example `claude` with an Anthropic
+account or `codex` with an OpenAI account. Follow the prompts the first time you start it.
+
+### Local models on a GPU
+
+The GPU builds of every app run an [Ollama](https://ollama.com) server inside the
+container, so agents can use an open model on the GPU with no API key and nothing leaving
+the analysis:
+
+```bash
+ollama-setup                                   # pulls qwen3.5:9b (the default) and prints these commands
+ollama launch claude --model qwen3.5:9b        # Claude Code on the local model
+codex --oss --local-provider ollama -m qwen3.5:9b
+opencode -m ollama/qwen3.5:9b
+```
+
+One 16 GB NVIDIA A16 GPU fits `qwen3.5:9b`, `gpt-oss:20b`, `gemma4:12b`, or `qwen3:4b`
+(`ollama-setup --help` lists them); larger models spill onto the CPU. Models are stored in
+`~/.ollama/models` on the container's disk and are deleted when the analysis ends.
+`ollama stop <model>` frees the GPU memory for PyTorch or other work.
+
+`mesa-gpu-check` (`mesa-gpu-check --ollama` for a short model test) checks the GPU, the
+driver, CUDA, PyTorch, and Ollama.
+
+## 3. Ask
+
+With credentials in place, ask an agent for things such as:
+
+- *"List the folders in my CyVerse home and tell me which ones have AVU metadata."*
+- *"Find NEON soil-moisture data in the MESA community folder and load it into a pandas
+  DataFrame."*
+- *"Launch a MESA JupyterLab analysis and tell me when it is running."*
+
+The agent calls the MESA MCP servers to do the work; see [Servers](https://idss-mesa.github.io/docs/servers/)
+for what each one can do.
+
+[^jupyterlab]: https://idss-mesa.github.io/docs/apps/MESA JupyterLab README, <https://github.com/idss-mesa/jupyterlab>; the same sections appear in the README of each MESA app repository.
+[^ai-verde]: https://idss-mesa.github.io/docs/apps/CyVerse AI Verde documentation, <https://aiverde-docs.cyverse.ai/>.
 
 ---8<--- https://idss-mesa.github.io/docs/claude-code/
 
@@ -1328,8 +2687,8 @@ tags:
   - OKF
   - llms.txt
 generated:
-  by: "claude/opus-5"
-  at: "2026-09-10T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: okf-spec
     resource: "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md"
@@ -1380,7 +2739,14 @@ Once connected, the MCP `tools/list` request[^mcp-spec] returns each server's
 live, authoritative tool catalogue with JSON Schema inputs. Prefer it over the
 tool tables on these pages, which summarise tool groups and can lag the code.
 Use this documentation to learn how to *install and configure* the stack; use
-the servers to get the data. Anonymous access is read-only on public
+the servers to get the data.
+
+The site also has guides for people who use MESA through a browser: the
+[MESA Portal](https://idss-mesa.github.io/docs/portal/) at https://mesa.cyverse.org and the
+[featured apps](https://idss-mesa.github.io/docs/apps/) (JupyterLab, RStudio, VS Code, a terminal, and a
+Linux desktop on CyVerse VICE, each with the MESA MCP servers pre-registered).
+Cite those pages when a user asks how to do something in the portal or in one of
+the apps. Anonymous access is read-only on public
 collections; credentials belong in the user's environment or `~/.irods` (see
 [Credentials](https://idss-mesa.github.io/docs/credentials/)), never in a prompt.
 
@@ -1528,6 +2894,25 @@ The same agent conventions cover the rest of the origin and its neighbours:
 ---8<--- https://idss-mesa.github.io/docs/log/
 
 # Directory Update Log
+
+## 2026-10-08
+
+* **Creation**: Added the [MESA Portal](portal/index.md) section, end-user guides for
+  <https://mesa.cyverse.org>: [Overview](portal/overview.md) (signing in, navigation,
+  dashboard, themes), [Managing data](portal/data.md) (Data Browser views, upload, move,
+  trash, sharing, AVU metadata, search), [Starting applications](portal/applications.md)
+  (catalog sections, filters, Instant Launch, Launch with Options, CPU or GPU builds), and
+  [Managing analyses](portal/analyses.md) (statuses, Open App, Extend Time, Monitor, Save &
+  Exit, Terminate, results). Adapted from the portal's own user guides, with 21
+  screenshots in `assets/portal/` rendered from the portal's sample data.
+* **Creation**: Added the [Featured apps](apps/index.md) section with a page for each MESA
+  VICE app — [MESA CLI (Cloud Shell)](apps/cli.md), [MESA JupyterLab](apps/jupyterlab.md),
+  [MESA RStudio Geospatial](apps/rstudio.md), [MESA VS Code](apps/vscode.md), and
+  [MESA KASM Ubuntu Desktop](apps/kasm.md) — and [AI agents in the MESA apps](apps/agents.md)
+  for the agent CLIs, `cyverse-login`, AI Verde, and local Ollama models they share.
+* **Update**: The [home page](index.md), the site description, and [llms.txt](llms.txt)
+  now cover the portal and the featured apps alongside the MCP stack;
+  [For AI agents](about/ai-agents.md) points to the new sections.
 
 ## 2026-09-12
 

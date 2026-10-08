@@ -8,8 +8,8 @@ tags:
   - OKF
   - llms.txt
 generated:
-  by: "claude/opus-5"
-  at: "2026-09-10T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: okf-spec
     resource: "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md"
@@ -60,7 +60,14 @@ Once connected, the MCP `tools/list` request[^mcp-spec] returns each server's
 live, authoritative tool catalogue with JSON Schema inputs. Prefer it over the
 tool tables on these pages, which summarise tool groups and can lag the code.
 Use this documentation to learn how to *install and configure* the stack; use
-the servers to get the data. Anonymous access is read-only on public
+the servers to get the data.
+
+The site also has guides for people who use MESA through a browser: the
+[MESA Portal](../portal/index.md) at https://mesa.cyverse.org and the
+[featured apps](../apps/index.md) (JupyterLab, RStudio, VS Code, a terminal, and a
+Linux desktop on CyVerse VICE, each with the MESA MCP servers pre-registered).
+Cite those pages when a user asks how to do something in the portal or in one of
+the apps. Anonymous access is read-only on public
 collections; credentials belong in the user's environment or `~/.irods` (see
 [Credentials](../credentials.md)), never in a prompt.
 

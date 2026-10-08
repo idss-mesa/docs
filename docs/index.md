@@ -1,7 +1,7 @@
 ---
 okf_version: "0.2"
 title: MESA
-description: One-line install of the CyVerse MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
+description: MESA documentation — the MESA Portal at mesa.cyverse.org, its featured CyVerse apps, and the one-line install of the MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
 icon: lucide/rocket
 ---
 
@@ -13,14 +13,54 @@ icon: lucide/rocket
 
 # MESA
 
-**MESA** wires the CyVerse data-management MCP servers into your AI coding agent —
-[Claude Code](claude-code.md), [Codex CLI](codex.md), [Antigravity](antigravity.md), or
-[OpenCode](opencode.md) — with a single command. One installer clones, builds, and
-registers everything you need to browse and curate the CyVerse Data Store (iRODS), apply
-ontology-backed metadata, and launch Discovery Environment apps — all from natural
-language.
+**MESA** (Multidisciplinary Environment for Scientific Advancement) connects you to
+CyVerse data and computing three ways:
 
-## Install
+- the **[MESA Portal](portal/index.md)** at <https://mesa.cyverse.org>, a web site for
+  your CyVerse Data Store files, apps, and analyses;
+- the **[featured apps](apps/index.md)** — JupyterLab, RStudio, VS Code, a terminal, and a
+  Linux desktop in the cloud, each with AI coding agents already set up;
+- the **MESA MCP stack**, which wires the CyVerse data-management MCP servers into your AI
+  coding agent — [Claude Code](claude-code.md), [Codex CLI](codex.md),
+  [Antigravity](antigravity.md), or [OpenCode](opencode.md) — with a single command, so
+  you can browse and curate the CyVerse Data Store (iRODS), apply ontology-backed
+  metadata, and launch Discovery Environment apps from natural language.
+
+## MESA Portal
+
+Sign in at <https://mesa.cyverse.org> with your CyVerse account (free at
+<https://user.cyverse.org>). Nothing to install.
+
+![The MESA Portal Applications page listing the five MESA featured apps](assets/portal/apps-mesa-apps.webp)
+
+| I want to… | Guide |
+|---|---|
+| Find my way around and sign in | [Overview](portal/overview.md) |
+| Browse, upload, share, and describe my files | [Managing data](portal/data.md) |
+| Start JupyterLab, RStudio, VS Code, or another app | [Starting applications](portal/applications.md) |
+| Get back to a running app, extend it, stop it, find its results | [Managing analyses](portal/analyses.md) |
+
+[Open the MESA Portal :material-arrow-right:](https://mesa.cyverse.org){ .md-button .md-button--primary }
+[Portal guide](portal/overview.md){ .md-button }
+
+## Featured apps
+
+Each featured app runs on CyVerse VICE with your Data Store mounted, the AI coding-agent
+CLIs installed, and the MESA MCP servers registered. Each also has a GPU build with CUDA
+PyTorch and a local [Ollama](https://ollama.com) server.
+
+| App | What it is |
+|---|---|
+| [**MESA CLI**](apps/cli.md) (*MESA Cloud Shell*) | A terminal in the browser, with Claude Code, Codex, OpenCode, Goose, and Antigravity |
+| [**MESA JupyterLab**](apps/jupyterlab.md) | Python, R, and Julia notebooks, with RStudio and VS Code in the Launcher |
+| [**MESA RStudio Geospatial**](apps/rstudio.md) | RStudio on the Rocker geospatial stack (sf, terra, stars, GDAL) |
+| [**MESA VS Code**](apps/vscode.md) | VS Code in the browser, with Cline wired to the MESA MCP servers |
+| [**MESA KASM Ubuntu Desktop**](apps/kasm.md) | A full Ubuntu desktop in the browser |
+
+See [AI agents in the MESA apps](apps/agents.md) for signing in to CyVerse and connecting
+AI Verde or local models inside any of them.
+
+## Install the MCP stack
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
