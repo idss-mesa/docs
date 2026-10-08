@@ -42,7 +42,7 @@ It is registered under the name `irods` with every detected client — see
 registration each one gets.
 
 `make build` produces a static (`CGO_ENABLED=0`) binary; Go ≥ 1.25 is required. Pass
-`--no-go` to the installer to skip this server (and `formation`).
+`--no-go` to the installer to skip this server.
 
 ## Capabilities
 

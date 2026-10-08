@@ -7,7 +7,7 @@ Each page below begins with its canonical URL followed by its original Markdown,
 ---
 okf_version: "0.2"
 title: MESA
-description: MESA documentation — the MESA Portal at mesa.cyverse.org, its featured CyVerse apps, and the one-line install of the MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode.
+description: MESA documentation — the MESA Portal at mesa.cyverse.org, its featured CyVerse apps, the one-line install of the MESA MCP stack for Claude Code, Codex CLI, Antigravity, and OpenCode, and CyVerse's hosted Formation server for claude.ai.
 icon: lucide/rocket
 ---
 
@@ -26,7 +26,8 @@ CyVerse data and computing three ways:
   your CyVerse Data Store files, apps, and analyses;
 - the **[featured apps](https://idss-mesa.github.io/docs/apps/)** — JupyterLab, RStudio, VS Code, a terminal, and a
   Linux desktop in the cloud, each with AI coding agents already set up;
-- the **MESA MCP stack**, which wires the CyVerse data-management MCP servers into your AI
+- the **MESA MCP stack**, which wires the CyVerse data-management MCP servers — two local
+  ones and CyVerse's hosted [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) — into your AI
   coding agent — [Claude Code](https://idss-mesa.github.io/docs/claude-code/), [Codex CLI](https://idss-mesa.github.io/docs/codex/),
   [Antigravity](https://idss-mesa.github.io/docs/antigravity/), or [OpenCode](https://idss-mesa.github.io/docs/opencode/) — with a single command, so
   you can browse and curate the CyVerse Data Store (iRODS), apply ontology-backed
@@ -72,8 +73,9 @@ AI Verde or local models inside any of them.
 curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
-Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. By default it uses
-anonymous public CyVerse access — no credentials required to get started.
+Runs on **Linux, macOS, and Windows Subsystem for Linux (WSL)**. The Data Store servers use
+anonymous public CyVerse access by default — no credentials required to get started — and
+the hosted Discovery Environment server asks you to sign in once with your CyVerse account.
 
 [Get started :material-arrow-right:](https://idss-mesa.github.io/docs/quickstart/){ .md-button .md-button--primary }
 [Install reference](https://idss-mesa.github.io/docs/install/){ .md-button }
@@ -86,10 +88,12 @@ anonymous public CyVerse access — no credentials required to get started.
 | [**mesa-ducklake**](https://idss-mesa.github.io/docs/servers/mesa-ducklake/) | Python | AVU metadata-history library that backs mesa-mcp (installed alongside it — not a standalone server) |
 | [**mesa-anyjev**](https://idss-mesa.github.io/docs/servers/mesa-anyjev/) | Python | Calibrated ontology and schema decisions; a plugin that adds the `mesa_decide_*` tools to mesa-mcp (installed alongside it) |
 | [**irods-mcp-server**](https://idss-mesa.github.io/docs/servers/irods-mcp-server/) | Go | Reference iRODS Data Store MCP server |
-| [**formation-mcp**](https://idss-mesa.github.io/docs/servers/formation-mcp/) | Go | CyVerse Discovery Environment — launch apps, manage analyses |
+| [**Formation**](https://idss-mesa.github.io/docs/servers/formation-mcp/) | hosted by CyVerse | CyVerse Discovery Environment — launch apps, manage analyses, read and write Data Store files. Nothing to build: registered by URL, <https://de.cyverse.org/formation/mcp> |
 
 After install, the three servers (`mesa-mcp`, `irods`, `formation`) are registered with
-every client the installer detected. Open your agent and ask it to *"ping the CyVerse
+every client the installer detected; sign in to `formation` once with your CyVerse
+account. Formation also works on its own as a
+[custom connector on claude.ai and in Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/). Open your agent and ask it to *"ping the CyVerse
 Data Store"* to confirm the link — see the [Quickstart](https://idss-mesa.github.io/docs/quickstart/) for per-client
 verification.
 
@@ -105,13 +109,13 @@ graph LR
   end
   clients -->|stdio| M[mesa-mcp]
   clients -->|stdio| I[irods-mcp-server]
-  clients -->|stdio| F[formation-mcp]
+  clients -->|HTTPS + CyVerse sign-in| F[Formation<br/>hosted by CyVerse]
   M -->|imports| D[mesa-ducklake]
   A[mesa-anyjev] -->|plugin: mesa_decide_* tools| M
   A -->|sidecar next to the history| D
   M --> IR[(CyVerse iRODS<br/>data.cyverse.org)]
   I --> IR
-  F --> DE[(Discovery Environment<br/>Formation API)]
+  F --> DE[(Discovery Environment<br/>apps, analyses, Data Store)]
   D --> PQ[(DuckLake catalog<br/>+ Parquet)]
 ```
 
@@ -151,8 +155,8 @@ tags:
   - antigravity
   - opencode
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: install-sh
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
@@ -163,7 +167,7 @@ sources:
     title: "uv documentation"
     author: "team:astral"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Quickstart
@@ -177,7 +181,7 @@ The installer checks for these and helps you install the missing ones:
 | `git`, `curl` | cloning + downloading | usually preinstalled |
 | an agent client | the integration target | any of the four below — the installer auto-detects the ones present and refuses to run if it finds none |
 | `uv` | Python servers | auto-installed from [astral.sh/uv](https://docs.astral.sh/uv/) if missing |
-| Go ≥ 1.25 | the two Go servers | only needed for `irods` + `formation`; pass `--no-go` to skip them |
+| Go ≥ 1.25 | the Go server | only needed for `irods`; pass `--no-go` to skip it |
 
 Supported agent clients:
 
@@ -207,8 +211,9 @@ This will:
 1. Detect your platform (Linux / macOS / WSL).
 2. Clone the four repos from `idss-mesa` into `~/.mesa/repos/`.
 3. Create a Python venv at `~/.mesa/.venv` and install `mesa-ducklake` + `mesa-mcp` + `mesa-anyjev`.
-4. Build the Go servers into `~/.mesa/bin/`.
-5. Register `mesa-mcp`, `irods`, and `formation` with **every detected client** —
+4. Build the Go server (`irods-mcp-server`) into `~/.mesa/bin/`.
+5. Register `mesa-mcp` and `irods` as local servers, and CyVerse's hosted
+   [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) as `formation`, with **every detected client** —
    Claude Code at user scope, Codex globally, Antigravity and OpenCode via their config
    files. Restrict targets with `--for`, e.g. `bash -s -- --for claude,codex`.
 
@@ -237,30 +242,61 @@ This will:
     opencode mcp list
     ```
 
-You should see `mesa-mcp`, `irods`, and `formation` listed. Then, in your agent
-session, try:
+You should see `mesa-mcp`, `irods`, and `formation` listed; `formation` shows as needing
+authentication until you sign in (step 4). Then, in your agent session, try:
 
 > *Ping the CyVerse Data Store and list what's in the shared directory.*
 
 That exercises `mesa-mcp`'s `ds_ping` and `ds_list_directory` tools against the public
 `data.cyverse.org` zone — no login needed.
 
-## 4. (Optional) Authenticate
+## 4. Sign in to Formation
 
-Anonymous access is read-only on public collections. To act as yourself, re-run with your
-[CyVerse](https://cyverse.org) credentials:
+`formation` lets your agent launch Discovery Environment apps and manage analyses. It is
+hosted by CyVerse and needs a one-time sign-in with your
+[CyVerse account](https://user.cyverse.org) in each client:
+
+=== "Claude Code"
+
+    Run `/mcp` inside Claude Code, pick **formation**, and choose **Authenticate** — or
+    run `claude mcp login formation` from a shell.
+
+=== "Codex"
+
+    ```bash
+    codex mcp login formation
+    ```
+
+=== "Antigravity"
+
+    Sign in to `formation` from the IDE's MCP servers panel.
+
+=== "OpenCode"
+
+    ```bash
+    opencode mcp auth formation
+    ```
+
+Then try: *"Which Discovery Environment apps can I run for JupyterLab?"*
+
+## 5. (Optional) Authenticate the Data Store servers
+
+Anonymous access is read-only on public collections. To let `mesa-mcp` act as yourself,
+re-run with your [CyVerse](https://cyverse.org) credentials:
 
 ```bash
 CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
   curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
-The credentials are threaded into **every** client registration the installer creates.
-See [Credentials](https://idss-mesa.github.io/docs/credentials/) for all the options (env vars, `~/.irods`, per-server config).
+The credentials are threaded into the `mesa-mcp` registration of **every** client the
+installer configures. See [Credentials](https://idss-mesa.github.io/docs/credentials/) for all the options (env vars,
+`~/.irods`, per-server config).
 
 ## Updating & uninstalling
 
-Re-running the one-liner pulls the latest code and rebuilds — it is safe to run again.
+Re-running the one-liner pulls the latest code and rebuilds — it is safe to run again,
+and it replaces the local `formation` server older installs created with the hosted one.
 Uninstalling removes the three servers from every detected client and (after
 confirmation) deletes `~/.mesa`:
 
@@ -280,15 +316,15 @@ tags:
   - environment-variables
   - uninstall
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: install-sh
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Install reference
@@ -311,8 +347,8 @@ git clone https://github.com/idss-mesa/docs.git && ./docs/install.sh
 |---|---|
 | `--prefix DIR` | install location (default `~/.mesa`) |
 | `--for LIST` | comma-separated client targets: `claude`, `codex`, `antigravity`, `opencode` (default: auto-detect all present) |
-| `--no-go` | skip the Go servers; install only `mesa-mcp` (no Go toolchain needed) |
-| `--uninstall` | remove the three servers from **all detected clients** and delete the install dir |
+| `--no-go` | skip the Go server (`irods`); `mesa-mcp` and the hosted `formation` are still registered (no Go toolchain needed) |
+| `--uninstall` | remove the three servers (`mesa-mcp`, `irods`, `formation`) from **all detected clients** and delete the install dir |
 | `--help` | print usage |
 
 When piping through `curl`, pass flags after `-s --`:
@@ -330,8 +366,9 @@ curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | ba
 | `MESA_MCP_REF` | `main` | branch/tag for `mesa-mcp` |
 | `MESA_CLIENTS` | auto-detect | same as `--for` (the flag wins when both are set) |
 | `MCP_SCOPE` | `user` | **Claude Code only** — registration scope: `user`, `project`, or `local` (the other clients have no scope concept) |
-| `CYVERSE_USERNAME` / `CYVERSE_PASSWORD` | — | applied to `mesa-mcp` and `formation` |
-| any `MESA_MCP_*` / `FORMATION_*` | — | passed through verbatim to the matching server |
+| `MESA_FORMATION_URL` | `https://de.cyverse.org/formation/mcp` | the hosted [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) endpoint registered as `formation` |
+| `CYVERSE_USERNAME` / `CYVERSE_PASSWORD` | — | applied to `mesa-mcp` (`formation` signs in through the browser instead) |
+| any `MESA_MCP_*` | — | passed through verbatim to `mesa-mcp` |
 
 ## What it lays down
 
@@ -340,14 +377,19 @@ curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | ba
 ├── repos/
 │   ├── mesa-mcp/            # editable Python source
 │   ├── mesa-ducklake/       # editable Python source
-│   ├── irods-mcp-server/    # Go source
-│   └── formation-mcp/       # Go source
+│   ├── mesa-anyjev/         # editable Python source (plugin for mesa-mcp)
+│   └── irods-mcp-server/    # Go source
 ├── .venv/                   # uv-managed Python 3.11 venv
 │   └── bin/mesa-mcp         # stdio MCP server entry point
 └── bin/
-    ├── irods-mcp-server     # built Go binary
-    └── formation-mcp        # built Go binary
+    └── irods-mcp-server     # built Go binary
 ```
+
+Nothing is installed for `formation`: it is CyVerse's hosted server, registered by URL.
+Older installs also built a local `bin/formation-mcp`; a re-run deletes
+that binary and replaces the old registration (see
+[Moving from the local formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/#moving-from-the-local-formation-mcp)).
+You can delete the leftover `repos/formation-mcp/` yourself.
 
 ## Idempotency
 
@@ -355,9 +397,11 @@ Every step is safe to repeat:
 
 - Repos are `git pull --ff-only`'d if already present, cloned otherwise.
 - The venv is recreated and packages reinstalled editable.
-- Go binaries are rebuilt.
+- The Go binary is rebuilt.
 - For the CLI clients (Claude Code, Codex), each `mcp add` is preceded by an
   `mcp remove`, so re-running updates the registration in place rather than duplicating it.
+  For Codex, `formation` is written straight into `~/.codex/config.toml`, because
+  `codex mcp add --url` would start an interactive sign-in.
 - For the config-file clients (Antigravity, OpenCode), the installer rewrites its own
   entries in the JSON, leaving any other servers you have configured untouched.
 
@@ -370,13 +414,13 @@ If you'd rather not use the script, the equivalent steps are:
 uv venv --python 3.11 ~/.mesa/.venv
 uv pip install --python ~/.mesa/.venv/bin/python -e ./mesa-ducklake -e ./mesa-mcp
 
-# Go servers
+# Go server
 ( cd irods-mcp-server && make build )                     # -> bin/irods-mcp-server
-( cd formation-mcp && go build -o formation-mcp ./cmd/formation-mcp )
 mkdir -p ~/.mesa/bin
 cp irods-mcp-server/bin/irods-mcp-server ~/.mesa/bin/
-cp formation-mcp/formation-mcp ~/.mesa/bin/
 ```
+
+Formation needs no build: register its URL and sign in.
 
 Then register the servers with your client:
 
@@ -385,26 +429,30 @@ Then register the servers with your client:
     ```bash
     claude mcp add mesa-mcp  -s user -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio
     claude mcp add irods     -s user -- ~/.mesa/bin/irods-mcp-server -c .../config-stdio.yaml
-    claude mcp add formation -s user -- ~/.mesa/bin/formation-mcp --transport stdio
+    claude mcp add --transport http -s user formation https://de.cyverse.org/formation/mcp
     ```
+
+    Then sign in to Formation with `/mcp` inside Claude Code or `claude mcp login formation`.
 
 === "Codex"
 
     ```bash
     codex mcp add mesa-mcp  -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio
     codex mcp add irods     -- ~/.mesa/bin/irods-mcp-server -c .../config-stdio.yaml
-    codex mcp add formation -- ~/.mesa/bin/formation-mcp --transport stdio
+    codex mcp add formation --url https://de.cyverse.org/formation/mcp   # signs you in now
     ```
 
 === "Antigravity"
 
     Write the servers into `$HOME/.gemini/config/mcp_config.json` — absolute paths
-    required. See [the registration MESA creates](https://idss-mesa.github.io/docs/antigravity/#the-registration-mesa-creates).
+    required, and `serverUrl` for `formation`. See
+    [the registration MESA creates](https://idss-mesa.github.io/docs/antigravity/#the-registration-mesa-creates).
 
 === "OpenCode"
 
     Add the servers to `~/.config/opencode/opencode.json` (respecting
-    `$XDG_CONFIG_HOME`) under the `mcp` key. See
+    `$XDG_CONFIG_HOME`) under the `mcp` key, with `formation` as a `remote` server, then
+    run `opencode mcp auth formation`. See
     [the registration MESA creates](https://idss-mesa.github.io/docs/opencode/#the-registration-mesa-creates).
 
 ---8<--- https://idss-mesa.github.io/docs/portal/overview/
@@ -950,8 +998,9 @@ stale_after: "2027-04-08T00:00:00Z"
 Every app you run on CyVerse becomes an **analysis**: an interactive session such as a
 JupyterLab notebook, or a batch job. The **Analyses** page
 (<https://mesa.cyverse.org/analyses/>) lists them all, whether you started them in the
-portal, in the Discovery Environment, or from an AI agent through
-[formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/)[^portal].
+portal, in the Discovery Environment, or from an AI agent through CyVerse's hosted
+[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) server (in any MCP client, including a claude.ai
+connector)[^portal].
 
 ![The Analyses page: quota badges, status cards, and running analyses](https://idss-mesa.github.io/docs/assets/portal/analyses-overview.webp)
 
@@ -1100,9 +1149,10 @@ agent next to your CyVerse data.
 ## First steps
 
 ```bash
-cyverse-login          # give the tools and agents your CyVerse access
-aiverde-setup          # optional: connect AI Verde models
-claude                 # or codex, opencode, goose, agy
+cyverse-login                             # give the tools and agents your Data Store access
+claude mcp login formation --no-browser   # sign in to the hosted Discovery Environment server
+aiverde-setup                             # optional: connect AI Verde models
+claude                                    # or codex, opencode, goose, agy
 ```
 
 See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) for what each step does. Save files you want
@@ -1211,7 +1261,9 @@ searching for *MESA JupyterLab*.
 ## First steps
 
 1. Open a **Terminal** from the Launcher.
-2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+2. Run `cyverse-login` to give the tools and agents your CyVerse Data Store access, and
+   sign in to `formation` (the Discovery Environment server) as shown in
+   [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent: `claude`, `codex`, `opencode`, or `agy`.
 
@@ -1324,7 +1376,9 @@ searching for *MESA RStudio Geospatial*.
 ## First steps
 
 1. Open the **Terminal** tab in RStudio.
-2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+2. Run `cyverse-login` to give the tools and agents your CyVerse Data Store access, and
+   sign in to `formation` (the Discovery Environment server) as shown in
+   [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent in the terminal: `claude`, `codex`, `opencode`, or `agy`.
 
@@ -1439,7 +1493,9 @@ searching for *MESA VS Code*.
 ## First steps
 
 1. Open a terminal: **Terminal → New Terminal** (or <kbd>Ctrl</kbd>+<kbd>`</kbd>).
-2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+2. Run `cyverse-login` to give the tools and agents your CyVerse Data Store access, and
+   sign in to `formation` (the Discovery Environment server) as shown in
+   [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent: `claude`, `codex`, `opencode`, or `agy`, or open **Cline** in the side
    bar and choose a model provider.
@@ -1539,7 +1595,9 @@ searching for *MESA KASM Ubuntu Desktop*.
 ## First steps
 
 1. Open a terminal from the desktop.
-2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+2. Run `cyverse-login` to give the tools and agents your CyVerse Data Store access, and
+   sign in to `formation` (the Discovery Environment server) as shown in
+   [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent: `claude`, `codex`, `opencode`, or `agy`.
 
@@ -1620,7 +1678,7 @@ each app's page covers what is different.
 | Category | Tools |
 |---|---|
 | **AI agent CLIs** | Claude Code (`claude`), OpenAI Codex (`codex`), OpenCode (`opencode`), Antigravity (`agy`), and Claude Code Router (`ccr`). The [MESA CLI](https://idss-mesa.github.io/docs/apps/cli/) also has Goose (`goose`). |
-| **MCP servers** | `irods` (CyVerse Data Store), `mesa` ([mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/) with [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/)), `formation` ([formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/), the Discovery Environment), and `filesystem`, registered for every agent CLI |
+| **MCP servers** | `irods` (CyVerse Data Store), `mesa` ([mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/) with [mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/)), `formation` (CyVerse's hosted [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) server for the Discovery Environment), and `filesystem`, registered for every agent CLI |
 | **CyVerse data** | GoCommands (`gocmd`), an iRODS configuration, `osn-mount.sh` for Open Storage Network and other S3 buckets, the AWS CLI |
 | **Developer tools** | GitHub CLI (`gh`), Git Credential Manager, Go 1.25, Node.js 22 |
 
@@ -1646,9 +1704,10 @@ cyverse-login          # your CyVerse username and password
 ```
 
 `cyverse-login` writes the standard iRODS credentials (`~/.irods/`), so GoCommands, the
-`mesa` and `formation` MCP servers, and the agents act as **you**, with access to your home
-folder and to what is shared with you. Without it they have anonymous, read-only access to
-public data. Restart an agent after signing in so its MCP servers pick up the credentials.
+local `mesa` and `irods` MCP servers, and the agents act as **you**, with access to your
+home folder and to what is shared with you. Without it they have anonymous, read-only
+access to public data. Restart an agent after signing in so its MCP servers pick up the
+credentials. `cyverse-login` does not cover `formation`; see the next step.
 
 **Claude Code** also registers the hosted CyVerse Data Store MCP servers: `irods` (the
 anonymous public endpoint, which works at once) and `irods-auth` (the authenticated
@@ -1659,8 +1718,27 @@ session:
 claude mcp login irods-auth --no-browser   # opens a kc.cyverse.org URL; paste the redirect back
 ```
 
-OpenCode, Codex, and Antigravity use the local servers and `gocmd`, which read the
-`~/.irods` credentials that `cyverse-login` wrote.
+Codex and Antigravity run a local `irods` server, and every agent runs a local `mesa`
+server; these and `gocmd` read the `~/.irods` credentials that `cyverse-login` wrote.
+OpenCode's `irods` is the hosted public endpoint, which reads public data only.
+
+### Sign in to Formation
+
+`formation` is CyVerse's hosted [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) server at
+<https://de.cyverse.org/formation/mcp>, already registered for every agent. It does not
+use `~/.irods`: each agent signs in to it with your CyVerse account the first time. The
+app's home folder is not kept between analyses, so sign in again in each new analysis.
+
+| Agent | Sign in |
+|---|---|
+| Claude Code | `claude mcp login formation --no-browser`, then open the printed address in your browser and paste the address you land on back into the terminal |
+| Codex | `codex mcp login formation --no-browser`, then the same: open the address, and paste the address you land on back |
+| Antigravity (KASM desktop) | from the IDE's MCP servers panel |
+
+OpenCode cannot finish this sign-in from your own browser: it waits for the browser to
+come back to the container, which your browser cannot reach. Use another agent for
+Formation there. On the [KASM desktop](https://idss-mesa.github.io/docs/apps/kasm/) the browser runs inside the app, so you can
+also sign in normally by opening the address in the desktop's Chrome or Firefox.
 
 ## 2. Connect a language model
 
@@ -1718,7 +1796,8 @@ With credentials in place, ask an agent for things such as:
 - *"List the folders in my CyVerse home and tell me which ones have AVU metadata."*
 - *"Find NEON soil-moisture data in the MESA community folder and load it into a pandas
   DataFrame."*
-- *"Launch a MESA JupyterLab analysis and tell me when it is running."*
+- *"Launch a MESA JupyterLab analysis and tell me when it is running."* (needs the
+  Formation sign-in above)
 
 The agent calls the MESA MCP servers to do the work; see [Servers](https://idss-mesa.github.io/docs/servers/)
 for what each one can do.
@@ -1731,15 +1810,15 @@ for what each one can do.
 ---
 type: Integration Guide
 title: Claude Code integration
-description: How MESA registers its MCP servers with Claude Code — scopes, management commands, and the registration it creates.
+description: How MESA registers its MCP servers with Claude Code — scopes, management commands, the registration it creates, and the hosted Formation server and claude.ai connectors.
 tags:
   - claude-code
   - mcp
   - registration
   - scopes
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: claude-code-mcp
     resource: "https://code.claude.com/docs/en/mcp"
@@ -1749,16 +1828,27 @@ sources:
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
+  - id: formation
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation source repository (README and landing page)"
+    author: "team:cyverse-de"
+  - id: mesa-apps
+    resource: "https://github.com/idss-mesa/cli/blob/main/bash/configs/claude.json"
+    title: "MESA app images: Claude Code MCP config"
+    author: "team:idss-mesa"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Claude Code integration
 
-MESA registers each server as a **local stdio** MCP server: Claude Code launches the
-binary as a subprocess and talks to it over standard input/output. No network ports, no
-hosted service required. Claude Code is one of four clients MESA supports — see also
-[Codex CLI](https://idss-mesa.github.io/docs/codex/), [Antigravity](https://idss-mesa.github.io/docs/antigravity/), and [OpenCode](https://idss-mesa.github.io/docs/opencode/).
+MESA registers `mesa-mcp` and `irods` as **local stdio** MCP servers: Claude Code
+launches each binary as a subprocess and talks to it over standard input/output. It
+registers `formation` as a **remote HTTP** server: [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/)
+is hosted by CyVerse at <https://de.cyverse.org/formation/mcp>, and you sign in to it once
+with your CyVerse account. Claude Code is one of four clients MESA supports — see also
+[Codex CLI](https://idss-mesa.github.io/docs/codex/), [Antigravity](https://idss-mesa.github.io/docs/antigravity/), and [OpenCode](https://idss-mesa.github.io/docs/opencode/), and
+[claude.ai and Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/) for connectors.
 
 ## Scopes
 
@@ -1794,8 +1884,7 @@ committed at the repo root.
                    "args": ["--transport", "stdio"], "env": {} },
     "irods":     { "type": "stdio", "command": "~/.mesa/bin/irods-mcp-server",
                    "args": ["-c", "~/.mesa/repos/irods-mcp-server/config-stdio.yaml"], "env": {} },
-    "formation": { "type": "stdio", "command": "~/.mesa/bin/formation-mcp",
-                   "args": ["--transport", "stdio"], "env": {} }
+    "formation": { "type": "http", "url": "https://de.cyverse.org/formation/mcp" }
   }
 }
 ```
@@ -1816,20 +1905,58 @@ claude mcp remove mesa-mcp -s user
 claude mcp remove mesa-mcp -s local
 ```
 
-## Alternative: hosted / remote servers
+## Hosted servers and connectors
 
-Local stdio is the default and needs no auth for public data. CyVerse also runs **hosted**
-MCP endpoints you can connect to instead of building locally — for example the public
-iRODS server at `https://mcp.cyverse.ai/mcp`:
+### Formation
+
+Formation runs only as CyVerse's hosted server; the installer registers it for you. To
+add it by hand (in every project, at user scope):
 
 ```bash
-claude mcp add --transport http cyverse-irods https://mcp.cyverse.ai/mcp
+claude mcp add --transport http --scope user formation https://de.cyverse.org/formation/mcp
 ```
 
-Hosted `mesa-mcp` (Streamable HTTP / SSE behind CyVerse Keycloak OIDC) is documented in the
-[mesa-mcp repo](https://github.com/idss-mesa/mesa-mcp); it requires authentication. The MESA
-installer focuses on the local build because it works offline-of-auth and gives you live,
-editable source.
+`claude mcp list` shows it as **Needs authentication** until you sign in. Run `/mcp` inside
+Claude Code, pick **formation**, and choose **Authenticate**; or run
+`claude mcp login formation` from a shell (add `--no-browser` on a remote machine and paste
+the redirect URL back). Claude Code stores the sign-in and refreshes it[^claude-code-mcp].
+
+Upgrading from an older MESA install? Its `formation` entry was a local server that no
+longer works, and `claude mcp add` at user scope fails while that entry exists. Re-run the
+installer, or run `claude mcp remove formation -s user` first. See
+[Moving from the local formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/#moving-from-the-local-formation-mcp).
+
+### claude.ai connectors
+
+If you are signed in to Claude Code with a claude.ai subscription, connectors you added on
+claude.ai — such as a [CyVerse Formation connector](https://idss-mesa.github.io/docs/claude-ai/) — are available in
+Claude Code automatically. A server you registered in Claude Code itself takes precedence
+over a connector with the same URL, so the connector is hidden rather than listed twice.
+Connectors are not loaded when Claude Code runs with an API key or another model provider.
+
+### CyVerse Data Store (iRODS)
+
+CyVerse also hosts Data Store MCP endpoints, which the MESA featured apps register
+alongside the local servers[^mesa-apps]:
+
+```bash
+# public data under /iplant/home/shared, no sign-in
+claude mcp add --transport http --scope user irods-public https://mcp-public.cyverse.ai/mcp
+
+# your own data: CyVerse's pre-registered OAuth client, then sign in
+claude mcp add --transport http --scope user --client-id mcp-client --callback-port 8990 \
+  irods-auth https://mcp.cyverse.ai/mcp
+claude mcp login irods-auth
+```
+
+The names avoid a clash with the installer's local `irods`. Hosted `mesa-mcp`
+(Streamable HTTP / SSE behind CyVerse Keycloak OIDC) is documented in the
+[mesa-mcp repo](https://github.com/idss-mesa/mesa-mcp); it requires authentication. The
+MESA installer builds `mesa-mcp` and `irods` locally because they work without signing in
+and give you live, editable source.
+
+[^claude-code-mcp]: https://idss-mesa.github.io/docs/Claude Code MCP documentation, <https://code.claude.com/docs/en/mcp>.
+[^mesa-apps]: https://idss-mesa.github.io/docs/MESA app images, Claude Code MCP config, <https://github.com/idss-mesa/cli/blob/main/bash/configs/claude.json>.
 
 ---8<--- https://idss-mesa.github.io/docs/codex/
 
@@ -1843,8 +1970,8 @@ tags:
   - registration
   - config-toml
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: codex-mcp
     resource: "https://developers.openai.com/codex/mcp"
@@ -1854,30 +1981,42 @@ sources:
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
+  - id: codex-source
+    resource: "https://github.com/openai/codex/blob/main/codex-rs/cli/src/mcp_cmd.rs"
+    title: "Codex CLI source: mcp add / login / logout"
+    author: "team:openai"
+  - id: formation
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation source repository (README)"
+    author: "team:cyverse-de"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Codex CLI integration
 
-MESA registers each server as a **local stdio** MCP server via `codex mcp add`: Codex
-launches the binary as a subprocess and talks to it over standard input/output. See also
-the sibling pages for [Claude Code](https://idss-mesa.github.io/docs/claude-code/), [Antigravity](https://idss-mesa.github.io/docs/antigravity/), and
-[OpenCode](https://idss-mesa.github.io/docs/opencode/).
+MESA registers `mesa-mcp` and `irods` as **local stdio** MCP servers via `codex mcp add`:
+Codex launches each binary as a subprocess and talks to it over standard input/output.
+It registers `formation` as a **streamable HTTP** server pointing at CyVerse's hosted
+[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/), which you sign in to once with your CyVerse account.
+See also the sibling pages for [Claude Code](https://idss-mesa.github.io/docs/claude-code/), [Antigravity](https://idss-mesa.github.io/docs/antigravity/),
+and [OpenCode](https://idss-mesa.github.io/docs/opencode/).
 
 ## Scope
 
 Codex has **no scope flag** — every registration is global, stored in
-`~/.codex/config.toml` under a `[mcp_servers.<name>]` table with `command`, `args`, and
-`env` keys. Unlike Claude Code there is no project or local scope; the installer's
+`~/.codex/config.toml` (or `$CODEX_HOME/config.toml`) under a `[mcp_servers.<name>]`
+table: `command`, `args`, and `env` keys for a local server, `url` for a remote one. Unlike Claude Code there is no project or local scope; the installer's
 `MCP_SCOPE` variable is ignored for Codex.
 
 ## Managing the servers
 
 ```bash
-codex mcp list            # show all servers
-codex mcp get mesa-mcp    # show one server's config
+codex mcp list               # show all servers, with their sign-in status
+codex mcp get mesa-mcp       # show one server's config
 codex mcp remove mesa-mcp
+codex mcp login formation    # sign in to Formation (add --no-browser on a remote machine)
+codex mcp logout formation
 ```
 
 Inside a Codex TUI session, run `/mcp` to verify the servers and their tools loaded.
@@ -1885,8 +2024,10 @@ Registration changes are read at startup — **restart the session** to pick the
 
 ## The registration MESA creates
 
-The installer runs `codex mcp add <name> --env K=V -- <command> <args>` for each server,
-which writes:
+The installer runs `codex mcp add <name> --env K=V -- <command> <args>` for each local
+server. For `formation` it writes the table itself, because `codex mcp add --url` starts
+the browser sign-in straight away, which would stall an unattended install[^codex-source].
+The result:
 
 ```toml
 # ~/.codex/config.toml
@@ -1900,18 +2041,31 @@ command = "/home/you/.mesa/bin/irods-mcp-server"
 args = ["-c", "/home/you/.mesa/repos/irods-mcp-server/config-stdio.yaml"]
 
 [mcp_servers.formation]
-command = "/home/you/.mesa/bin/formation-mcp"
-args = ["--transport", "stdio"]
-env = { FORMATION_USERNAME = "you", FORMATION_PASSWORD = "••••••" }
+url = "https://de.cyverse.org/formation/mcp"
+tool_timeout_sec = 600
 ```
 
-The `env` tables only appear when you installed with
-[credentials](https://idss-mesa.github.io/docs/credentials/); anonymous installs omit them.
+The `env` table on `mesa-mcp` only appears when you installed with
+[credentials](https://idss-mesa.github.io/docs/credentials/); anonymous installs omit it. `formation` never takes
+credentials. `tool_timeout_sec = 600` lets `launch_app_and_wait` wait for an app for up to
+the 9 minutes Formation allows; Codex's default limit is 5 minutes.
 
 !!! note "mesa-ducklake is not listed here"
     `mesa-ducklake` is a **library** imported by `mesa-mcp`, not a separate MCP server. Its
     capabilities surface through `mesa-mcp`'s `mesa_ducklake_*` tools. See
     [its page](https://idss-mesa.github.io/docs/servers/mesa-ducklake/).
+
+## Signing in to Formation
+
+Run `codex mcp login formation`. Codex opens the CyVerse sign-in page in your browser
+(`--no-browser` prints the address instead). Until you sign in, Codex tells you at startup
+to run `codex mcp login formation`. Remote servers with OAuth sign-in need Codex 0.77 or
+newer.
+
+To add Formation by hand instead of through the installer, either run
+`codex mcp add formation --url https://de.cyverse.org/formation/mcp` (it signs you in
+immediately) or paste the `[mcp_servers.formation]` table above into
+`~/.codex/config.toml`.
 
 ## Troubleshooting notes
 
@@ -1919,9 +2073,13 @@ The `env` tables only appear when you installed with
   check `/mcp`.
 - `/mcp` shows nothing → `codex mcp list`, then inspect `~/.codex/config.toml`.
 - Re-running the installer updates the entries in place (it removes and re-adds each
-  server), so a stale path after moving `~/.mesa` is fixed by a re-run.
+  server), so a stale path after moving `~/.mesa` is fixed by a re-run. It also replaces
+  the local `formation` entry older installs created with the hosted one.
+- `formation` needs sign-in → `codex mcp login formation`.
 
 More in the general [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/) page.
+
+[^codex-source]: https://idss-mesa.github.io/docs/Codex CLI source, `codex mcp add`, <https://github.com/openai/codex/blob/main/codex-rs/cli/src/mcp_cmd.rs>.
 
 ---8<--- https://idss-mesa.github.io/docs/antigravity/
 
@@ -1935,8 +2093,8 @@ tags:
   - mcp
   - registration
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: antigravity-mcp
     resource: "https://antigravity.google/docs/mcp"
@@ -1946,15 +2104,21 @@ sources:
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
+  - id: formation
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation source repository (landing page client instructions)"
+    author: "team:cyverse-de"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Antigravity integration
 
 [Google Antigravity](https://antigravity.google/) is Google's agentic IDE, paired with
 the `agy` CLI. Antigravity has **no non-interactive `add` command**, so the MESA
-installer writes its MCP config file directly. See also the sibling pages for
+installer writes its MCP config file directly: `mesa-mcp` and `irods` as local servers,
+and `formation` as a remote server pointing at CyVerse's hosted
+[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/). See also the sibling pages for
 [Claude Code](https://idss-mesa.github.io/docs/claude-code/), [Codex CLI](https://idss-mesa.github.io/docs/codex/), and [OpenCode](https://idss-mesa.github.io/docs/opencode/).
 
 ## Where the config lives
@@ -1990,15 +2154,18 @@ entries from the JSON — or run `install.sh --uninstall`, which does it for you
       "args": ["-c", "/home/you/.mesa/repos/irods-mcp-server/config-stdio.yaml"]
     },
     "formation": {
-      "command": "/home/you/.mesa/bin/formation-mcp",
-      "args": ["--transport", "stdio"],
-      "env": { "FORMATION_USERNAME": "you", "FORMATION_PASSWORD": "••••••" }
+      "serverUrl": "https://de.cyverse.org/formation/mcp"
     }
   }
 }
 ```
 
-The `env` objects only appear when you installed with [credentials](https://idss-mesa.github.io/docs/credentials/).
+The `env` object on `mesa-mcp` only appears when you installed with
+[credentials](https://idss-mesa.github.io/docs/credentials/). A remote server uses `serverUrl`, not `url`, and takes
+no credentials: Formation asks you to sign in with your CyVerse account. Formation's own
+setup page documents this form for Antigravity and `agy`[^formation]; the MESA team has
+not tested Antigravity's sign-in to it, so if it fails, use another client such as
+Claude Code or the [claude.ai connector](https://idss-mesa.github.io/docs/claude-ai/).
 The installer **merges** its entries into an existing file — any other MCP servers you
 have configured are left untouched.
 
@@ -2019,6 +2186,8 @@ have configured are left untouched.
 
 More in the general [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/) page.
 
+[^formation]: https://idss-mesa.github.io/docs/Formation client setup instructions, <https://github.com/cyverse-de/formation>.
+
 ---8<--- https://idss-mesa.github.io/docs/opencode/
 
 ---
@@ -2030,8 +2199,8 @@ tags:
   - mcp
   - registration
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: opencode-mcp
     resource: "https://opencode.ai/docs/mcp-servers/"
@@ -2041,15 +2210,25 @@ sources:
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
+  - id: opencode-source
+    resource: "https://github.com/sst/opencode/blob/main/packages/opencode/src/cli/cmd/mcp.ts"
+    title: "OpenCode CLI source: opencode mcp auth / add / debug"
+    author: "team:opencode"
+  - id: formation
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation source repository (README and landing page)"
+    author: "team:cyverse-de"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # OpenCode integration
 
-[OpenCode](https://opencode.ai) is an open-source terminal coding agent. Its
-`opencode mcp add` command is **interactive-only**, so the MESA installer writes the
-global config directly. See also the sibling pages for [Claude Code](https://idss-mesa.github.io/docs/claude-code/),
+[OpenCode](https://opencode.ai) is an open-source terminal coding agent. The MESA
+installer writes its global config directly, which works with every OpenCode release
+(older releases have no non-interactive `opencode mcp add`). `mesa-mcp` and `irods` are
+registered as local servers; `formation` is registered as a remote server pointing at
+CyVerse's hosted [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/), which you sign in to once. See also the sibling pages for [Claude Code](https://idss-mesa.github.io/docs/claude-code/),
 [Codex CLI](https://idss-mesa.github.io/docs/codex/), and [Antigravity](https://idss-mesa.github.io/docs/antigravity/).
 
 ## Where the config lives
@@ -2063,7 +2242,11 @@ the global registration.
 ## Managing the servers
 
 ```bash
-opencode mcp list         # verify the servers are registered
+opencode mcp list               # verify the servers are registered
+opencode mcp auth formation     # sign in to Formation with your CyVerse account
+opencode mcp auth list          # sign-in status of remote servers
+opencode mcp logout formation   # forget the Formation sign-in
+opencode mcp debug formation    # diagnose a remote server that will not connect
 ```
 
 Config is read at startup — **restart OpenCode** after changes. To remove the MESA
@@ -2071,8 +2254,8 @@ servers, delete their entries from the JSON — or run `install.sh --uninstall`.
 
 ## The registration MESA creates
 
-Note the argv-array `command` — program and arguments together, unlike the other
-clients' command + args split:
+Note the argv-array `command` on the local servers — program and arguments together,
+unlike the other clients' command + args split — and the `url` on the remote one:
 
 ```json
 {
@@ -2089,17 +2272,16 @@ clients' command + args split:
       "enabled": true
     },
     "formation": {
-      "type": "local",
-      "command": ["/home/you/.mesa/bin/formation-mcp", "--transport", "stdio"],
-      "enabled": true,
-      "environment": { "FORMATION_USERNAME": "you", "FORMATION_PASSWORD": "••••••" }
+      "type": "remote",
+      "url": "https://de.cyverse.org/formation/mcp",
+      "enabled": true
     }
   }
 }
 ```
 
-The `environment` objects only appear when you installed with
-[credentials](https://idss-mesa.github.io/docs/credentials/). The installer **merges** its entries into an existing
+The `environment` object on `mesa-mcp` only appears when you installed with
+[credentials](https://idss-mesa.github.io/docs/credentials/); `formation` never takes credentials. The installer **merges** its entries into an existing
 file — other servers and settings are left untouched.
 
 !!! note "mesa-ducklake is not listed here"
@@ -2107,21 +2289,171 @@ file — other servers and settings are left untouched.
     capabilities surface through `mesa-mcp`'s `mesa_ducklake_*` tools. See
     [its page](https://idss-mesa.github.io/docs/servers/mesa-ducklake/).
 
+## Signing in to Formation
+
+Run `opencode mcp auth formation`. OpenCode registers itself with Formation automatically,
+opens the CyVerse sign-in page in your browser, and waits for the sign-in to come back to
+it on this computer; it stores the result in `~/.local/share/opencode/mcp-auth.json`[^opencode-source].
+Until you sign in, OpenCode marks `formation` as needing authentication and tells you to
+run that command.
+
+Because the sign-in has to return to the computer OpenCode runs on, it does not complete
+when OpenCode runs on a remote machine (such as a MESA app on CyVerse) and the browser on
+yours. There, use Claude Code: `claude mcp login formation --no-browser` lets you paste
+the sign-in result back by hand.
+
 ## Troubleshooting notes
 
 - `opencode mcp list` missing the servers → restart OpenCode (config is read at
   startup), then inspect the global `opencode.json` (path above).
 - A server present globally but absent in one project → check that project's
   `opencode.json` for a deep-merged entry overriding or disabling it.
+- `formation` failing to connect → `opencode mcp auth formation`, then
+  `opencode mcp debug formation`.
 
 More in the general [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/) page.
+
+[^opencode-source]: https://idss-mesa.github.io/docs/OpenCode MCP documentation and CLI source, <https://opencode.ai/docs/mcp-servers/> and <https://github.com/sst/opencode/blob/main/packages/opencode/src/cli/cmd/mcp.ts>.
+
+---8<--- https://idss-mesa.github.io/docs/claude-ai/
+
+---
+type: Integration Guide
+title: claude.ai and Claude Desktop
+description: Add CyVerse's hosted Formation MCP server to claude.ai and Claude Desktop as a custom connector, sign in with your CyVerse account, and use it in chats and in Claude Code.
+tags:
+  - claude-ai
+  - claude-desktop
+  - connector
+  - formation
+  - remote-mcp
+  - oauth
+generated:
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
+sources:
+  - id: claude-connectors
+    resource: "https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp"
+    title: "Getting started with custom connectors using remote MCP"
+    author: "team:anthropic"
+  - id: claude-code-mcp
+    resource: "https://code.claude.com/docs/en/mcp"
+    title: "Claude Code MCP documentation (Use MCP servers from claude.ai)"
+    author: "team:anthropic"
+  - id: formation
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation source repository (README)"
+    author: "team:cyverse-de"
+status: stable
+stale_after: "2027-04-08T00:00:00Z"
+---
+
+# claude.ai and Claude Desktop
+
+On claude.ai and in Claude Desktop, MCP servers are added as **connectors**. A custom
+connector points Claude at a remote MCP server on the internet; Claude connects to it from
+Anthropic's cloud, not from your computer[^claude-connectors].
+
+The MESA server you can add this way is **[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/)**,
+CyVerse's hosted MCP server for the Discovery Environment, at
+<https://de.cyverse.org/formation/mcp>. With it, Claude can launch Discovery Environment
+apps, follow your analyses, and read and write your Data Store files, as you. The other
+MESA servers run on your own computer and are for [Claude Code](https://idss-mesa.github.io/docs/claude-code/) and the
+other agent clients.
+
+Custom connectors are available on the Free, Pro, Max, Team, and Enterprise plans; the Free
+plan allows one custom connector.
+
+## Add the Formation connector
+
+=== "Pro and Max"
+
+    1. Go to **Customize > Connectors**. In Claude Desktop, choose **Customize** in the
+       sidebar, then **Connectors**.
+    2. Click **+ Add**, then **Add custom connector**.
+    3. Enter a name, for example `CyVerse Formation`.
+    4. Enter the URL `https://de.cyverse.org/formation/mcp` exactly (no trailing slash)
+       and click **Continue**.
+    5. Review the authentication settings Claude detected and click **Continue**.
+    6. Under **Authentication**, choose **Sign in now** (or **Sign in when needed**).
+    7. Under **OAuth client**, choose **Register automatically**. Formation registers
+       Claude for you; there is no client ID or secret to enter.
+    8. Leave **Request headers** empty and click **Add**.
+    9. Sign in with your CyVerse username and password on the CyVerse page that opens.
+
+=== "Team and Enterprise"
+
+    **An owner adds it once for the organization:**
+
+    1. Go to **Organization settings > Connectors**.
+    2. Click **Add**, hover over **Custom**, and select **Web**.
+    3. Enter a name (`CyVerse Formation`) and the URL
+       `https://de.cyverse.org/formation/mcp`, and click **Continue**.
+    4. Review the detected authentication, choose **Register automatically** under
+       **OAuth client**, and click **Add**.
+
+    On Team, Owners and Primary Owners can add connectors; on Enterprise, so can people
+    with a custom role that includes **Manage access to Libraries**.
+
+    **Then each member connects it:**
+
+    1. Go to **Customize > Connectors**.
+    2. Find **CyVerse Formation** (it has a **Custom** label) and click **Connect**.
+    3. Sign in with your own CyVerse account.
+
+    Every member signs in separately, so Claude only reaches what that person can reach
+    in CyVerse.
+
+To change a connector's settings later, remove it and add it again.
+
+## Use it in a chat
+
+1. Click **+** at the lower left of the message box and choose **Connectors**.
+2. Switch **CyVerse Formation** on for the conversation.
+3. Ask, for example:
+    - *"Who am I in CyVerse, and what is in my home folder?"*
+    - *"Find a JupyterLab app in the Discovery Environment and launch it for me."*
+    - *"Which of my analyses are running? Stop the oldest one and save its outputs."*
+
+Keep approval on for the tools that change things — `delete_data`, `upload_file`,
+`set_metadata`, `stop_analysis`, and `launch_app_and_wait` — rather than allowing them
+always; you can also block individual tools in the connector's settings under
+**Customize > Connectors**. File contents Formation reads become part of the
+conversation. The [Formation page](https://idss-mesa.github.io/docs/servers/formation-mcp/#tools) lists every tool.
+
+A connector you add on claude.ai is also available in Claude Desktop and in the Claude
+mobile apps once it is connected.
+
+## In Claude Code
+
+If you are signed in to Claude Code with a claude.ai subscription, connectors you added on
+claude.ai are available there automatically; run `/mcp` to see them[^claude-code-mcp].
+Connectors are not loaded when Claude Code runs with an API key or another model
+provider; register Formation directly instead (see [Claude Code](https://idss-mesa.github.io/docs/claude-code/#hosted-servers-and-connectors)).
+
+If Claude Code also has its own `formation` entry pointing at the same URL, Claude Code
+uses its own entry and hides the connector. An older local `formation` entry from the MESA
+installer does not count as the same server, so you would see both; re-run the
+[installer](https://idss-mesa.github.io/docs/install/) or remove the old entry with `claude mcp remove formation -s user`.
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| **Connect** fails or the CyVerse sign-in page shows an error | Check the URL is exactly `https://de.cyverse.org/formation/mcp`. If it is, remove the connector, add it again, and choose **Register automatically**. |
+| Tools fail with authentication errors after a while | Go to **Customize > Connectors**, open **CyVerse Formation**, and connect again. |
+| Calls fail with "service accounts are not supported" | Formation accepts personal CyVerse accounts only; connect again and sign in with your own account. |
+| Formation does not answer at all | Check <https://status.cyverse.org> for a CyVerse outage. |
+
+[^claude-connectors]: https://idss-mesa.github.io/docs/Getting started with custom connectors using remote MCP, <https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp>.
+[^claude-code-mcp]: https://idss-mesa.github.io/docs/Claude Code MCP documentation, <https://code.claude.com/docs/en/mcp>.
 
 ---8<--- https://idss-mesa.github.io/docs/credentials/
 
 ---
 type: Reference
 title: Credentials
-description: Authenticating the MESA servers to CyVerse — env vars at install time, native iRODS auth, and per-server configuration.
+description: Authenticating the MESA servers to CyVerse — env vars at install time and native iRODS auth for mesa-mcp and irods, and browser sign-in for the hosted Formation server.
 tags:
   - credentials
   - authentication
@@ -2129,8 +2461,8 @@ tags:
   - irods
   - formation
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: install-sh
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
@@ -2140,24 +2472,29 @@ sources:
     resource: "https://github.com/idss-mesa/mesa-mcp/blob/main/.env.example"
     title: "mesa-mcp .env.example"
     author: "team:idss-mesa"
-  - id: formation-mcp
-    resource: "https://github.com/idss-mesa/formation-mcp"
-    title: "formation-mcp source repository"
-    author: "team:idss-mesa"
+  - id: formation
+    resource: "https://github.com/cyverse-de/formation"
+    title: "Formation source repository (README)"
+    author: "team:cyverse-de"
   - id: icommands
     resource: "https://learning.cyverse.org/ds/icommands/"
     title: "CyVerse iCommands guide"
     author: "team:cyverse"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Credentials
 
-By default every MESA server connects **anonymously** to public CyVerse infrastructure
-(`data.cyverse.org`, zone `iplant`, user `anonymous`). That is enough to read public
-collections and browse the Discovery Environment app catalog. To write metadata, access
-private data, or launch apps as yourself, authenticate.
+By default the two local MESA servers, `mesa-mcp` and `irods`, connect **anonymously** to
+public CyVerse infrastructure (`data.cyverse.org`, zone `iplant`, user `anonymous`). That
+is enough to read public collections. To write metadata or reach private data as
+yourself, give them your CyVerse credentials as described below.
+
+`formation`, the hosted Discovery Environment server, works differently: it has no
+anonymous access and takes no credentials from you or the installer. Each client signs in
+to it with your CyVerse account in the browser — see
+[formation](#formation-sign-in-with-your-cyverse-account) below.
 
 ## Quickest path — env vars at install time
 
@@ -2166,10 +2503,8 @@ CYVERSE_USERNAME=you CYVERSE_PASSWORD='••••••' \
   curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
-The installer threads these into **every client registration it creates** as:
-
-- `mesa-mcp` → `MESA_MCP_IRODS__USER`, `MESA_MCP_IRODS__PASSWORD`
-- `formation` → `FORMATION_USERNAME`, `FORMATION_PASSWORD`
+The installer threads these into the `mesa-mcp` registration of **every client** it
+configures, as `MESA_MCP_IRODS__USER` and `MESA_MCP_IRODS__PASSWORD`.
 
 !!! warning "Where the password ends up"
     These land in plaintext in each client's config file: `~/.claude.json` (Claude Code
@@ -2215,24 +2550,34 @@ irods_user_password: ••••••
 Any `MESA_MCP_*` variable set in your shell at install time is passed through to the server.
 The full list is in [`mesa-mcp/.env.example`](https://github.com/idss-mesa/mesa-mcp/blob/main/.env.example).
 
-## formation — Discovery Environment auth
+## formation — sign in with your CyVerse account
 
-`formation-mcp` accepts a username/password or a JWT, via env vars or `~/.formation-mcp.yaml`:
+[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) is hosted by CyVerse at
+<https://de.cyverse.org/formation/mcp> and uses the standard MCP sign-in: OAuth 2.1 with
+PKCE against CyVerse's Keycloak[^formation]. The first time a client connects, it opens the
+CyVerse sign-in page in your browser; the client then stores the sign-in and refreshes it.
 
-```yaml
-# ~/.formation-mcp.yaml
-base_url: https://de.cyverse.org/formation
-username: you
-password: ••••••
-```
+| Client | Sign in |
+|---|---|
+| Claude Code | `/mcp` inside Claude Code, or `claude mcp login formation` (`--no-browser` on a remote machine) |
+| Codex | `codex mcp login formation` |
+| OpenCode | `opencode mcp auth formation` |
+| Antigravity | the IDE's MCP servers panel |
+| claude.ai and Claude Desktop | **Connect** on the connector — see [claude.ai and Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/) |
 
-Env equivalents: `FORMATION_BASE_URL`, `FORMATION_USERNAME`, `FORMATION_PASSWORD`, or
-`FORMATION_TOKEN`.
+No password is stored in any config file, and `CYVERSE_USERNAME`, `~/.irods`, and
+`cyverse-login` do not apply. Only personal CyVerse accounts can sign in.
+
+The `~/.formation-mcp.yaml` file and the `FORMATION_*` variables belonged to the old local
+`formation-mcp` server and are no longer used; see
+[Moving from the local formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/#moving-from-the-local-formation-mcp).
 
 ## DataCite (optional)
 
 DataCite DOI tools in `mesa-mcp` only need credentials when you mint/publish DOIs. See the
 [mesa-mcp docs](https://github.com/idss-mesa/mesa-mcp) for the DataCite configuration.
+
+[^formation]: https://idss-mesa.github.io/docs/Formation README, <https://github.com/cyverse-de/formation>.
 
 ---8<--- https://idss-mesa.github.io/docs/servers/mesa-mcp/
 
@@ -2481,7 +2826,7 @@ It is registered under the name `irods` with every detected client — see
 registration each one gets.
 
 `make build` produces a static (`CGO_ENABLED=0`) binary; Go ≥ 1.25 is required. Pass
-`--no-go` to the installer to skip this server (and `formation`).
+`--no-go` to the installer to skip this server.
 
 ## Capabilities
 
@@ -2500,89 +2845,266 @@ Edit `config-stdio.yaml` to switch from anonymous to a named account — see
 
 ---
 type: MCP Server
-title: formation-mcp
-description: Go MCP server for the CyVerse Discovery Environment via the Formation API — launch apps, monitor analyses.
+title: Formation (hosted)
+description: CyVerse's hosted MCP server for the Discovery Environment at https://de.cyverse.org/formation/mcp — launch apps, manage analyses, and work with the Data Store from claude.ai, Claude Code, Codex, OpenCode, or Antigravity.
 tags:
   - formation
-  - go
   - discovery-environment
+  - hosted
+  - remote-mcp
+  - oauth
+  - connector
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
-  - id: repo
-    resource: "https://github.com/idss-mesa/formation-mcp"
-    title: "formation-mcp source repository"
-    author: "team:idss-mesa"
-  - id: formation-api
+  - id: formation
     resource: "https://github.com/cyverse-de/formation"
-    title: "Formation API source repository"
+    title: "Formation source repository (README and landing page)"
     author: "team:cyverse-de"
+  - id: claude-connectors
+    resource: "https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp"
+    title: "Getting started with custom connectors using remote MCP"
+    author: "team:anthropic"
+  - id: claude-code-mcp
+    resource: "https://code.claude.com/docs/en/mcp"
+    title: "Claude Code MCP documentation"
+    author: "team:anthropic"
+  - id: install-sh
+    resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
+    title: "MESA install.sh"
+    author: "team:idss-mesa"
+  - id: mesa-apps
+    resource: "https://github.com/idss-mesa/jupyterlab/tree/main/latest/configs"
+    title: "MESA app images: per-agent MCP configs"
+    author: "team:idss-mesa"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
-# formation-mcp
+# Formation (hosted)
 
-**Repo:** [idss-mesa/formation-mcp](https://github.com/idss-mesa/formation-mcp) · **Language:** Go · **Registered as:** `formation`
+**Endpoint:** <https://de.cyverse.org/formation/mcp> · **Run by:** CyVerse ·
+**Source:** [cyverse-de/formation](https://github.com/cyverse-de/formation) ·
+**Registered as:** `formation`
 
-Connects your agent client to the **CyVerse Discovery Environment** through the
-[Formation API](https://github.com/cyverse-de/formation). It lets you launch scientific
-apps, monitor analyses, and work with Data Store files in natural language.
+Formation is the CyVerse Discovery Environment's own MCP server[^formation]. CyVerse
+hosts it, so there is nothing to install or build: point your client at the URL and sign
+in with your CyVerse account. Your agent can then find and launch Discovery Environment
+apps, follow and stop analyses, and read, write, and describe files in the CyVerse Data
+Store, always as **you** and with your own permissions.
 
-## How MESA runs it
+It works in every client MESA supports and as a **custom connector** on claude.ai and in
+Claude Desktop.
+
+!!! tip "Enter the URL exactly"
+    Use `https://de.cyverse.org/formation/mcp`, with `https` and no trailing slash. The
+    sign-in checks that the address matches exactly.
+
+## Add it to your client
+
+=== "claude.ai & Claude Desktop"
+
+    1. Go to **Customize > Connectors**, click **+ Add**, then **Add custom connector**.
+    2. Name it `CyVerse Formation`, paste `https://de.cyverse.org/formation/mcp`, and
+       click **Continue**.
+    3. Keep sign-in on, choose **Register automatically** under **OAuth client**, and
+       click **Add**.
+    4. Sign in with your CyVerse account when asked.
+
+    On Team and Enterprise plans an owner adds the connector once and each member clicks
+    **Connect**. Step by step: [claude.ai and Claude Desktop](https://idss-mesa.github.io/docs/claude-ai/).
+
+=== "Claude Code"
+
+    ```bash
+    claude mcp add --transport http --scope user formation https://de.cyverse.org/formation/mcp
+    ```
+
+    Then, inside Claude Code, run `/mcp`, pick **formation**, and choose
+    **Authenticate**; or from a shell run `claude mcp login formation` (add
+    `--no-browser` on a remote machine and paste the redirect URL back)[^claude-code-mcp].
+
+    If you are signed in to Claude Code with a claude.ai subscription, a Formation
+    connector you added on claude.ai is available in Claude Code automatically.
+
+=== "Codex"
+
+    ```bash
+    codex mcp add formation --url https://de.cyverse.org/formation/mcp
+    ```
+
+    Codex detects that Formation needs a sign-in and opens the CyVerse login straight
+    away; later, sign in again with `codex mcp login formation` (`--no-browser` on a
+    remote machine). The same entry in `~/.codex/config.toml`:
+
+    ```toml
+    [mcp_servers.formation]
+    url = "https://de.cyverse.org/formation/mcp"
+    tool_timeout_sec = 600   # launches can wait up to 9 minutes; Codex's default is 5
+    ```
+
+    Needs Codex 0.77 or newer.
+
+=== "OpenCode"
+
+    In `~/.config/opencode/opencode.json`:
+
+    ```json
+    {
+      "mcp": {
+        "formation": {
+          "type": "remote",
+          "url": "https://de.cyverse.org/formation/mcp",
+          "enabled": true
+        }
+      }
+    }
+    ```
+
+    Then sign in with `opencode mcp auth formation`; `opencode mcp auth list` shows the
+    status.
+
+=== "Antigravity"
+
+    In `$HOME/.gemini/config/mcp_config.json` (note `serverUrl`, not `url`):
+
+    ```json
+    {
+      "mcpServers": {
+        "formation": {
+          "serverUrl": "https://de.cyverse.org/formation/mcp"
+        }
+      }
+    }
+    ```
+
+    Then refresh the IDE's MCP servers panel, or run `/mcp` in `agy`. The MESA team has
+    not tested Antigravity's sign-in to Formation; if it fails, use another client.
+
+=== "MESA installer and apps"
+
+    The [MESA installer](https://idss-mesa.github.io/docs/install/) registers Formation by URL with every client it
+    detects, and the [MESA featured apps](https://idss-mesa.github.io/docs/apps/agents/) come with it already
+    registered for every agent. Either way, sign in once per client as shown in the
+    other tabs.
+
+## Sign in
+
+The first time a client connects, it opens the CyVerse sign-in page in your browser. Log
+in with your CyVerse username and password and you are sent back to the client. Behind
+this is standard MCP sign-in: OAuth 2.1 with PKCE against CyVerse's Keycloak, and
+automatic client registration, so there is no API key or client ID to set up[^formation].
+
+- No password, environment variable, `~/.irods` file, or `cyverse-login` is involved.
+- The client stores the sign-in and refreshes it. If calls start failing with
+  authentication errors later, sign in again (`/mcp` or `claude mcp login formation`,
+  `codex mcp login formation`, `opencode mcp auth formation`, or **Connect** on
+  claude.ai).
+- Only personal CyVerse accounts can sign in; service accounts are refused.
+- No CyVerse account yet? Register for free at <https://user.cyverse.org>.
+
+## Tools
+
+| Tool | What it does |
+|---|---|
+| `whoami` | Your username, name, email, and Data Store paths: home folder, trash, and default analysis output folder. Agents call it first instead of guessing paths. |
+| `list_apps` | Lists the Discovery Environment apps you can use, optionally filtered by name |
+| `get_app_parameters` | An app's parameters, their types, and defaults |
+| `launch_app_and_wait` | Launches an app. For an interactive (VICE) app it waits until the app's address answers and returns it |
+| `get_analysis_status` | An analysis's status, and whether its app address is ready |
+| `list_running_analyses` | Your running analyses |
+| `stop_analysis` | Stops an analysis, saving its outputs unless asked not to |
+| `browse_data` | Lists a Data Store folder or reads a text file |
+| `create_directory` | Creates a folder, optionally with metadata |
+| `upload_file` | Writes text to a file in the Data Store, optionally with metadata |
+| `set_metadata` | Adds or replaces AVU metadata on a file or folder |
+| `delete_data` | Moves a file or folder to your Data Store trash; `dry_run` previews it |
+
+## Good to know
+
+- **Launching apps.** `launch_app_and_wait` waits up to 5 minutes by default and never
+  more than 9 minutes. If an app needs parameters the request did not supply, the tool
+  lists them instead of launching, so the agent can ask you. Batch (non-interactive) jobs return as soon as
+  they are submitted; check them with `get_analysis_status`.
+- **Text only.** `browse_data` returns file contents into the conversation, so whatever it
+  reads is sent to your model provider. It reads at most 1 MiB at a time and continues
+  with `offset` and `limit`; images, archives, and other binary files cannot be read.
+- **Deleting.** `delete_data` moves items to your Data Store trash (its own description
+  says deletions are permanent; they are not). Non-empty folders need `recurse`.
+- **Metadata.** `set_metadata` with `replace` replaces only the attributes you set and
+  keeps the others. CyVerse system attributes (names starting with `ipc`) are hidden and
+  cannot be written.
+- **Everything is yours.** Analyses Formation launches appear in the Discovery
+  Environment and on the MESA Portal's [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page, and output
+  goes to your `analyses` folder.
+- **Approving tools.** The tools carry no read-only or destructive hints, so your client
+  treats them all alike. Approve `delete_data`, `upload_file`, `set_metadata`,
+  `stop_analysis`, and `launch_app_and_wait` call by call rather than "always".
+
+## Moving from the local formation-mcp
+
+Earlier versions of the MESA installer built [formation-mcp](https://github.com/idss-mesa/formation-mcp)
+and registered it as a local stdio server that called Formation's REST API. CyVerse
+replaced that API with this hosted MCP server in June 2026, so the local server no longer
+works: it exits with `Configuration error: FORMATION_BASE_URL is required`, or its tools
+fail with `login failed with status 404`.
+
+Re-run the installer and it replaces the old entry with the hosted one in every client
+and deletes `~/.mesa/bin/formation-mcp`:
 
 ```bash
-( cd ~/.mesa/repos/formation-mcp && go build -o formation-mcp ./cmd/formation-mcp )
-~/.mesa/bin/formation-mcp --transport stdio
+curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash
 ```
 
-It is registered under the name `formation` with every detected client — see
-[Claude Code](https://idss-mesa.github.io/docs/claude-code/), [Codex CLI](https://idss-mesa.github.io/docs/codex/),
-[Antigravity](https://idss-mesa.github.io/docs/antigravity/), or [OpenCode](https://idss-mesa.github.io/docs/opencode/) for the exact
-registration each one gets.
+To switch by hand instead, remove the old entry first, then add the hosted one as shown
+above:
 
-Go ≥ 1.25 required. Prebuilt binaries for Linux/macOS/Windows are also published on the
-repo's [GitHub Releases](https://github.com/idss-mesa/formation-mcp/releases) (built with
-GoReleaser) if you'd prefer to download rather than build.
+| Client | Remove the old entry |
+|---|---|
+| Claude Code | `claude mcp remove formation -s user` (adding again at user scope fails while the old entry exists) |
+| Codex | `codex mcp remove formation` |
+| OpenCode | delete `formation` from the `mcp` key of `~/.config/opencode/opencode.json` |
+| Antigravity | delete `formation` from `mcpServers` in `$HOME/.gemini/config/mcp_config.json` |
 
-## What you can do
+`~/.formation-mcp.yaml` and the `FORMATION_*` environment variables are no longer used;
+you can delete them, along with `~/.mesa/repos/formation-mcp`.
 
-- **list / launch apps** and wait for completion
-- **monitor and stop analyses**
-- **browse, upload, and set metadata** on Data Store files
-- open results in the browser
+## Troubleshooting
 
-## Authentication
+| Problem | What to do |
+|---|---|
+| **Needs authentication** in `claude mcp list` or `/mcp` | Expected until you sign in: run `/mcp` or `claude mcp login formation`. |
+| `formation` appears twice in Claude Code | You have the old local entry and a claude.ai connector. Remove the local one: `claude mcp remove formation -s user`. |
+| The CyVerse page says `Invalid parameter: redirect_uri` | CyVerse does not yet accept that client's sign-in callback. Report it to [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the claude.ai connector meanwhile. |
+| `authentication error` (HTTP 500) | CyVerse's sign-in service is unreachable from Formation; try again later and check <https://status.cyverse.org>. |
+| A launch times out in Codex | Add `tool_timeout_sec = 600` to `[mcp_servers.formation]` in `~/.codex/config.toml`. |
 
-`formation-mcp` needs CyVerse credentials to launch anything as you. Provide them via env
-vars (`FORMATION_USERNAME` / `FORMATION_PASSWORD` or `FORMATION_TOKEN`) or a
-`~/.formation-mcp.yaml` file — see [Credentials](https://idss-mesa.github.io/docs/credentials/#formation-discovery-environment-auth).
-Configuration precedence is **CLI flag > env var > config file**.
+More in [Troubleshooting](https://idss-mesa.github.io/docs/troubleshooting/#formation-sign-in-and-connection).
 
-The server also supports an **SSE** transport for remote/web clients (Claude.ai) behind
-nginx + TLS; the repo README has the full deployment guide.
+[^formation]: https://idss-mesa.github.io/docs/servers/Formation README and landing page, <https://github.com/cyverse-de/formation>.
+[^claude-code-mcp]: https://idss-mesa.github.io/docs/servers/Claude Code MCP documentation, <https://code.claude.com/docs/en/mcp>.
 
 ---8<--- https://idss-mesa.github.io/docs/troubleshooting/
 
 ---
 type: Troubleshooting
 title: Troubleshooting
-description: Fixes for common MESA install and registration problems across Claude Code, Codex, Antigravity, and OpenCode.
+description: Fixes for common MESA install, registration, and Formation sign-in problems across Claude Code, Codex, Antigravity, and OpenCode.
 tags:
   - troubleshooting
   - errors
   - faq
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: install-sh
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Troubleshooting
@@ -2600,11 +3122,12 @@ You're running in PowerShell, `cmd`, Git Bash, or MSYS. Install
 [WSL](https://learn.microsoft.com/windows/wsl/install), open an Ubuntu (or similar) shell,
 and run the one-liner there. The installer auto-detects WSL and treats it as Linux.
 
-## Go servers were skipped
+## Go server was skipped
 
-If you see *"Go toolchain not found"* or *"Go 1.x is older than the required 1.25"*, only
-`mesa-mcp` was installed. Install [Go ≥ 1.25](https://go.dev/dl/) and re-run, or pass
-`--no-go` if you only want `mesa-mcp`.
+If you see *"Go toolchain not found"* or *"Go 1.x is older than the required 1.25"*,
+`irods` was not installed; `mesa-mcp` and the hosted `formation` were registered anyway.
+Install [Go ≥ 1.25](https://go.dev/dl/) and re-run, or pass `--no-go` to skip `irods`
+on purpose.
 
 ## `uv` not found after install
 
@@ -2619,8 +3142,9 @@ then re-run the installer.
 
 ## `claude mcp list` shows "Needs authentication" or "Failed to connect"
 
-- **Needs authentication** on a *hosted* (`https://…`) server is expected until you log in;
-  it does not affect the local stdio servers MESA installs.
+- **Needs authentication** on a *hosted* (`https://…`) server such as `formation` is
+  expected until you sign in: run `/mcp` and choose **Authenticate**, or
+  `claude mcp login formation`. It does not affect the local stdio servers.
 - **Failed to connect** on a local server usually means the binary moved or the venv broke.
   Re-run the installer to rebuild and re-register.
 
@@ -2655,6 +3179,32 @@ more than once (e.g. an older manual entry plus MESA's). Remove the ones you don
 claude mcp remove mesa-mcp -s user
 claude mcp remove mesa-mcp -s local
 ```
+
+## Formation sign-in and connection
+
+[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) is hosted by CyVerse at
+<https://de.cyverse.org/formation/mcp>; each client signs in to it with your CyVerse
+account.
+
+- **`Configuration error: FORMATION_BASE_URL is required`**, or tools failing with
+  **`login failed with status 404`**: this is the local `formation-mcp` that older
+  installs built. It stopped working when CyVerse moved Formation to the hosted server.
+  Re-run the installer to replace it, or follow
+  [Moving from the local formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/#moving-from-the-local-formation-mcp).
+- **`MCP server formation already exists in user config`** when adding the hosted server
+  to Claude Code: remove the old entry first, `claude mcp remove formation -s user`.
+- **The CyVerse sign-in page says `Invalid parameter: redirect_uri`**: CyVerse does not
+  accept that client's sign-in callback yet. Report the client and its version to
+  [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the
+  [claude.ai connector](https://idss-mesa.github.io/docs/claude-ai/) meanwhile.
+- **OpenCode's sign-in never finishes on a remote machine**: OpenCode waits for the
+  browser to return to the machine it runs on. Sign in from Claude Code there instead
+  (`claude mcp login formation --no-browser`).
+- **`authentication error`** (HTTP 500) from Formation: its connection to CyVerse's
+  sign-in service failed. Try again later and check <https://status.cyverse.org>.
+- **A launch times out in Codex**: Codex stops waiting for a tool after 5 minutes by
+  default; add `tool_timeout_sec = 600` under `[mcp_servers.formation]` in
+  `~/.codex/config.toml` (the installer sets it).
 
 ## iRODS calls return permission errors
 
@@ -2716,39 +3266,45 @@ documentation through the endpoints below rather than scraping rendered HTML.
 
 ## This site documents an MCP stack
 
-The MESA stack — [mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/),
-[irods-mcp-server](https://idss-mesa.github.io/docs/servers/irods-mcp-server/) and
-[formation-mcp](https://idss-mesa.github.io/docs/servers/formation-mcp/), with the
-[mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/) library behind mesa-mcp — *is*
-agent tooling. If what you actually want is CyVerse data — Data Store
-collections, AVU metadata, ontology terms, Discovery Environment apps and
-analyses — do not scrape these pages: install the servers and call their
-tools.
+The MESA stack — [mesa-mcp](https://idss-mesa.github.io/docs/servers/mesa-mcp/) and
+[irods-mcp-server](https://idss-mesa.github.io/docs/servers/irods-mcp-server/), which run locally, with the
+[mesa-ducklake](https://idss-mesa.github.io/docs/servers/mesa-ducklake/) library behind mesa-mcp, and
+[Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/), which CyVerse hosts — *is* agent
+tooling. If what you actually want is CyVerse data — Data Store collections, AVU
+metadata, ontology terms, Discovery Environment apps and analyses — do not
+scrape these pages: connect the servers and call their tools.
 
-* **All three servers, every detected client** (local `stdio`):
-  `curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash` —
+* **Every server, every detected client:**
+  `curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash`
+  registers `mesa-mcp` and `irods` as local `stdio` servers and Formation by URL —
   see the [Quickstart](https://idss-mesa.github.io/docs/quickstart/).
 * **One server by hand:**
   `claude mcp add mesa-mcp -s user -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio` —
   see the [manual install](https://idss-mesa.github.io/docs/install/#manual-install) steps for every client.
-* **Hosted, nothing to build:** the public CyVerse iRODS endpoint over
-  Streamable HTTP, `claude mcp add --transport http cyverse-irods https://mcp.cyverse.ai/mcp` —
-  see [hosted / remote servers](https://idss-mesa.github.io/docs/claude-code/#alternative-hosted-remote-servers).
+* **Hosted, nothing to build:** Formation, the Discovery Environment server, at
+  [https://de.cyverse.org/formation/mcp](https://de.cyverse.org/formation/mcp)
+  (Streamable HTTP, OAuth sign-in with a CyVerse account):
+  `claude mcp add --transport http --scope user formation https://de.cyverse.org/formation/mcp`,
+  or a custom connector on claude.ai and in Claude Desktop — see
+  [Formation](https://idss-mesa.github.io/docs/servers/formation-mcp/) and
+  [hosted servers and connectors](https://idss-mesa.github.io/docs/claude-code/#hosted-servers-and-connectors).
 
 Once connected, the MCP `tools/list` request[^mcp-spec] returns each server's
 live, authoritative tool catalogue with JSON Schema inputs. Prefer it over the
 tool tables on these pages, which summarise tool groups and can lag the code.
 Use this documentation to learn how to *install and configure* the stack; use
-the servers to get the data.
+the servers to get the data. Anonymous access to `mesa-mcp` and `irods` is
+read-only on public collections; their credentials belong in the user's
+environment or `~/.irods` (see [Credentials](https://idss-mesa.github.io/docs/credentials/)), never in a
+prompt. Formation takes no credentials at all: the user signs in through the
+client.
 
 The site also has guides for people who use MESA through a browser: the
 [MESA Portal](https://idss-mesa.github.io/docs/portal/) at https://mesa.cyverse.org and the
 [featured apps](https://idss-mesa.github.io/docs/apps/) (JupyterLab, RStudio, VS Code, a terminal, and a
 Linux desktop on CyVerse VICE, each with the MESA MCP servers pre-registered).
 Cite those pages when a user asks how to do something in the portal or in one of
-the apps. Anonymous access is read-only on public
-collections; credentials belong in the user's environment or `~/.irods` (see
-[Credentials](https://idss-mesa.github.io/docs/credentials/)), never in a prompt.
+the apps.
 
 ## Entry points
 
@@ -2897,6 +3453,28 @@ The same agent conventions cover the rest of the origin and its neighbours:
 
 ## 2026-10-08
 
+* **Update**: Rewrote [Formation](servers/formation-mcp.md) (formerly formation-mcp) for
+  CyVerse's hosted Formation MCP server at <https://de.cyverse.org/formation/mcp>: per-client
+  setup (claude.ai and Claude Desktop, Claude Code, Codex, OpenCode, Antigravity), browser
+  sign-in with a CyVerse account, the 12 tools and their limits, and how to move off the
+  local `formation-mcp`. CyVerse removed the REST API that server called on 2026-06-11, so it
+  no longer works.
+* **Creation**: Added [claude.ai and Claude Desktop](claude-ai.md), adding Formation as a
+  custom connector (Pro and Max, Team and Enterprise owners and members), using it in chats
+  and in Claude Code.
+* **Update**: `install.sh` now registers `formation` by URL with every client (Claude Code
+  `--transport http`, Codex `url` with `tool_timeout_sec = 600`, OpenCode `remote`,
+  Antigravity `serverUrl`) instead of building `formation-mcp`, even with `--no-go`; a re-run
+  replaces the old local entry and deletes `~/.mesa/bin/formation-mcp`. New override
+  `MESA_FORMATION_URL`. [Install reference](install.md), [Quickstart](quickstart.md) (new
+  "Sign in to Formation" step), [Credentials](credentials.md), the four client pages,
+  [Troubleshooting](troubleshooting.md), the [home page](index.md), and `README.md` match.
+* **Update**: [Claude Code](claude-code.md) has a new "Hosted servers and connectors"
+  section; its hosted iRODS commands now match the MESA app images (public
+  `mcp-public.cyverse.ai`, authenticated `mcp.cyverse.ai` with the `mcp-client` OAuth client).
+* **Update**: [AI agents in the MESA apps](apps/agents.md) no longer says `cyverse-login`
+  signs agents in to Formation; it adds a "Sign in to Formation" step for each agent, and the
+  five app pages point to it.
 * **Creation**: Added the [MESA Portal](portal/index.md) section, end-user guides for
   <https://mesa.cyverse.org>: [Overview](portal/overview.md) (signing in, navigation,
   dashboard, themes), [Managing data](portal/data.md) (Data Browser views, upload, move,

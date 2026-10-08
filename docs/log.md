@@ -2,6 +2,28 @@
 
 ## 2026-10-08
 
+* **Update**: Rewrote [Formation](servers/formation-mcp.md) (formerly formation-mcp) for
+  CyVerse's hosted Formation MCP server at <https://de.cyverse.org/formation/mcp>: per-client
+  setup (claude.ai and Claude Desktop, Claude Code, Codex, OpenCode, Antigravity), browser
+  sign-in with a CyVerse account, the 12 tools and their limits, and how to move off the
+  local `formation-mcp`. CyVerse removed the REST API that server called on 2026-06-11, so it
+  no longer works.
+* **Creation**: Added [claude.ai and Claude Desktop](claude-ai.md), adding Formation as a
+  custom connector (Pro and Max, Team and Enterprise owners and members), using it in chats
+  and in Claude Code.
+* **Update**: `install.sh` now registers `formation` by URL with every client (Claude Code
+  `--transport http`, Codex `url` with `tool_timeout_sec = 600`, OpenCode `remote`,
+  Antigravity `serverUrl`) instead of building `formation-mcp`, even with `--no-go`; a re-run
+  replaces the old local entry and deletes `~/.mesa/bin/formation-mcp`. New override
+  `MESA_FORMATION_URL`. [Install reference](install.md), [Quickstart](quickstart.md) (new
+  "Sign in to Formation" step), [Credentials](credentials.md), the four client pages,
+  [Troubleshooting](troubleshooting.md), the [home page](index.md), and `README.md` match.
+* **Update**: [Claude Code](claude-code.md) has a new "Hosted servers and connectors"
+  section; its hosted iRODS commands now match the MESA app images (public
+  `mcp-public.cyverse.ai`, authenticated `mcp.cyverse.ai` with the `mcp-client` OAuth client).
+* **Update**: [AI agents in the MESA apps](apps/agents.md) no longer says `cyverse-login`
+  signs agents in to Formation; it adds a "Sign in to Formation" step for each agent, and the
+  five app pages point to it.
 * **Creation**: Added the [MESA Portal](portal/index.md) section, end-user guides for
   <https://mesa.cyverse.org>: [Overview](portal/overview.md) (signing in, navigation,
   dashboard, themes), [Managing data](portal/data.md) (Data Browser views, upload, move,

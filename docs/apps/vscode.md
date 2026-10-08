@@ -63,7 +63,9 @@ searching for *MESA VS Code*.
 ## First steps
 
 1. Open a terminal: **Terminal → New Terminal** (or <kbd>Ctrl</kbd>+<kbd>`</kbd>).
-2. Run `cyverse-login` to give the tools and agents your CyVerse access.
+2. Run `cyverse-login` to give the tools and agents your CyVerse Data Store access, and
+   sign in to `formation` (the Discovery Environment server) as shown in
+   [Sign in to Formation](agents.md#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent: `claude`, `codex`, `opencode`, or `agy`, or open **Cline** in the side
    bar and choose a model provider.

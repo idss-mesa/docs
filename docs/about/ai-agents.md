@@ -37,39 +37,45 @@ documentation through the endpoints below rather than scraping rendered HTML.
 
 ## This site documents an MCP stack
 
-The MESA stack — [mesa-mcp](../servers/mesa-mcp.md),
-[irods-mcp-server](../servers/irods-mcp-server.md) and
-[formation-mcp](../servers/formation-mcp.md), with the
-[mesa-ducklake](../servers/mesa-ducklake.md) library behind mesa-mcp — *is*
-agent tooling. If what you actually want is CyVerse data — Data Store
-collections, AVU metadata, ontology terms, Discovery Environment apps and
-analyses — do not scrape these pages: install the servers and call their
-tools.
+The MESA stack — [mesa-mcp](../servers/mesa-mcp.md) and
+[irods-mcp-server](../servers/irods-mcp-server.md), which run locally, with the
+[mesa-ducklake](../servers/mesa-ducklake.md) library behind mesa-mcp, and
+[Formation](../servers/formation-mcp.md), which CyVerse hosts — *is* agent
+tooling. If what you actually want is CyVerse data — Data Store collections, AVU
+metadata, ontology terms, Discovery Environment apps and analyses — do not
+scrape these pages: connect the servers and call their tools.
 
-* **All three servers, every detected client** (local `stdio`):
-  `curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash` —
+* **Every server, every detected client:**
+  `curl -fsSL https://raw.githubusercontent.com/idss-mesa/docs/main/install.sh | bash`
+  registers `mesa-mcp` and `irods` as local `stdio` servers and Formation by URL —
   see the [Quickstart](../quickstart.md).
 * **One server by hand:**
   `claude mcp add mesa-mcp -s user -- ~/.mesa/.venv/bin/mesa-mcp --transport stdio` —
   see the [manual install](../install.md#manual-install) steps for every client.
-* **Hosted, nothing to build:** the public CyVerse iRODS endpoint over
-  Streamable HTTP, `claude mcp add --transport http cyverse-irods https://mcp.cyverse.ai/mcp` —
-  see [hosted / remote servers](../claude-code.md#alternative-hosted-remote-servers).
+* **Hosted, nothing to build:** Formation, the Discovery Environment server, at
+  [https://de.cyverse.org/formation/mcp](https://de.cyverse.org/formation/mcp)
+  (Streamable HTTP, OAuth sign-in with a CyVerse account):
+  `claude mcp add --transport http --scope user formation https://de.cyverse.org/formation/mcp`,
+  or a custom connector on claude.ai and in Claude Desktop — see
+  [Formation](../servers/formation-mcp.md) and
+  [hosted servers and connectors](../claude-code.md#hosted-servers-and-connectors).
 
 Once connected, the MCP `tools/list` request[^mcp-spec] returns each server's
 live, authoritative tool catalogue with JSON Schema inputs. Prefer it over the
 tool tables on these pages, which summarise tool groups and can lag the code.
 Use this documentation to learn how to *install and configure* the stack; use
-the servers to get the data.
+the servers to get the data. Anonymous access to `mesa-mcp` and `irods` is
+read-only on public collections; their credentials belong in the user's
+environment or `~/.irods` (see [Credentials](../credentials.md)), never in a
+prompt. Formation takes no credentials at all: the user signs in through the
+client.
 
 The site also has guides for people who use MESA through a browser: the
 [MESA Portal](../portal/index.md) at https://mesa.cyverse.org and the
 [featured apps](../apps/index.md) (JupyterLab, RStudio, VS Code, a terminal, and a
 Linux desktop on CyVerse VICE, each with the MESA MCP servers pre-registered).
 Cite those pages when a user asks how to do something in the portal or in one of
-the apps. Anonymous access is read-only on public
-collections; credentials belong in the user's environment or `~/.irods` (see
-[Credentials](../credentials.md)), never in a prompt.
+the apps.
 
 ## Entry points
 

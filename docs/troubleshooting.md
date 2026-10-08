@@ -1,21 +1,21 @@
 ---
 type: Troubleshooting
 title: Troubleshooting
-description: Fixes for common MESA install and registration problems across Claude Code, Codex, Antigravity, and OpenCode.
+description: Fixes for common MESA install, registration, and Formation sign-in problems across Claude Code, Codex, Antigravity, and OpenCode.
 tags:
   - troubleshooting
   - errors
   - faq
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: install-sh
     resource: "https://github.com/idss-mesa/docs/blob/main/install.sh"
     title: "MESA install.sh"
     author: "team:idss-mesa"
 status: stable
-stale_after: "2027-03-10T00:00:00Z"
+stale_after: "2027-04-08T00:00:00Z"
 ---
 
 # Troubleshooting
@@ -33,11 +33,12 @@ You're running in PowerShell, `cmd`, Git Bash, or MSYS. Install
 [WSL](https://learn.microsoft.com/windows/wsl/install), open an Ubuntu (or similar) shell,
 and run the one-liner there. The installer auto-detects WSL and treats it as Linux.
 
-## Go servers were skipped
+## Go server was skipped
 
-If you see *"Go toolchain not found"* or *"Go 1.x is older than the required 1.25"*, only
-`mesa-mcp` was installed. Install [Go ≥ 1.25](https://go.dev/dl/) and re-run, or pass
-`--no-go` if you only want `mesa-mcp`.
+If you see *"Go toolchain not found"* or *"Go 1.x is older than the required 1.25"*,
+`irods` was not installed; `mesa-mcp` and the hosted `formation` were registered anyway.
+Install [Go ≥ 1.25](https://go.dev/dl/) and re-run, or pass `--no-go` to skip `irods`
+on purpose.
 
 ## `uv` not found after install
 
@@ -52,8 +53,9 @@ then re-run the installer.
 
 ## `claude mcp list` shows "Needs authentication" or "Failed to connect"
 
-- **Needs authentication** on a *hosted* (`https://…`) server is expected until you log in;
-  it does not affect the local stdio servers MESA installs.
+- **Needs authentication** on a *hosted* (`https://…`) server such as `formation` is
+  expected until you sign in: run `/mcp` and choose **Authenticate**, or
+  `claude mcp login formation`. It does not affect the local stdio servers.
 - **Failed to connect** on a local server usually means the binary moved or the venv broke.
   Re-run the installer to rebuild and re-register.
 
@@ -88,6 +90,32 @@ more than once (e.g. an older manual entry plus MESA's). Remove the ones you don
 claude mcp remove mesa-mcp -s user
 claude mcp remove mesa-mcp -s local
 ```
+
+## Formation sign-in and connection
+
+[Formation](servers/formation-mcp.md) is hosted by CyVerse at
+<https://de.cyverse.org/formation/mcp>; each client signs in to it with your CyVerse
+account.
+
+- **`Configuration error: FORMATION_BASE_URL is required`**, or tools failing with
+  **`login failed with status 404`**: this is the local `formation-mcp` that older
+  installs built. It stopped working when CyVerse moved Formation to the hosted server.
+  Re-run the installer to replace it, or follow
+  [Moving from the local formation-mcp](servers/formation-mcp.md#moving-from-the-local-formation-mcp).
+- **`MCP server formation already exists in user config`** when adding the hosted server
+  to Claude Code: remove the old entry first, `claude mcp remove formation -s user`.
+- **The CyVerse sign-in page says `Invalid parameter: redirect_uri`**: CyVerse does not
+  accept that client's sign-in callback yet. Report the client and its version to
+  [CyVerse support](https://user.cyverse.org/support) and use Claude Code or the
+  [claude.ai connector](claude-ai.md) meanwhile.
+- **OpenCode's sign-in never finishes on a remote machine**: OpenCode waits for the
+  browser to return to the machine it runs on. Sign in from Claude Code there instead
+  (`claude mcp login formation --no-browser`).
+- **`authentication error`** (HTTP 500) from Formation: its connection to CyVerse's
+  sign-in service failed. Try again later and check <https://status.cyverse.org>.
+- **A launch times out in Codex**: Codex stops waiting for a tool after 5 minutes by
+  default; add `tool_timeout_sec = 600` under `[mcp_servers.formation]` in
+  `~/.codex/config.toml` (the installer sets it).
 
 ## iRODS calls return permission errors
 

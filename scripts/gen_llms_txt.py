@@ -50,8 +50,10 @@ def main() -> int:
         "",
         f"> {desc} This documentation covers the MESA Portal (managing data, "
         "starting applications, managing analyses), the featured apps and the "
-        "AI agents inside them, the installer, per-client registration, "
-        "CyVerse credentials, the servers, and troubleshooting. The source "
+        "AI agents inside them, the installer, per-client registration "
+        "(including claude.ai connectors), CyVerse credentials, the servers "
+        "(including CyVerse's hosted Formation server), and troubleshooting. "
+        "The source "
         "repository is an Open Knowledge Format "
         "(OKF v0.2) bundle: every page carries YAML frontmatter with type, "
         "provenance (generated/sources), and lifecycle (status/stale_after) "

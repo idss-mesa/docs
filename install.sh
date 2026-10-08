@@ -2,8 +2,9 @@
 #
 # MESA — one-liner installer for the CyVerse MESA MCP stack.
 #
-# Clones, builds, and registers three CyVerse MCP servers as local stdio
-# servers with every supported agent client found on this machine:
+# Clones, builds, and registers two CyVerse MCP servers as local stdio servers,
+# and registers CyVerse's hosted Formation server by URL, with every supported
+# agent client found on this machine:
 #
 #   clients:  Claude Code (claude) · OpenAI Codex CLI (codex)
 #             Google Antigravity (agy / IDE) · OpenCode (opencode)
@@ -11,7 +12,9 @@
 #   servers:
 #   * mesa-mcp    iRODS Data Store + OBO/OLS ontology + DataCite + DuckLake   (Python)
 #   * irods       reference iRODS Data Store server (irods-mcp-server)        (Go)
-#   * formation   CyVerse Discovery Environment (Formation API)               (Go)
+#   * formation   CyVerse Discovery Environment, hosted by CyVerse at
+#                 https://de.cyverse.org/formation/mcp (nothing to build;
+#                 each client signs in with your CyVerse account)
 #
 # mesa-ducklake (the AVU metadata-history library) is installed alongside
 # mesa-mcp, which imports it — it is not a standalone MCP server.
@@ -35,10 +38,12 @@
 #   MESA_MCP_REF       branch/tag for mesa-mcp   (default: main)
 #   MESA_CLIENTS       same as --for             (default: auto-detect)
 #   MCP_SCOPE          Claude Code scope only    (default: user)
+#   MESA_FORMATION_URL hosted Formation endpoint (default: https://de.cyverse.org/formation/mcp)
 #
 # Credentials (optional — default is anonymous public CyVerse access):
-#   CYVERSE_USERNAME / CYVERSE_PASSWORD   applied to mesa-mcp + formation
-#   any MESA_MCP_IRODS__* / FORMATION_*   passed through verbatim to the server
+#   CYVERSE_USERNAME / CYVERSE_PASSWORD   applied to mesa-mcp
+#   any MESA_MCP_IRODS__*                 passed through verbatim to mesa-mcp
+#   formation takes no credentials here: sign in to it from each client
 #
 set -euo pipefail
 
@@ -50,6 +55,7 @@ MESA_GIT_ORG="${MESA_GIT_ORG:-idss-mesa}"
 MESA_MCP_REF="${MESA_MCP_REF:-main}"
 ANYJEV_REF="${ANYJEV_REF:-795a4970b47218b7c0686cd579d691fc2cf8df2f}"
 MCP_SCOPE="${MCP_SCOPE:-user}"            # Claude Code only
+FORMATION_URL="${MESA_FORMATION_URL:-https://de.cyverse.org/formation/mcp}"
 CLIENTS_ALL="claude codex antigravity opencode"
 CLIENT_FILTER="${MESA_CLIENTS:-}"         # --for overrides this
 CLIENTS_SELECTED=""                       # resolved by select_clients()
@@ -79,7 +85,7 @@ have() { command -v "$1" >/dev/null 2>&1; }
 # script, so fall back to a compact usage text.
 usage() {
   if [ -r "$0" ] && head -1 "$0" 2>/dev/null | grep -q '^#!' ; then
-    sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,47p' "$0" | sed 's/^# \{0,1\}//'
   else
     cat <<'EOF'
 MESA — one-liner installer for the CyVerse MESA MCP stack.
@@ -91,7 +97,7 @@ Usage:
                   (default: every supported client detected on this machine)
 
 Environment overrides: MESA_HOME, MESA_GIT_ORG, MESA_MCP_REF, MESA_CLIENTS,
-MCP_SCOPE, CYVERSE_USERNAME / CYVERSE_PASSWORD.
+MCP_SCOPE, MESA_FORMATION_URL, CYVERSE_USERNAME / CYVERSE_PASSWORD.
 
 Docs: https://idss-mesa.github.io/docs/
 EOF
@@ -206,7 +212,9 @@ mesa_python() {
   fi
 }
 
-json_add_server() {   # json_add_server <file> <flavor:antigravity|opencode> <name> <cmd> [args...]
+json_add_server() {   # json_add_server <file> <flavor> <name> <cmd> [args...]
+  # flavor: antigravity | opencode (local stdio command), or
+  #         antigravity-remote | opencode-remote (then <cmd> is the server URL).
   # env pairs travel via the MCP_ENV array; they always contain '=' so the
   # literal '--' below unambiguously separates them from the command argv.
   local file="$1" flavor="$2" name="$3"; shift 3
@@ -238,6 +246,10 @@ if flavor == 'antigravity':
     if env:
         entry['env'] = env
     data.setdefault('mcpServers', {})[name] = entry
+elif flavor == 'antigravity-remote':
+    data.setdefault('mcpServers', {})[name] = {'serverUrl': cmd[0]}   # serverUrl, not url
+elif flavor == 'opencode-remote':
+    data.setdefault('mcp', {})[name] = {'type': 'remote', 'url': cmd[0], 'enabled': True}
 else:  # opencode
     entry = {'type': 'local', 'command': cmd, 'enabled': True}   # command: full argv array
     if env:
@@ -251,6 +263,44 @@ tmp = f"{path}.mesa-tmp.{os.getpid()}"
 with open(tmp, 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
+os.replace(tmp, path)
+PY
+}
+
+codex_add_remote() {   # codex_add_remote <name> <url>
+  # `codex mcp add --url` starts an interactive OAuth login as soon as it sees
+  # an OAuth-protected server, which would stall `curl | bash`. Append the
+  # [mcp_servers.<name>] table to config.toml instead (after `codex mcp remove`)
+  # and let the user run `codex mcp login <name>` later.
+  local name="$1" url="$2" py
+  py="$(mesa_python)" || die "python is required to edit the Codex config (install python3 and re-run)"
+  "$py" - "${CODEX_HOME:-$HOME/.codex}/config.toml" "$name" "$url" <<'PY'
+import json, os, sys
+path, name, url = sys.argv[1], sys.argv[2], sys.argv[3]
+try:
+    import tomllib
+except ImportError:              # python < 3.11: write without the parse check
+    tomllib = None
+try:
+    with open(path) as f:
+        text = f.read()
+except FileNotFoundError:
+    text = ''
+if tomllib:
+    try:
+        servers = tomllib.loads(text).get('mcp_servers', {})
+    except tomllib.TOMLDecodeError as e:
+        sys.exit(f"error: {path} is not valid TOML ({e}); fix it and re-run")
+    if name in servers:
+        sys.exit(f"error: {path} still has [mcp_servers.{name}]; remove it and re-run")
+block = f"[mcp_servers.{name}]\nurl = {json.dumps(url)}\ntool_timeout_sec = 600\n"
+new = (text.rstrip('\n') + '\n\n' if text.strip() else '') + block
+if tomllib:
+    tomllib.loads(new)
+os.makedirs(os.path.dirname(path), exist_ok=True)
+tmp = f"{path}.mesa-tmp.{os.getpid()}"
+with open(tmp, 'w') as f:
+    f.write(new)
 os.replace(tmp, path)
 PY
 }
@@ -362,13 +412,13 @@ ensure_prereqs() {
 
   if [ "$BUILD_GO" -eq 1 ]; then
     if ! have go; then
-      warn "Go toolchain not found — skipping the Go servers (irods-mcp-server, formation-mcp)."
+      warn "Go toolchain not found — skipping the Go server (irods-mcp-server)."
       warn "Install Go >= 1.${GO_MIN_MINOR} from https://go.dev/dl/ and re-run, or pass --no-go to silence this."
       BUILD_GO=0
     else
       local minor; minor="$(go env GOVERSION 2>/dev/null | sed -E 's/^go1\.([0-9]+).*/\1/')"
       if [ -n "$minor" ] && [ "$minor" -lt "$GO_MIN_MINOR" ]; then
-        warn "Go 1.$minor is older than the required 1.${GO_MIN_MINOR} — skipping Go servers. Upgrade Go and re-run."
+        warn "Go 1.$minor is older than the required 1.${GO_MIN_MINOR} — skipping the Go server (irods-mcp-server). Upgrade Go and re-run."
         BUILD_GO=0
       fi
     fi
@@ -425,10 +475,6 @@ install_go() {
   ( cd "$MESA_HOME/repos/irods-mcp-server" && make build )
   cp "$MESA_HOME/repos/irods-mcp-server/bin/irods-mcp-server" "$MESA_HOME/bin/irods-mcp-server"
   ok "irods-mcp-server built"
-
-  say "Building formation-mcp (Go)"
-  ( cd "$MESA_HOME/repos/formation-mcp" && CGO_ENABLED=0 go build -o "$MESA_HOME/bin/formation-mcp" ./cmd/formation-mcp )
-  ok "formation-mcp built"
 }
 
 # ---------------------------------------------------------------------------
@@ -445,15 +491,6 @@ build_env_mesa_mcp() {
   done < <(env)
 }
 
-build_env_formation() {
-  MCP_ENV=()
-  [ -n "${CYVERSE_USERNAME:-}" ] && MCP_ENV+=( "FORMATION_USERNAME=$CYVERSE_USERNAME" )
-  [ -n "${CYVERSE_PASSWORD:-}" ] && MCP_ENV+=( "FORMATION_PASSWORD=$CYVERSE_PASSWORD" )
-  while IFS='=' read -r k _; do
-    case "$k" in FORMATION_*) MCP_ENV+=( "$k=$(printenv "$k")" );; esac
-  done < <(env)
-}
-
 env_flags() {   # env_flags <flag>  ->  FLAGGED_ENV=( <flag> K=V ... )
   local flag="$1" kv
   FLAGGED_ENV=()
@@ -461,10 +498,22 @@ env_flags() {   # env_flags <flag>  ->  FLAGGED_ENV=( <flag> K=V ... )
 }
 
 # ---------------------------------------------------------------------------
-# Per-client registration adapters (<name> <cmd> [args...], env via MCP_ENV)
+# Per-client registration adapters, two forms:
+#   <add> <name> <cmd> [args...]   local stdio server (env via MCP_ENV)
+#   <add> --url <name> <url>       remote (streamable HTTP + OAuth) server
+# Each adapter removes or overwrites an existing entry of the same name, so a
+# re-run replaces an older local `formation` registration with the hosted one.
 # ---------------------------------------------------------------------------
 add_claude() {
-  local name="$1"; shift
+  local name
+  if [ "$1" = --url ]; then
+    name="$2"
+    claude mcp remove "$name" -s "$MCP_SCOPE" >/dev/null 2>&1 || true
+    claude mcp add --transport http -s "$MCP_SCOPE" "$name" "$3"
+    ok "claude: registered $name → $3 (scope: $MCP_SCOPE)"
+    return
+  fi
+  name="$1"; shift
   env_flags -e
   claude mcp remove "$name" -s "$MCP_SCOPE" >/dev/null 2>&1 || true
   claude mcp add "$name" -s "$MCP_SCOPE" ${FLAGGED_ENV[@]+"${FLAGGED_ENV[@]}"} -- "$@"
@@ -474,7 +523,15 @@ add_claude() {
 add_codex() {
   # Always remove first (re-add idempotency is not guaranteed); calls stay
   # strictly serial — codex does a read-modify-write on config.toml.
-  local name="$1"; shift
+  local name
+  if [ "$1" = --url ]; then
+    name="$2"
+    codex mcp remove "$name" >/dev/null 2>&1 || true
+    codex_add_remote "$name" "$3"
+    ok "codex: registered $name → $3"
+    return
+  fi
+  name="$1"; shift
   env_flags --env
   codex mcp remove "$name" >/dev/null 2>&1 || true
   codex mcp add "$name" ${FLAGGED_ENV[@]+"${FLAGGED_ENV[@]}"} -- "$@"
@@ -484,28 +541,31 @@ add_codex() {
 add_antigravity() {
   # No non-interactive CLI: edit every existing candidate config, else create
   # the Antigravity 2.0 unified path.
-  local name="$1"; shift
-  local wrote=0 f
+  local flavor=antigravity name wrote=0 f
+  if [ "$1" = --url ]; then flavor=antigravity-remote; shift; fi
+  name="$1"; shift
   while IFS= read -r f; do
     if [ -e "$f" ]; then
-      json_add_server "$f" antigravity "$name" "$@"
+      json_add_server "$f" "$flavor" "$name" "$@"
       wrote=1
       case " $ANTIGRAVITY_WRITTEN " in *" $f "*) ;; *) ANTIGRAVITY_WRITTEN="$ANTIGRAVITY_WRITTEN $f" ;; esac
     fi
   done < <(antigravity_candidate_paths)
   if [ "$wrote" -eq 0 ]; then
     f="$HOME/.gemini/config/mcp_config.json"
-    json_add_server "$f" antigravity "$name" "$@"
+    json_add_server "$f" "$flavor" "$name" "$@"
     ANTIGRAVITY_WRITTEN=" $f"
   fi
   ok "antigravity: registered $name"
 }
 
 add_opencode() {
-  # `opencode mcp add` is interactive-only; the dict-key overwrite in the
-  # global config is the idempotent registration.
-  local name="$1"; shift
-  json_add_server "$OPENCODE_CONFIG" opencode "$name" "$@"
+  # `opencode mcp add` is interactive in older releases; the dict-key
+  # overwrite in the global config is the idempotent registration.
+  local flavor=opencode name
+  if [ "$1" = --url ]; then flavor=opencode-remote; shift; fi
+  name="$1"; shift
+  json_add_server "$OPENCODE_CONFIG" "$flavor" "$name" "$@"
   ok "opencode: registered $name"
 }
 
@@ -520,12 +580,11 @@ register_with() {   # register_with <add-function>
     # irods: anonymous public access via the repo's stdio config (edit it to authenticate).
     MCP_ENV=()
     "$add" irods "$MESA_HOME/bin/irods-mcp-server" -c "$MESA_HOME/repos/irods-mcp-server/config-stdio.yaml"
-    # formation: optional CyVerse creds via env (else uses ~/.formation-mcp.yaml or anonymous).
-    build_env_formation
-    "$add" formation "$MESA_HOME/bin/formation-mcp" --transport stdio
   else
-    warn "Go servers skipped — only mesa-mcp was registered."
+    warn "Go server skipped — irods was not registered."
   fi
+  # formation: hosted by CyVerse (streamable HTTP + OAuth); no build, no credentials.
+  "$add" --url formation "$FORMATION_URL"
 }
 
 register_servers() {
@@ -569,9 +628,18 @@ summary() {
   echo
   say "Next steps"
   echo "  • Open your agent and try a tool, e.g. ask it to 'ping the CyVerse Data Store' (mesa-mcp ds_ping)."
-  echo "  • By default the servers use anonymous public access (data.cyverse.org, zone iplant)."
-  echo "  • To authenticate, re-run with CYVERSE_USERNAME / CYVERSE_PASSWORD set, or edit"
+  echo "  • mesa-mcp and irods use anonymous public access by default (data.cyverse.org, zone iplant)."
+  echo "    To authenticate them, re-run with CYVERSE_USERNAME / CYVERSE_PASSWORD set, or edit"
   echo "    $MESA_HOME/repos/irods-mcp-server/config-stdio.yaml and your ~/.irods/irods_environment.json."
+  echo "  • formation ($FORMATION_URL) needs a one-time sign-in with your CyVerse account:"
+  for client in $CLIENTS_SELECTED; do
+    case "$client" in
+      claude)      echo "      Claude Code:  run /mcp inside Claude Code, or: claude mcp login formation" ;;
+      codex)       echo "      Codex:        codex mcp login formation" ;;
+      antigravity) echo "      Antigravity:  open the MCP servers panel and sign in to formation" ;;
+      opencode)    echo "      OpenCode:     opencode mcp auth formation" ;;
+    esac
+  done
   echo "  • Docs: https://idss-mesa.github.io/docs/   •   Uninstall: $0 --uninstall"
 }
 
@@ -592,7 +660,11 @@ main() {
   clone_or_update mesa-anyjev main
   if [ "$BUILD_GO" -eq 1 ]; then
     clone_or_update irods-mcp-server main
-    clone_or_update formation-mcp main
+  fi
+  # Formation is hosted now; drop the local binary older installs built.
+  if [ -e "$MESA_HOME/bin/formation-mcp" ]; then
+    rm -f "$MESA_HOME/bin/formation-mcp"
+    ok "removed the retired local formation-mcp binary (formation is now hosted)"
   fi
 
   install_python                       # guarantees venv python before any JSON edit

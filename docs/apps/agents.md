@@ -44,7 +44,7 @@ each app's page covers what is different.
 | Category | Tools |
 |---|---|
 | **AI agent CLIs** | Claude Code (`claude`), OpenAI Codex (`codex`), OpenCode (`opencode`), Antigravity (`agy`), and Claude Code Router (`ccr`). The [MESA CLI](cli.md) also has Goose (`goose`). |
-| **MCP servers** | `irods` (CyVerse Data Store), `mesa` ([mesa-mcp](../servers/mesa-mcp.md) with [mesa-ducklake](../servers/mesa-ducklake.md)), `formation` ([formation-mcp](../servers/formation-mcp.md), the Discovery Environment), and `filesystem`, registered for every agent CLI |
+| **MCP servers** | `irods` (CyVerse Data Store), `mesa` ([mesa-mcp](../servers/mesa-mcp.md) with [mesa-ducklake](../servers/mesa-ducklake.md)), `formation` (CyVerse's hosted [Formation](../servers/formation-mcp.md) server for the Discovery Environment), and `filesystem`, registered for every agent CLI |
 | **CyVerse data** | GoCommands (`gocmd`), an iRODS configuration, `osn-mount.sh` for Open Storage Network and other S3 buckets, the AWS CLI |
 | **Developer tools** | GitHub CLI (`gh`), Git Credential Manager, Go 1.25, Node.js 22 |
 
@@ -70,9 +70,10 @@ cyverse-login          # your CyVerse username and password
 ```
 
 `cyverse-login` writes the standard iRODS credentials (`~/.irods/`), so GoCommands, the
-`mesa` and `formation` MCP servers, and the agents act as **you**, with access to your home
-folder and to what is shared with you. Without it they have anonymous, read-only access to
-public data. Restart an agent after signing in so its MCP servers pick up the credentials.
+local `mesa` and `irods` MCP servers, and the agents act as **you**, with access to your
+home folder and to what is shared with you. Without it they have anonymous, read-only
+access to public data. Restart an agent after signing in so its MCP servers pick up the
+credentials. `cyverse-login` does not cover `formation`; see the next step.
 
 **Claude Code** also registers the hosted CyVerse Data Store MCP servers: `irods` (the
 anonymous public endpoint, which works at once) and `irods-auth` (the authenticated
@@ -83,8 +84,27 @@ session:
 claude mcp login irods-auth --no-browser   # opens a kc.cyverse.org URL; paste the redirect back
 ```
 
-OpenCode, Codex, and Antigravity use the local servers and `gocmd`, which read the
-`~/.irods` credentials that `cyverse-login` wrote.
+Codex and Antigravity run a local `irods` server, and every agent runs a local `mesa`
+server; these and `gocmd` read the `~/.irods` credentials that `cyverse-login` wrote.
+OpenCode's `irods` is the hosted public endpoint, which reads public data only.
+
+### Sign in to Formation
+
+`formation` is CyVerse's hosted [Formation](../servers/formation-mcp.md) server at
+<https://de.cyverse.org/formation/mcp>, already registered for every agent. It does not
+use `~/.irods`: each agent signs in to it with your CyVerse account the first time. The
+app's home folder is not kept between analyses, so sign in again in each new analysis.
+
+| Agent | Sign in |
+|---|---|
+| Claude Code | `claude mcp login formation --no-browser`, then open the printed address in your browser and paste the address you land on back into the terminal |
+| Codex | `codex mcp login formation --no-browser`, then the same: open the address, and paste the address you land on back |
+| Antigravity (KASM desktop) | from the IDE's MCP servers panel |
+
+OpenCode cannot finish this sign-in from your own browser: it waits for the browser to
+come back to the container, which your browser cannot reach. Use another agent for
+Formation there. On the [KASM desktop](kasm.md) the browser runs inside the app, so you can
+also sign in normally by opening the address in the desktop's Chrome or Firefox.
 
 ## 2. Connect a language model
 
@@ -142,7 +162,8 @@ With credentials in place, ask an agent for things such as:
 - *"List the folders in my CyVerse home and tell me which ones have AVU metadata."*
 - *"Find NEON soil-moisture data in the MESA community folder and load it into a pandas
   DataFrame."*
-- *"Launch a MESA JupyterLab analysis and tell me when it is running."*
+- *"Launch a MESA JupyterLab analysis and tell me when it is running."* (needs the
+  Formation sign-in above)
 
 The agent calls the MESA MCP servers to do the work; see [Servers](../servers/index.md)
 for what each one can do.
