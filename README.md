@@ -11,6 +11,12 @@ access works out of the box — no credentials needed to start.
 
 📖 **Docs:** <https://idss-mesa.github.io/docs/>
 
+Prefer a browser? The **MESA Portal** at <https://mesa.cyverse.org> manages your CyVerse
+data, apps, and analyses, and launches the MESA featured apps (JupyterLab, RStudio,
+VS Code, a terminal, and a Linux desktop) with the same MCP servers already registered —
+see the [portal guide](https://idss-mesa.github.io/docs/portal/) and the
+[featured apps](https://idss-mesa.github.io/docs/apps/).
+
 ## What it installs
 
 One installer clones and builds four CyVerse repos, then registers three of them as

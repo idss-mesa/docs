@@ -1,6 +1,6 @@
 [project]
 site_name = "MESA"
-site_description = "One-line install of the CyVerse MESA MCP stack (mesa-mcp, mesa-ducklake, irods-mcp-server, formation-mcp) for Claude Code, Codex CLI, Antigravity, and OpenCode."
+site_description = "MESA documentation: the MESA Portal at mesa.cyverse.org and its featured CyVerse apps, and the one-line install of the MESA MCP stack (mesa-mcp, mesa-ducklake, irods-mcp-server, formation-mcp) for Claude Code, Codex CLI, Antigravity, and OpenCode."
 site_author = "idss-mesa"
 site_url = "https://idss-mesa.github.io/docs/"
 repo_url = "https://github.com/idss-mesa/docs"
@@ -18,6 +18,22 @@ nav = [
   { "Home" = "index.md" },
   { "Quickstart" = "quickstart.md" },
   { "Install reference" = "install.md" },
+  { "MESA Portal" = [
+      "portal/index.md",
+      { "Overview" = "portal/overview.md" },
+      { "Managing data" = "portal/data.md" },
+      { "Starting applications" = "portal/applications.md" },
+      { "Managing analyses" = "portal/analyses.md" },
+  ] },
+  { "Featured apps" = [
+      "apps/index.md",
+      { "MESA CLI (Cloud Shell)" = "apps/cli.md" },
+      { "MESA JupyterLab" = "apps/jupyterlab.md" },
+      { "MESA RStudio Geospatial" = "apps/rstudio.md" },
+      { "MESA VS Code" = "apps/vscode.md" },
+      { "MESA KASM Ubuntu Desktop" = "apps/kasm.md" },
+      { "AI agents in the apps" = "apps/agents.md" },
+  ] },
   { "Agent clients" = [
       { "Claude Code" = "claude-code.md" },
       { "Codex CLI" = "codex.md" },

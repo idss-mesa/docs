@@ -48,9 +48,11 @@ def main() -> int:
     lines = [
         f"# {name} documentation",
         "",
-        f"> {desc} This documentation covers the installer, per-client "
-        "registration, CyVerse credentials, the four servers, and "
-        "troubleshooting. The source repository is an Open Knowledge Format "
+        f"> {desc} This documentation covers the MESA Portal (managing data, "
+        "starting applications, managing analyses), the featured apps and the "
+        "AI agents inside them, the installer, per-client registration, "
+        "CyVerse credentials, the servers, and troubleshooting. The source "
+        "repository is an Open Knowledge Format "
         "(OKF v0.2) bundle: every page carries YAML frontmatter with type, "
         "provenance (generated/sources), and lifecycle (status/stale_after) "
         "fields.",
