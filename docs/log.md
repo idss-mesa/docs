@@ -1,5 +1,32 @@
 # Directory Update Log
 
+## 2026-11-13
+
+* **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis
+  on 2026-11-13: R starts in `/home/rstudio`, not in `~/data-store`, and the app includes
+  DuckDB 2.0 for R. [MESA JupyterLab](apps/jupyterlab.md) points R users to it.
+* **Update**: [MESA JupyterLab](apps/jupyterlab.md) lists DuckDB for Python, found in
+  the app's Python environment (version 2.0.0, with pandas 3.1.1) on 2026-11-12.
+* **Update**: [MESA JupyterLab](apps/jupyterlab.md) now says which DuckDB clients the app
+  has, checked in a running analysis on 2026-11-13: the Python package and the `duckdb`
+  command (both 2.0.0), and not the R or Julia packages.
+
+## 2026-11-12
+
+* **Update**: Corrected the portal and app pages against the live portal, checked while
+  testing the [MESA Trainings](https://idss-mesa.github.io/trainings/) tutorials.
+  [Portal overview](portal/overview.md): the top bar holds only the theme switch and the
+  user menu (**My Profile**, **Settings**, **Logout**), and the theme cycles **Light**,
+  **Dark**, **System**. [Managing data](portal/data.md): the sharing levels are **Read**,
+  **Read & Write**, and **Full Control**; `~/data-store` holds `home` and `data`; an empty
+  folder can show "Unable to Load Files". [Managing analyses](portal/analyses.md):
+  **Save & Exit** asks for confirmation, stopping can take up to a minute, the finished
+  lists start folded, and an interactive app's output folder is usually empty.
+  [Starting applications](portal/applications.md): the **Launching Application** window
+  that appears when the browser blocks the launch tab.
+  [MESA JupyterLab](apps/jupyterlab.md) and [AI agents](apps/agents.md): where your files
+  are under `~/data-store`, and the **Select Kernel** box.
+
 ## 2026-10-08
 
 * **Update**: Rewrote [Formation](servers/formation-mcp.md) (formerly formation-mcp) for

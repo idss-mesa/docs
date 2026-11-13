@@ -9,8 +9,8 @@ tags:
   - discovery-environment
   - launch
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-12T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/applications/"
@@ -110,6 +110,10 @@ What a card offers depends on the kind of app:
 tab and steps through **Submitting**, **Queued**, **Container Starting**, **Initializing**,
 and **Running**; then it switches to the app.
 
+If your browser does not let the portal open that tab, the same progress appears in a
+**Launching Application** window on the Applications page. When it reads **Application
+Ready**, click **Open** *app name* to open the app, or **Go to Analyses**.
+
 ![The launch page stepping through Submitting, Queued, Container Starting, Initializing, and Running](../assets/portal/apps-launching.webp){ width="640" }
 
 ### Launch with Options
@@ -165,7 +169,7 @@ The **High-Performance Computing** tab needs a one-time link to Tapis:
 | "CyVerse is busy" or "Couldn't load …" | CyVerse did not answer. Wait a minute and click **Try again**. |
 | "Too many requests" | The catalog limits requests per minute. Wait a minute; signing in gives you your own allowance. |
 | An app is not in the list | Check the tab (**Browse All Apps** is the full catalog), clear the type filter and the search box, or search by name. |
-| The app does not open | Wait until the launch page shows **Running**, allow pop-ups for mesa.cyverse.org, then use **Open App** on the [Analyses](analyses.md) page. |
+| The app does not open | Wait until the launch page or the **Launching Application** window shows **Running**, then click its **Open** link. Allow pop-ups for mesa.cyverse.org so the next launch can open its own tab, or use **Open App** on the [Analyses](analyses.md) page. |
 | The launch fails | Check your CPU-hour quota on the dashboard, and try smaller resources with **Launch with Options**. |
 
 [^portal]: MESA Portal Applications catalog, <https://mesa.cyverse.org/applications/>; MESA Portal Applications user guide, <https://mesa.cyverse.org/docs/>.
