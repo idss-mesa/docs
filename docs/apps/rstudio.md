@@ -11,7 +11,7 @@ tags:
   - gpu
 generated:
   by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/rstudio"
@@ -41,7 +41,7 @@ login: CyVerse signs you in when the app opens.
 | Category | Tools |
 |---|---|
 | **IDE** | RStudio Server |
-| **Science** | R with the tidyverse, sf, terra, and stars; GDAL, PROJ, and GEOS |
+| **Science** | R with the tidyverse, sf, terra, and stars; GDAL, PROJ, and GEOS; [DuckDB](https://duckdb.org/docs/2.0/clients/r) 2.0 as the R `duckdb` package and the `duckdb` command |
 | **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](agents.md) |
 | **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
 | **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
@@ -55,7 +55,10 @@ The agent CLIs are on the `PATH` both in RStudio's **Terminal** tab and in R, fo
    MESA Apps**.
 2. On **MESA RStudio Geospatial**, click **Instant Launch** or **Launch with Options**. See
    [Starting applications](../portal/applications.md).
-3. RStudio opens in a new tab with `~/data-store` (your Data Store) as the working folder.
+3. RStudio opens in a new tab. The R session starts in `/home/rstudio`; your Data Store
+   is the `data-store` folder there, and your own files are in
+   `~/data-store/home/<username>`. Set that as the working folder with `setwd()`, or in
+   the **Files** tab with **More → Set As Working Directory**.
 
 You can also start it from the [Discovery Environment](https://de.cyverse.org) by
 searching for *MESA RStudio Geospatial*.

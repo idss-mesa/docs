@@ -76,7 +76,8 @@ The details are in [AI agents in the MESA apps](agents.md). Keep notebooks and r
 under `~/data-store`: the rest of the container is deleted when the analysis ends.
 
 **DuckDB from R or Julia.** The app has DuckDB for Python and the `duckdb` command, but
-not the R or Julia DuckDB packages. In R, `install.packages("duckdb")` adds the
+not the R or Julia DuckDB packages. [MESA RStudio Geospatial](rstudio.md) has the R
+package already installed. Here, in R, `install.packages("duckdb")` adds the
 [R client](https://duckdb.org/docs/2.0/clients/r) for the current session (and
 `install.packages("duckplyr")` its dplyr-compatible interface); `DBI`, `dplyr`, and
 `dbplyr` are already installed. Packages you install live on the container's disk and

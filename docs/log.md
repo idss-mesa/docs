@@ -2,6 +2,9 @@
 
 ## 2026-11-13
 
+* **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis
+  on 2026-11-13: R starts in `/home/rstudio`, not in `~/data-store`, and the app includes
+  DuckDB 2.0 for R. [MESA JupyterLab](apps/jupyterlab.md) points R users to it.
 * **Update**: [MESA JupyterLab](apps/jupyterlab.md) lists DuckDB for Python, found in
   the app's Python environment (version 2.0.0, with pandas 3.1.1) on 2026-11-12.
 * **Update**: [MESA JupyterLab](apps/jupyterlab.md) now says which DuckDB clients the app
