@@ -2,6 +2,13 @@
 
 ## 2026-11-13
 
+* **Update**: Further corrections from a second day of testing on the live portal.
+  [Managing analyses](portal/analyses.md): the Monitor panel's **Resources** tab shows no
+  live figures yet, **Extend Time** added about 24 hours, and **Relaunch** has no dialog.
+  [Managing data](portal/data.md): search lags new items and starts from the folder you
+  are in. [Starting applications](portal/applications.md): what **Launch with Options**
+  offered for MESA JupyterLab. [MESA RStudio Geospatial](apps/rstudio.md): DuckDB's
+  first-use question in R.
 * **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis
   on 2026-11-13: R starts in `/home/rstudio`, not in `~/data-store`, and the app includes
   DuckDB 2.0 for R. [MESA JupyterLab](apps/jupyterlab.md) points R users to it.

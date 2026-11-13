@@ -9,7 +9,7 @@ tags:
   - discovery-environment
 generated:
   by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/analyses/"
@@ -67,8 +67,11 @@ connector)[^portal].
 - **Open App** opens the running app in a new tab. This is how you get back to a
   JupyterLab, RStudio, VS Code, terminal, or desktop session you started earlier.
 - **Monitor** opens a panel under the card with three tabs: **Logs** (the app's output,
-  with a filter box, pause, and download), **Resources** (the CPU, memory, and other
-  resources of the analysis), and **Steps** (its execution steps and their status).
+  with a filter box that keeps only matching lines, pause, and download),
+  **Resources**, and **Steps** (for an interactive app, the single step *Interactive*).
+  The **Resources** tab does not yet show live figures: it says that resource details
+  are not available and that CPU, memory, and network metrics are coming in a future
+  update.
 - **Share** lets other CyVerse users see the analysis (read only or with write access).
 
 ![Sharing a running analysis with another CyVerse user](../assets/portal/analyses-share.webp){ width="520" }
@@ -77,7 +80,9 @@ connector)[^portal].
 
 Interactive apps have a time limit. **Time Remaining** turns yellow with an hour or less
 left and red with 30 minutes or less, and the **Extend Time** button shows **LOW**. Click
-**Extend Time** to add time before it runs out. When the limit is reached, the app stops.
+**Extend Time** to add time before it runs out, and confirm when the browser asks. In a
+test on 2026-11-13 one click added about 24 hours, although the confirmation says 3 days.
+When the limit is reached, the app stops.
 
 ### Stop an app
 
@@ -106,7 +111,9 @@ Stopping apps you no longer use frees CPU hours on your quota.
   `~/data-store` is in your own folders, not here. The Data Browser can show an empty
   folder as "Unable to Load Files" with a password box; you do not need to enter
   anything.
-- **Relaunch** starts the app again with the same settings, which you can change first.
+- **Relaunch** starts the app again with the same settings. It starts at once: there is
+  no dialog in which to change them. To change them, use **Launch with Options** on the
+  [Applications](applications.md) page.
 - On a failed analysis, **View Logs** shows what went wrong (look for errors such as
   "out of memory" or a missing file); **Retry** runs it again.
 

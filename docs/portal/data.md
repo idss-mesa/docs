@@ -11,7 +11,7 @@ tags:
   - avu
 generated:
   by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/data/"
@@ -98,8 +98,17 @@ The dark band at the top describes the folder you are in:
 
 Type in the **Search files and folders** box to find items by name in the folder you are
 in and the folders below it. The menu beside the box limits the results to **Files** or
-**Folders**. Each result shows its full path; **Clear search** (or **×**) returns to the
-folder.
+**Folders**. Results appear a few seconds after you stop typing, under a line such as
+*Found 1 result for "lakehouse" in mesa*. Each result shows the path of the folder that
+holds it; **Clear search** (or **×**) returns to the folder.
+
+Two things to know:
+
+- **New items take time to become searchable.** In a test on 2026-11-13, files created
+  within the previous day were not found; older ones were. Browse to recent files.
+- **Search starts from the folder you are in.** After you open a result and go back,
+  search looks inside the folder you opened; the result line names it. Click a location
+  such as **My Files** or **Community** to search from the top again.
 
 ![Search results for "plot" in the SRER folder](../assets/portal/data-search.webp)
 

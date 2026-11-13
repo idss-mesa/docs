@@ -623,7 +623,7 @@ tags:
   - avu
 generated:
   by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/data/"
@@ -710,8 +710,17 @@ The dark band at the top describes the folder you are in:
 
 Type in the **Search files and folders** box to find items by name in the folder you are
 in and the folders below it. The menu beside the box limits the results to **Files** or
-**Folders**. Each result shows its full path; **Clear search** (or **×**) returns to the
-folder.
+**Folders**. Results appear a few seconds after you stop typing, under a line such as
+*Found 1 result for "lakehouse" in mesa*. Each result shows the path of the folder that
+holds it; **Clear search** (or **×**) returns to the folder.
+
+Two things to know:
+
+- **New items take time to become searchable.** In a test on 2026-11-13, files created
+  within the previous day were not found; older ones were. Browse to recent files.
+- **Search starts from the folder you are in.** After you open a result and go back,
+  search looks inside the folder you opened; the result line names it. Click a location
+  such as **My Files** or **Community** to search from the top again.
 
 ![Search results for "plot" in the SRER folder](https://idss-mesa.github.io/docs/assets/portal/data-search.webp)
 
@@ -827,7 +836,7 @@ tags:
   - launch
 generated:
   by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/applications/"
@@ -943,6 +952,10 @@ Ready**, click **Open** *app name* to open the app, or **Go to Analyses**.
   time limit, within the app's limits.
 - The app's own **parameters**, filled in with its defaults.
 
+Not every app offers every choice. On 2026-11-13 the dialog for MESA JupyterLab had a
+name, **CPU Cores** (1, 2, or 4), **Memory (RAM)** (2 to 16 GB), and **Time Limit** (1
+to 48 hours), and no compute choice or app parameters.
+
 Click **Launch**. The same launch page opens as for Instant Launch.
 
 <div class="grid" markdown>
@@ -1004,7 +1017,7 @@ tags:
   - discovery-environment
 generated:
   by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/analyses/"
@@ -1062,8 +1075,11 @@ connector)[^portal].
 - **Open App** opens the running app in a new tab. This is how you get back to a
   JupyterLab, RStudio, VS Code, terminal, or desktop session you started earlier.
 - **Monitor** opens a panel under the card with three tabs: **Logs** (the app's output,
-  with a filter box, pause, and download), **Resources** (the CPU, memory, and other
-  resources of the analysis), and **Steps** (its execution steps and their status).
+  with a filter box that keeps only matching lines, pause, and download),
+  **Resources**, and **Steps** (for an interactive app, the single step *Interactive*).
+  The **Resources** tab does not yet show live figures: it says that resource details
+  are not available and that CPU, memory, and network metrics are coming in a future
+  update.
 - **Share** lets other CyVerse users see the analysis (read only or with write access).
 
 ![Sharing a running analysis with another CyVerse user](https://idss-mesa.github.io/docs/assets/portal/analyses-share.webp){ width="520" }
@@ -1072,7 +1088,9 @@ connector)[^portal].
 
 Interactive apps have a time limit. **Time Remaining** turns yellow with an hour or less
 left and red with 30 minutes or less, and the **Extend Time** button shows **LOW**. Click
-**Extend Time** to add time before it runs out. When the limit is reached, the app stops.
+**Extend Time** to add time before it runs out, and confirm when the browser asks. In a
+test on 2026-11-13 one click added about 24 hours, although the confirmation says 3 days.
+When the limit is reached, the app stops.
 
 ### Stop an app
 
@@ -1101,7 +1119,9 @@ Stopping apps you no longer use frees CPU hours on your quota.
   `~/data-store` is in your own folders, not here. The Data Browser can show an empty
   folder as "Unable to Load Files" with a password box; you do not need to enter
   anything.
-- **Relaunch** starts the app again with the same settings, which you can change first.
+- **Relaunch** starts the app again with the same settings. It starts at once: there is
+  no dialog in which to change them. To change them, use **Launch with Options** on the
+  [Applications](https://idss-mesa.github.io/docs/portal/applications/) page.
 - On a failed analysis, **View Logs** shows what went wrong (look for errors such as
   "out of memory" or a missing file); **Retry** runs it again.
 
@@ -1428,6 +1448,10 @@ searching for *MESA RStudio Geospatial*.
    [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent in the terminal: `claude`, `codex`, `opencode`, or `agy`.
+
+**DuckDB in R.** The first `dbConnect(duckdb())` of a session stops to ask
+`duckdb: create /home/rstudio/.duckdb? (Yes/no/cancel)`. Answer `yes`: the folder holds
+DuckDB's settings and extensions, on the container's disk.
 
 See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/). Save scripts, projects, and outputs under
 `~/data-store`; the rest of the container is deleted when the analysis ends.
@@ -3571,6 +3595,13 @@ The same agent conventions cover the rest of the origin and its neighbours:
 
 ## 2026-11-13
 
+* **Update**: Further corrections from a second day of testing on the live portal.
+  [Managing analyses](portal/analyses.md): the Monitor panel's **Resources** tab shows no
+  live figures yet, **Extend Time** added about 24 hours, and **Relaunch** has no dialog.
+  [Managing data](portal/data.md): search lags new items and starts from the folder you
+  are in. [Starting applications](portal/applications.md): what **Launch with Options**
+  offered for MESA JupyterLab. [MESA RStudio Geospatial](apps/rstudio.md): DuckDB's
+  first-use question in R.
 * **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis
   on 2026-11-13: R starts in `/home/rstudio`, not in `~/data-store`, and the app includes
   DuckDB 2.0 for R. [MESA JupyterLab](apps/jupyterlab.md) points R users to it.

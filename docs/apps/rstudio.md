@@ -72,6 +72,10 @@ searching for *MESA RStudio Geospatial*.
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent in the terminal: `claude`, `codex`, `opencode`, or `agy`.
 
+**DuckDB in R.** The first `dbConnect(duckdb())` of a session stops to ask
+`duckdb: create /home/rstudio/.duckdb? (Yes/no/cancel)`. Answer `yes`: the folder holds
+DuckDB's settings and extensions, on the container's disk.
+
 See [AI agents in the MESA apps](agents.md). Save scripts, projects, and outputs under
 `~/data-store`; the rest of the container is deleted when the analysis ends.
 

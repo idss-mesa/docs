@@ -10,7 +10,7 @@ tags:
   - launch
 generated:
   by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/applications/"
@@ -125,6 +125,10 @@ Ready**, click **Open** *app name* to open the app, or **Go to Analyses**.
 - **Resource Configuration**: CPU cores, memory, the number of GPUs (GPU builds), and the
   time limit, within the app's limits.
 - The app's own **parameters**, filled in with its defaults.
+
+Not every app offers every choice. On 2026-11-13 the dialog for MESA JupyterLab had a
+name, **CPU Cores** (1, 2, or 4), **Memory (RAM)** (2 to 16 GB), and **Time Limit** (1
+to 48 hours), and no compute choice or app parameters.
 
 Click **Launch**. The same launch page opens as for Instant Launch.
 
