@@ -13,8 +13,8 @@ tags:
   - ai-verde
   - ollama
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-12T00:00:00Z"
 sources:
   - id: jupyterlab
     resource: "https://github.com/idss-mesa/jupyterlab"
@@ -55,7 +55,8 @@ itself) and type `claude`, `codex`, `opencode`, or `agy`.
 ## Your Data Store inside the app
 
 When the app starts from the portal or the Discovery Environment, your Data Store is
-mounted under `~/data-store`, and the app opens there. Save work you want to keep under
+mounted under `~/data-store`, and the app opens there. It holds `home`, where your own
+home folder is `~/data-store/home/<username>`, and `data`. Save work you want to keep under
 `~/data-store`: everything else lives on the container's disk and is gone when the
 analysis ends.
 

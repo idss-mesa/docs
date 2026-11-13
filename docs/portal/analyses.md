@@ -8,8 +8,8 @@ tags:
   - vice
   - discovery-environment
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/analyses/"
@@ -55,7 +55,7 @@ connector)[^portal].
 | **Submitted** | CyVerse received the request | **Cancel** |
 | **Pending** | Waiting for compute resources | **Cancel** |
 | **Running** | The app is running | **Open App**, **Extend Time**, **Save & Exit**, **Share**, **Monitor**, **Terminate** |
-| **Stopping…** | You asked it to stop; CyVerse is shutting it down (10–30 seconds) | None; the page updates by itself |
+| **Stopping** | You asked it to stop; CyVerse is shutting it down (up to a minute) | None; the page updates by itself |
 | **Completed** | Finished | **View Results**, **Relaunch**, **Share** |
 | **Failed** | Ended with an error | **View Logs**, **Retry** |
 | **Canceled** | Stopped before it finished | **Relaunch** |
@@ -67,8 +67,11 @@ connector)[^portal].
 - **Open App** opens the running app in a new tab. This is how you get back to a
   JupyterLab, RStudio, VS Code, terminal, or desktop session you started earlier.
 - **Monitor** opens a panel under the card with three tabs: **Logs** (the app's output,
-  with a filter box, pause, and download), **Resources** (the CPU, memory, and other
-  resources of the analysis), and **Steps** (its execution steps and their status).
+  with a filter box that keeps only matching lines, pause, and download),
+  **Resources**, and **Steps** (for an interactive app, the single step *Interactive*).
+  The **Resources** tab does not yet show live figures: it says that resource details
+  are not available and that CPU, memory, and network metrics are coming in a future
+  update.
 - **Share** lets other CyVerse users see the analysis (read only or with write access).
 
 ![Sharing a running analysis with another CyVerse user](../assets/portal/analyses-share.webp){ width="520" }
@@ -77,17 +80,19 @@ connector)[^portal].
 
 Interactive apps have a time limit. **Time Remaining** turns yellow with an hour or less
 left and red with 30 minutes or less, and the **Extend Time** button shows **LOW**. Click
-**Extend Time** to add time before it runs out. When the limit is reached, the app stops.
+**Extend Time** to add time before it runs out, and confirm when the browser asks. In a
+test on 2026-11-13 one click added about 24 hours, although the confirmation says 3 days.
+When the limit is reached, the app stops.
 
 ### Stop an app
 
 - **Save & Exit** saves the app's outputs to your Data Store and then ends it; it shows as
-  **Completed**.
+  **Completed**. Your browser asks you to confirm first.
 - **Terminate** ends it at once; it shows as **Canceled**. Anything not saved in your Data
   Store is lost.
 
-After either, the card reads **Stopping…** until CyVerse confirms; you do not need to
-click again. Before you stop an app, save your notebooks and files under `~/data-store`,
+After either, the card's badge reads **Stopping** and its buttons are replaced by a
+progress message until CyVerse confirms; you do not need to click again. Before you stop an app, save your notebooks and files under `~/data-store`,
 and commit and push code you want to keep.
 
 Stopping apps you no longer use frees CPU hours on your quota.
@@ -96,10 +101,19 @@ Stopping apps you no longer use frees CPU hours on your quota.
 
 ![Completed, Failed, and Canceled analyses with View Results, Relaunch, View Logs, and Retry](../assets/portal/analyses-completed.webp)
 
+- The **Completed Analyses** and **Canceled Analyses** lists start folded: click a
+  heading to open it. The newest analysis is first.
 - **View Results** on a completed analysis opens its output folder in the
   [Data Browser](data.md). Unless you chose another folder, results are under
-  `/iplant/home/<username>/analyses/`.
-- **Relaunch** starts the app again with the same settings, which you can change first.
+  `/iplant/home/<username>/analyses/`, in a folder named after the analysis and its start
+  time.
+- For an interactive app that folder is usually empty: what you saved under
+  `~/data-store` is in your own folders, not here. The Data Browser can show an empty
+  folder as "Unable to Load Files" with a password box; you do not need to enter
+  anything.
+- **Relaunch** starts the app again with the same settings. It starts at once: there is
+  no dialog in which to change them. To change them, use **Launch with Options** on the
+  [Applications](applications.md) page.
 - On a failed analysis, **View Logs** shows what went wrong (look for errors such as
   "out of memory" or a missing file); **Retry** runs it again.
 

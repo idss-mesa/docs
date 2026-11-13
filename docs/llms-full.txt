@@ -486,8 +486,8 @@ tags:
   - cyverse
   - getting-started
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-12T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/"
@@ -564,10 +564,8 @@ The **sidebar** on the left groups the pages:
 | **Data & Apps** | **Data Browser** — see [Managing data](https://idss-mesa.github.io/docs/portal/data/); **Applications** — see [Starting applications](https://idss-mesa.github.io/docs/portal/applications/); **Analyses** — see [Managing analyses](https://idss-mesa.github.io/docs/portal/analyses/) |
 | **Help & Docs** | **Documentation** — the portal's own user guides (signed-in users) |
 
-The **top bar** links to the [MESA website](https://idss-mesa.github.io/), the
-[Discovery Environment](https://de.cyverse.org), and these docs, and holds the theme
-switch and your user menu (profile, settings, quotas, sign out). On a phone or tablet the
-sidebar folds into the ☰ menu button.
+The **top bar** holds the theme switch and, under your name, your user menu: **My
+Profile**, **Settings**, and **Logout**. Your quotas are on the dashboard. On a phone or tablet the sidebar folds into the ☰ menu button.
 
 ## Dashboard
 
@@ -582,7 +580,7 @@ sidebar folds into the ☰ menu button.
 
 ## Light, dark, or automatic theme
 
-Click the theme button in the top bar to cycle **Light → Dark → Auto**. *Auto* follows
+Click the theme button in the top bar to cycle **Light → Dark → System**. *System* follows
 your operating system's setting. You can also choose a theme under **Settings** in the
 user menu. Your choice is kept in your browser.
 
@@ -624,8 +622,8 @@ tags:
   - metadata
   - avu
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/data/"
@@ -712,8 +710,17 @@ The dark band at the top describes the folder you are in:
 
 Type in the **Search files and folders** box to find items by name in the folder you are
 in and the folders below it. The menu beside the box limits the results to **Files** or
-**Folders**. Each result shows its full path; **Clear search** (or **×**) returns to the
-folder.
+**Folders**. Results appear a few seconds after you stop typing, under a line such as
+*Found 1 result for "lakehouse" in mesa*. Each result shows the path of the folder that
+holds it; **Clear search** (or **×**) returns to the folder.
+
+Two things to know:
+
+- **New items take time to become searchable.** In a test on 2026-11-13, files created
+  within the previous day were not found; older ones were. Browse to recent files.
+- **Search starts from the folder you are in.** After you open a result and go back,
+  search looks inside the folder you opened; the result line names it. Click a location
+  such as **My Files** or **Community** to search from the top again.
 
 ![Search results for "plot" in the SRER folder](https://idss-mesa.github.io/docs/assets/portal/data-search.webp)
 
@@ -758,7 +765,7 @@ Tick the box on each card (or **Select All**). A toolbar appears with **Trash**,
     - **All CyVerse Users (public)**: every signed-in CyVerse user can read it.
     - **Anyone without login (anonymous)**: anyone on the internet can read it.
     - **Share with User**: type a complete CyVerse username or email address, pick
-      **Read**, **Write**, or **Own**, and click **Share**.
+      **Read**, **Read & Write**, or **Full Control**, and click **Share**.
 3. **Current Permissions** lists everyone who has access. Change a level or click
    **Remove** to take access away.
 
@@ -793,9 +800,12 @@ Good to know:
 
 ## Data in the apps
 
-Interactive apps you start from the portal see your Data Store under `~/data-store`, and
-batch analyses write their results under `/iplant/home/<username>/analyses/` unless you
-choose another folder. Open **Analysis output** folders here, or use **View Results** on
+Interactive apps you start from the portal see your Data Store under `~/data-store`,
+which holds two folders: `home`, with your own home folder at
+`~/data-store/home/<username>` (the **My Files** view here) and `home/shared` (the
+**Shared** view), and `data`. Batch analyses write their results under `/iplant/home/<username>/analyses/` unless you
+choose another folder; an interactive app gets a folder there too, which stays empty
+unless the app wrote outputs to it. Open **Analysis output** folders here, or use **View Results** on
 the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page.
 
 ## Troubleshooting
@@ -805,7 +815,8 @@ the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page.
 | **My Files** asks for a password | Your CyVerse single sign-on token is missing or expired. Sign out and sign in again with **Sign in with CyVerse**. If you are asked for a WebDAV password, set one in [CyVerse user settings](https://user.cyverse.org); **Clear Session** forgets it. |
 | Upload, share, or AVU buttons are missing | You are signed out, or you only have **Read only** access to the folder (see the folder header). |
 | A new file does not appear | Wait a few seconds and refresh the page. |
-| "Permission denied" | Ask the owner to share the item with you, with **Write** if you need to change it. |
+| "Permission denied" | Ask the owner to share the item with you, with **Read & Write** if you need to change it. |
+| An empty folder shows "Unable to Load Files" and a CyVerse password box | Nothing has failed and you do not need to enter a password: the folder has no files. This is what the output folder of an interactive app usually looks like. |
 | "Some details unavailable" in the header | Part of the folder information did not load. Click **Retry**. |
 | The Data Store does not answer | Check <https://status.cyverse.org> for an outage. |
 
@@ -824,8 +835,8 @@ tags:
   - discovery-environment
   - launch
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/applications/"
@@ -925,6 +936,10 @@ What a card offers depends on the kind of app:
 tab and steps through **Submitting**, **Queued**, **Container Starting**, **Initializing**,
 and **Running**; then it switches to the app.
 
+If your browser does not let the portal open that tab, the same progress appears in a
+**Launching Application** window on the Applications page. When it reads **Application
+Ready**, click **Open** *app name* to open the app, or **Go to Analyses**.
+
 ![The launch page stepping through Submitting, Queued, Container Starting, Initializing, and Running](https://idss-mesa.github.io/docs/assets/portal/apps-launching.webp){ width="640" }
 
 ### Launch with Options
@@ -936,6 +951,10 @@ and **Running**; then it switches to the app.
 - **Resource Configuration**: CPU cores, memory, the number of GPUs (GPU builds), and the
   time limit, within the app's limits.
 - The app's own **parameters**, filled in with its defaults.
+
+Not every app offers every choice. On 2026-11-13 the dialog for MESA JupyterLab had a
+name, **CPU Cores** (1, 2, or 4), **Memory (RAM)** (2 to 16 GB), and **Time Limit** (1
+to 48 hours), and no compute choice or app parameters.
 
 Click **Launch**. The same launch page opens as for Instant Launch.
 
@@ -980,7 +999,7 @@ The **High-Performance Computing** tab needs a one-time link to Tapis:
 | "CyVerse is busy" or "Couldn't load …" | CyVerse did not answer. Wait a minute and click **Try again**. |
 | "Too many requests" | The catalog limits requests per minute. Wait a minute; signing in gives you your own allowance. |
 | An app is not in the list | Check the tab (**Browse All Apps** is the full catalog), clear the type filter and the search box, or search by name. |
-| The app does not open | Wait until the launch page shows **Running**, allow pop-ups for mesa.cyverse.org, then use **Open App** on the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page. |
+| The app does not open | Wait until the launch page or the **Launching Application** window shows **Running**, then click its **Open** link. Allow pop-ups for mesa.cyverse.org so the next launch can open its own tab, or use **Open App** on the [Analyses](https://idss-mesa.github.io/docs/portal/analyses/) page. |
 | The launch fails | Check your CPU-hour quota on the dashboard, and try smaller resources with **Launch with Options**. |
 
 [^portal]: https://idss-mesa.github.io/docs/portal/MESA Portal Applications catalog, <https://mesa.cyverse.org/applications/>; MESA Portal Applications user guide, <https://mesa.cyverse.org/docs/>.
@@ -997,8 +1016,8 @@ tags:
   - vice
   - discovery-environment
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/analyses/"
@@ -1044,7 +1063,7 @@ connector)[^portal].
 | **Submitted** | CyVerse received the request | **Cancel** |
 | **Pending** | Waiting for compute resources | **Cancel** |
 | **Running** | The app is running | **Open App**, **Extend Time**, **Save & Exit**, **Share**, **Monitor**, **Terminate** |
-| **Stopping…** | You asked it to stop; CyVerse is shutting it down (10–30 seconds) | None; the page updates by itself |
+| **Stopping** | You asked it to stop; CyVerse is shutting it down (up to a minute) | None; the page updates by itself |
 | **Completed** | Finished | **View Results**, **Relaunch**, **Share** |
 | **Failed** | Ended with an error | **View Logs**, **Retry** |
 | **Canceled** | Stopped before it finished | **Relaunch** |
@@ -1056,8 +1075,11 @@ connector)[^portal].
 - **Open App** opens the running app in a new tab. This is how you get back to a
   JupyterLab, RStudio, VS Code, terminal, or desktop session you started earlier.
 - **Monitor** opens a panel under the card with three tabs: **Logs** (the app's output,
-  with a filter box, pause, and download), **Resources** (the CPU, memory, and other
-  resources of the analysis), and **Steps** (its execution steps and their status).
+  with a filter box that keeps only matching lines, pause, and download),
+  **Resources**, and **Steps** (for an interactive app, the single step *Interactive*).
+  The **Resources** tab does not yet show live figures: it says that resource details
+  are not available and that CPU, memory, and network metrics are coming in a future
+  update.
 - **Share** lets other CyVerse users see the analysis (read only or with write access).
 
 ![Sharing a running analysis with another CyVerse user](https://idss-mesa.github.io/docs/assets/portal/analyses-share.webp){ width="520" }
@@ -1066,17 +1088,19 @@ connector)[^portal].
 
 Interactive apps have a time limit. **Time Remaining** turns yellow with an hour or less
 left and red with 30 minutes or less, and the **Extend Time** button shows **LOW**. Click
-**Extend Time** to add time before it runs out. When the limit is reached, the app stops.
+**Extend Time** to add time before it runs out, and confirm when the browser asks. In a
+test on 2026-11-13 one click added about 24 hours, although the confirmation says 3 days.
+When the limit is reached, the app stops.
 
 ### Stop an app
 
 - **Save & Exit** saves the app's outputs to your Data Store and then ends it; it shows as
-  **Completed**.
+  **Completed**. Your browser asks you to confirm first.
 - **Terminate** ends it at once; it shows as **Canceled**. Anything not saved in your Data
   Store is lost.
 
-After either, the card reads **Stopping…** until CyVerse confirms; you do not need to
-click again. Before you stop an app, save your notebooks and files under `~/data-store`,
+After either, the card's badge reads **Stopping** and its buttons are replaced by a
+progress message until CyVerse confirms; you do not need to click again. Before you stop an app, save your notebooks and files under `~/data-store`,
 and commit and push code you want to keep.
 
 Stopping apps you no longer use frees CPU hours on your quota.
@@ -1085,10 +1109,19 @@ Stopping apps you no longer use frees CPU hours on your quota.
 
 ![Completed, Failed, and Canceled analyses with View Results, Relaunch, View Logs, and Retry](https://idss-mesa.github.io/docs/assets/portal/analyses-completed.webp)
 
+- The **Completed Analyses** and **Canceled Analyses** lists start folded: click a
+  heading to open it. The newest analysis is first.
 - **View Results** on a completed analysis opens its output folder in the
   [Data Browser](https://idss-mesa.github.io/docs/portal/data/). Unless you chose another folder, results are under
-  `/iplant/home/<username>/analyses/`.
-- **Relaunch** starts the app again with the same settings, which you can change first.
+  `/iplant/home/<username>/analyses/`, in a folder named after the analysis and its start
+  time.
+- For an interactive app that folder is usually empty: what you saved under
+  `~/data-store` is in your own folders, not here. The Data Browser can show an empty
+  folder as "Unable to Load Files" with a password box; you do not need to enter
+  anything.
+- **Relaunch** starts the app again with the same settings. It starts at once: there is
+  no dialog in which to change them. To change them, use **Launch with Options** on the
+  [Applications](https://idss-mesa.github.io/docs/portal/applications/) page.
 - On a failed analysis, **View Logs** shows what went wrong (look for errors such as
   "out of memory" or a missing file); **Retry** runs it again.
 
@@ -1228,8 +1261,8 @@ tags:
   - julia
   - gpu
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/jupyterlab"
@@ -1259,7 +1292,7 @@ MESA MCP servers are ready in every terminal.
 | Category | Tools |
 |---|---|
 | **IDEs** | JupyterLab; RStudio Server, Shiny Server, and VS Code (code-server) as Launcher cards |
-| **Science** | Python 3.13, R, and Julia with the datascience stack (NumPy, SciPy, pandas, tidyverse, …); Miniconda and Mamba |
+| **Science** | Python 3.13, R, and Julia with the datascience stack (NumPy, SciPy, pandas, tidyverse, …); [DuckDB](https://duckdb.org/docs/2.0/clients/overview) 2.0 for SQL over CSV and Parquet files, as a Python package (`import duckdb`) and as the `duckdb` command in a terminal; Miniconda and Mamba |
 | **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) |
 | **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
 | **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
@@ -1272,7 +1305,7 @@ MESA MCP servers are ready in every terminal.
    CPU cores, memory, the time limit, or the **GPU** build. See
    [Starting applications](https://idss-mesa.github.io/docs/portal/applications/).
 3. The app opens in a new tab at the JupyterLab interface, in `~/data-store` (your Data
-   Store).
+   Store). Your own files are in `home/<username>` there.
 
 You can also start it from the [Discovery Environment](https://de.cyverse.org) by
 searching for *MESA JupyterLab*.
@@ -1286,8 +1319,20 @@ searching for *MESA JupyterLab*.
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent: `claude`, `codex`, `opencode`, or `agy`.
 
+A new notebook or console asks you to **Select Kernel**, and the list does not start on
+Python: choose **Python 3 (ipykernel)**, **R**, or the Julia kernel before you click **Select**.
+
 The details are in [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/). Keep notebooks and results
 under `~/data-store`: the rest of the container is deleted when the analysis ends.
+
+**DuckDB from R or Julia.** The app has DuckDB for Python and the `duckdb` command, but
+not the R or Julia DuckDB packages. [MESA RStudio Geospatial](https://idss-mesa.github.io/docs/apps/rstudio/) has the R
+package already installed. Here, in R, `install.packages("duckdb")` adds the
+[R client](https://duckdb.org/docs/2.0/clients/r) for the current session (and
+`install.packages("duckplyr")` its dplyr-compatible interface); `DBI`, `dplyr`, and
+`dbplyr` are already installed. Packages you install live on the container's disk and
+are gone when the analysis ends, as are the `duckdb` command's history and extensions
+under `~/.duckdb`.
 
 **RStudio inside JupyterLab.** Click the **RStudio** card in the Launcher to open RStudio
 Server in a new tab, with the same files and R installation.
@@ -1343,7 +1388,7 @@ tags:
   - gpu
 generated:
   by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/rstudio"
@@ -1373,7 +1418,7 @@ login: CyVerse signs you in when the app opens.
 | Category | Tools |
 |---|---|
 | **IDE** | RStudio Server |
-| **Science** | R with the tidyverse, sf, terra, and stars; GDAL, PROJ, and GEOS |
+| **Science** | R with the tidyverse, sf, terra, and stars; GDAL, PROJ, and GEOS; [DuckDB](https://duckdb.org/docs/2.0/clients/r) 2.0 as the R `duckdb` package and the `duckdb` command |
 | **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/) |
 | **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
 | **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
@@ -1387,7 +1432,10 @@ The agent CLIs are on the `PATH` both in RStudio's **Terminal** tab and in R, fo
    MESA Apps**.
 2. On **MESA RStudio Geospatial**, click **Instant Launch** or **Launch with Options**. See
    [Starting applications](https://idss-mesa.github.io/docs/portal/applications/).
-3. RStudio opens in a new tab with `~/data-store` (your Data Store) as the working folder.
+3. RStudio opens in a new tab. The R session starts in `/home/rstudio`; your Data Store
+   is the `data-store` folder there, and your own files are in
+   `~/data-store/home/<username>`. Set that as the working folder with `setwd()`, or in
+   the **Files** tab with **More → Set As Working Directory**.
 
 You can also start it from the [Discovery Environment](https://de.cyverse.org) by
 searching for *MESA RStudio Geospatial*.
@@ -1400,6 +1448,10 @@ searching for *MESA RStudio Geospatial*.
    [Sign in to Formation](https://idss-mesa.github.io/docs/apps/agents/#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent in the terminal: `claude`, `codex`, `opencode`, or `agy`.
+
+**DuckDB in R.** The first `dbConnect(duckdb())` of a session stops to ask
+`duckdb: create /home/rstudio/.duckdb? (Yes/no/cancel)`. Answer `yes`: the folder holds
+DuckDB's settings and extensions, on the container's disk.
 
 See [AI agents in the MESA apps](https://idss-mesa.github.io/docs/apps/agents/). Save scripts, projects, and outputs under
 `~/data-store`; the rest of the container is deleted when the analysis ends.
@@ -1666,8 +1718,8 @@ tags:
   - ai-verde
   - ollama
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-12T00:00:00Z"
 sources:
   - id: jupyterlab
     resource: "https://github.com/idss-mesa/jupyterlab"
@@ -1708,7 +1760,8 @@ itself) and type `claude`, `codex`, `opencode`, or `agy`.
 ## Your Data Store inside the app
 
 When the app starts from the portal or the Discovery Environment, your Data Store is
-mounted under `~/data-store`, and the app opens there. Save work you want to keep under
+mounted under `~/data-store`, and the app opens there. It holds `home`, where your own
+home folder is `~/data-store/home/<username>`, and `data`. Save work you want to keep under
 `~/data-store`: everything else lives on the container's disk and is gone when the
 analysis ends.
 
@@ -3539,6 +3592,40 @@ The same agent conventions cover the rest of the origin and its neighbours:
 ---8<--- https://idss-mesa.github.io/docs/log/
 
 # Directory Update Log
+
+## 2026-11-13
+
+* **Update**: Further corrections from a second day of testing on the live portal.
+  [Managing analyses](portal/analyses.md): the Monitor panel's **Resources** tab shows no
+  live figures yet, **Extend Time** added about 24 hours, and **Relaunch** has no dialog.
+  [Managing data](portal/data.md): search lags new items and starts from the folder you
+  are in. [Starting applications](portal/applications.md): what **Launch with Options**
+  offered for MESA JupyterLab. [MESA RStudio Geospatial](apps/rstudio.md): DuckDB's
+  first-use question in R.
+* **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis
+  on 2026-11-13: R starts in `/home/rstudio`, not in `~/data-store`, and the app includes
+  DuckDB 2.0 for R. [MESA JupyterLab](apps/jupyterlab.md) points R users to it.
+* **Update**: [MESA JupyterLab](apps/jupyterlab.md) lists DuckDB for Python, found in
+  the app's Python environment (version 2.0.0, with pandas 3.1.1) on 2026-11-12.
+* **Update**: [MESA JupyterLab](apps/jupyterlab.md) now says which DuckDB clients the app
+  has, checked in a running analysis on 2026-11-13: the Python package and the `duckdb`
+  command (both 2.0.0), and not the R or Julia packages.
+
+## 2026-11-12
+
+* **Update**: Corrected the portal and app pages against the live portal, checked while
+  testing the [MESA Trainings](https://idss-mesa.github.io/trainings/) tutorials.
+  [Portal overview](portal/overview.md): the top bar holds only the theme switch and the
+  user menu (**My Profile**, **Settings**, **Logout**), and the theme cycles **Light**,
+  **Dark**, **System**. [Managing data](portal/data.md): the sharing levels are **Read**,
+  **Read & Write**, and **Full Control**; `~/data-store` holds `home` and `data`; an empty
+  folder can show "Unable to Load Files". [Managing analyses](portal/analyses.md):
+  **Save & Exit** asks for confirmation, stopping can take up to a minute, the finished
+  lists start folded, and an interactive app's output folder is usually empty.
+  [Starting applications](portal/applications.md): the **Launching Application** window
+  that appears when the browser blocks the launch tab.
+  [MESA JupyterLab](apps/jupyterlab.md) and [AI agents](apps/agents.md): where your files
+  are under `~/data-store`, and the **Select Kernel** box.
 
 ## 2026-10-08
 
