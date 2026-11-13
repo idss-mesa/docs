@@ -10,8 +10,8 @@ tags:
   - metadata
   - avu
 generated:
-  by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  by: "claude-code/2.1.294"
+  at: "2026-10-08T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/data/"
@@ -144,7 +144,7 @@ Tick the box on each card (or **Select All**). A toolbar appears with **Trash**,
     - **All CyVerse Users (public)**: every signed-in CyVerse user can read it.
     - **Anyone without login (anonymous)**: anyone on the internet can read it.
     - **Share with User**: type a complete CyVerse username or email address, pick
-      **Read**, **Read & Write**, or **Full Control**, and click **Share**.
+      **Read**, **Write**, or **Own**, and click **Share**.
 3. **Current Permissions** lists everyone who has access. Change a level or click
    **Remove** to take access away.
 
@@ -179,12 +179,9 @@ Good to know:
 
 ## Data in the apps
 
-Interactive apps you start from the portal see your Data Store under `~/data-store`,
-which holds two folders: `home`, with your own home folder at
-`~/data-store/home/<username>` (the **My Files** view here) and `home/shared` (the
-**Shared** view), and `data`. Batch analyses write their results under `/iplant/home/<username>/analyses/` unless you
-choose another folder; an interactive app gets a folder there too, which stays empty
-unless the app wrote outputs to it. Open **Analysis output** folders here, or use **View Results** on
+Interactive apps you start from the portal see your Data Store under `~/data-store`, and
+batch analyses write their results under `/iplant/home/<username>/analyses/` unless you
+choose another folder. Open **Analysis output** folders here, or use **View Results** on
 the [Analyses](analyses.md) page.
 
 ## Troubleshooting
@@ -194,8 +191,7 @@ the [Analyses](analyses.md) page.
 | **My Files** asks for a password | Your CyVerse single sign-on token is missing or expired. Sign out and sign in again with **Sign in with CyVerse**. If you are asked for a WebDAV password, set one in [CyVerse user settings](https://user.cyverse.org); **Clear Session** forgets it. |
 | Upload, share, or AVU buttons are missing | You are signed out, or you only have **Read only** access to the folder (see the folder header). |
 | A new file does not appear | Wait a few seconds and refresh the page. |
-| "Permission denied" | Ask the owner to share the item with you, with **Read & Write** if you need to change it. |
-| An empty folder shows "Unable to Load Files" and a CyVerse password box | Nothing has failed and you do not need to enter a password: the folder has no files. This is what the output folder of an interactive app usually looks like. |
+| "Permission denied" | Ask the owner to share the item with you, with **Write** if you need to change it. |
 | "Some details unavailable" in the header | Part of the folder information did not load. Click **Retry**. |
 | The Data Store does not answer | Check <https://status.cyverse.org> for an outage. |
 
