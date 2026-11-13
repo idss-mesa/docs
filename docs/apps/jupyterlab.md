@@ -11,8 +11,8 @@ tags:
   - julia
   - gpu
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-12T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/jupyterlab"
@@ -55,7 +55,7 @@ MESA MCP servers are ready in every terminal.
    CPU cores, memory, the time limit, or the **GPU** build. See
    [Starting applications](../portal/applications.md).
 3. The app opens in a new tab at the JupyterLab interface, in `~/data-store` (your Data
-   Store).
+   Store). Your own files are in `home/<username>` there.
 
 You can also start it from the [Discovery Environment](https://de.cyverse.org) by
 searching for *MESA JupyterLab*.
@@ -68,6 +68,9 @@ searching for *MESA JupyterLab*.
    [Sign in to Formation](agents.md#sign-in-to-formation).
 3. Optionally run `aiverde-setup` to connect AI Verde models.
 4. Start an agent: `claude`, `codex`, `opencode`, or `agy`.
+
+A new notebook or console asks you to **Select Kernel**, and the list does not start on
+Python: choose **Python 3 (ipykernel)**, **R**, or the Julia kernel before you click **Select**.
 
 The details are in [AI agents in the MESA apps](agents.md). Keep notebooks and results
 under `~/data-store`: the rest of the container is deleted when the analysis ends.
