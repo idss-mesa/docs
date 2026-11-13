@@ -42,7 +42,7 @@ MESA MCP servers are ready in every terminal.
 | Category | Tools |
 |---|---|
 | **IDEs** | JupyterLab; RStudio Server, Shiny Server, and VS Code (code-server) as Launcher cards |
-| **Science** | Python 3.13, R, and Julia with the datascience stack (NumPy, SciPy, pandas, tidyverse, …); DuckDB for Python (`import duckdb`), for SQL over CSV and Parquet files; Miniconda and Mamba |
+| **Science** | Python 3.13, R, and Julia with the datascience stack (NumPy, SciPy, pandas, tidyverse, …); [DuckDB](https://duckdb.org/docs/2.0/clients/overview) 2.0 for SQL over CSV and Parquet files, as a Python package (`import duckdb`) and as the `duckdb` command in a terminal; Miniconda and Mamba |
 | **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](agents.md) |
 | **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
 | **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
@@ -74,6 +74,14 @@ Python: choose **Python 3 (ipykernel)**, **R**, or the Julia kernel before you c
 
 The details are in [AI agents in the MESA apps](agents.md). Keep notebooks and results
 under `~/data-store`: the rest of the container is deleted when the analysis ends.
+
+**DuckDB from R or Julia.** The app has DuckDB for Python and the `duckdb` command, but
+not the R or Julia DuckDB packages. In R, `install.packages("duckdb")` adds the
+[R client](https://duckdb.org/docs/2.0/clients/r) for the current session (and
+`install.packages("duckplyr")` its dplyr-compatible interface); `DBI`, `dplyr`, and
+`dbplyr` are already installed. Packages you install live on the container's disk and
+are gone when the analysis ends, as are the `duckdb` command's history and extensions
+under `~/.duckdb`.
 
 **RStudio inside JupyterLab.** Click the **RStudio** card in the Launcher to open RStudio
 Server in a new tab, with the same files and R installation.

@@ -4,6 +4,9 @@
 
 * **Update**: [MESA JupyterLab](apps/jupyterlab.md) lists DuckDB for Python, found in
   the app's Python environment (version 2.0.0, with pandas 3.1.1) on 2026-11-12.
+* **Update**: [MESA JupyterLab](apps/jupyterlab.md) now says which DuckDB clients the app
+  has, checked in a running analysis on 2026-11-13: the Python package and the `duckdb`
+  command (both 2.0.0), and not the R or Julia packages.
 
 ## 2026-11-12
 
