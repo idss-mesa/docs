@@ -8,8 +8,8 @@ tags:
   - cyverse
   - getting-started
 generated:
-  by: "claude-code/2.1.294"
-  at: "2026-10-08T00:00:00Z"
+  by: "claude-code/2.1.321"
+  at: "2026-11-12T00:00:00Z"
 sources:
   - id: portal
     resource: "https://mesa.cyverse.org/"
@@ -86,10 +86,8 @@ The **sidebar** on the left groups the pages:
 | **Data & Apps** | **Data Browser** — see [Managing data](data.md); **Applications** — see [Starting applications](applications.md); **Analyses** — see [Managing analyses](analyses.md) |
 | **Help & Docs** | **Documentation** — the portal's own user guides (signed-in users) |
 
-The **top bar** links to the [MESA website](https://idss-mesa.github.io/), the
-[Discovery Environment](https://de.cyverse.org), and these docs, and holds the theme
-switch and your user menu (profile, settings, quotas, sign out). On a phone or tablet the
-sidebar folds into the ☰ menu button.
+The **top bar** holds the theme switch and, under your name, your user menu: **My
+Profile**, **Settings**, and **Logout**. Your quotas are on the dashboard. On a phone or tablet the sidebar folds into the ☰ menu button.
 
 ## Dashboard
 
@@ -104,7 +102,7 @@ sidebar folds into the ☰ menu button.
 
 ## Light, dark, or automatic theme
 
-Click the theme button in the top bar to cycle **Light → Dark → Auto**. *Auto* follows
+Click the theme button in the top bar to cycle **Light → Dark → System**. *System* follows
 your operating system's setting. You can also choose a theme under **Settings** in the
 user menu. Your choice is kept in your browser.
 
