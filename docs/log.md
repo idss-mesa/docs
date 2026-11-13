@@ -1,5 +1,10 @@
 # Directory Update Log
 
+## 2026-11-13
+
+* **Update**: [MESA JupyterLab](apps/jupyterlab.md) lists DuckDB for Python, found in
+  the app's Python environment (version 2.0.0, with pandas 3.1.1) on 2026-11-12.
+
 ## 2026-11-12
 
 * **Update**: Corrected the portal and app pages against the live portal, checked while
