@@ -12,7 +12,7 @@ tags:
   - gpu
 generated:
   by: "claude-code/2.1.321"
-  at: "2026-11-12T00:00:00Z"
+  at: "2026-11-13T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/jupyterlab"
@@ -42,7 +42,7 @@ MESA MCP servers are ready in every terminal.
 | Category | Tools |
 |---|---|
 | **IDEs** | JupyterLab; RStudio Server, Shiny Server, and VS Code (code-server) as Launcher cards |
-| **Science** | Python 3.13, R, and Julia with the datascience stack (NumPy, SciPy, pandas, tidyverse, …); Miniconda and Mamba |
+| **Science** | Python 3.13, R, and Julia with the datascience stack (NumPy, SciPy, pandas, tidyverse, …); DuckDB for Python (`import duckdb`), for SQL over CSV and Parquet files; Miniconda and Mamba |
 | **AI agents and MCP** | Claude Code, Codex, OpenCode, Antigravity, Claude Code Router; the `irods`, `mesa`, `formation`, and `filesystem` MCP servers — see [AI agents in the MESA apps](agents.md) |
 | **CyVerse data** | GoCommands, iRODS configuration, S3/OSN mounts, AWS CLI |
 | **Developer tools** | GitHub CLI, Git Credential Manager, Go 1.25, Node.js 22 |
