@@ -3569,6 +3569,13 @@ The same agent conventions cover the rest of the origin and its neighbours:
 
 # Directory Update Log
 
+## 2026-11-14
+
+* **Update**: Site accessibility, checked with axe-core against WCAG 2.2 AA. Code blocks
+  no longer carry an empty link before every line, the current page in the navigation is
+  set in a darker teal in the light scheme, and the copy and select buttons on code blocks
+  are at least 24 pixels square. No page content changed.
+
 ## 2026-11-13
 
 * **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis

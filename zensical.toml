@@ -112,8 +112,11 @@ permalink = true
 [project.markdown_extensions.pymdownx.emoji]
 emoji_generator = "zensical.extensions.emoji.to_svg"
 emoji_index = "zensical.extensions.emoji.twemoji"
+# anchor_linenums is off: it puts an empty, focusable link before every line of
+# every code block, which a keyboard user must tab through and a screen reader
+# announces as an unnamed link (WCAG 2.4.4, 4.1.2).
 [project.markdown_extensions.pymdownx.highlight]
-anchor_linenums = true
+anchor_linenums = false
 line_spans = "__span"
 pygments_lang_class = true
 [project.markdown_extensions.pymdownx.inlinehilite]
