@@ -15,3 +15,27 @@
 @media print {
   .md-typeset .mesa-machine-readable { display: none; }
 }
+
+/* Accessibility (WCAG 2.2 AA), found with axe-core. */
+
+/* The current page in the navigation is set in the teal accent on a teal
+   tint, 2.2:1 in the light scheme. A darker teal holds 4.5:1 there. */
+[data-md-color-scheme="default"] .md-nav--primary .md-nav__item .md-nav__link--active {
+  color: #00695c;
+}
+
+/* The copy and select buttons on code blocks: at least 24 by 24 pixels. */
+.md-typeset .md-code__button { min-width: 24px; min-height: 24px; }
+
+/* Links in the light scheme take the theme's green, 2.8:1 on white. A darker
+   green holds 4.5:1 on the page, on inline code and inside note boxes. The
+   dark scheme's link green already passes and is left alone. */
+[data-md-color-scheme="default"][data-md-color-primary="green"] {
+  --md-typeset-a-color: #2e7d32;
+}
+
+/* The primary button is white on the same green, in both schemes. */
+.md-typeset .md-button--primary {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
+}

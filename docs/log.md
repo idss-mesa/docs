@@ -1,5 +1,13 @@
 # Directory Update Log
 
+## 2026-11-14
+
+* **Update**: Site accessibility, checked with axe-core against WCAG 2.2 AA. Code blocks
+  no longer carry an empty link before every line, the current page in the navigation is
+  set in a darker teal in the light scheme, and the copy and select buttons on code blocks
+  are at least 24 pixels square. Links in the light scheme and the primary button are set
+  in a darker green, `#2e7d32`, which holds 4.5:1. No page content changed.
+
 ## 2026-11-13
 
 * **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis
