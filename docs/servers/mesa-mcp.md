@@ -10,8 +10,8 @@ tags:
   - datacite
   - ducklake
 generated:
-  by: "claude/fable-5"
-  at: "2026-07-18T00:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-11-24T00:00:00Z"
 sources:
   - id: repo
     resource: "https://github.com/idss-mesa/mesa-mcp"
@@ -36,7 +36,7 @@ metadata management and exposes everything as MCP tools.
 | `mesa_ols_*` | Browse OBO/OLS ontologies: search terms, fetch hierarchies, generate AVU templates |
 | `mesa_avu_*` | Apply ontology terms and DataCite fields as AVUs (with the CURIE in the `unit` slot) |
 | `mesa_datacite_*` | DataCite metadata: template, validate, export, apply |
-| `mesa_ducklake_*` | Metadata history: init a project, snapshot, list history, time-travel, diff (backed by [mesa-ducklake](mesa-ducklake.md)) |
+| `mesa_ducklake_*` | Metadata history: init a project, list a path's history, time-travel (backed by [mesa-ducklake](mesa-ducklake.md)) |
 
 ## How MESA runs it
 
