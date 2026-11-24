@@ -1,5 +1,18 @@
 # Directory Update Log
 
+## 2026-11-24
+
+* **Update**: [mesa-ducklake](servers/mesa-ducklake.md) now says it follows the DuckLake
+  *pattern* but does not use the DuckDB `ducklake` extension. It also explains how its
+  `.mesa/ducklake/` history differs from a project's own extension-format lake (such as
+  neon-ducklake's `ducklake/*.ducklake`), and links to the repo's sections on porting to the
+  extension and on reading history without the catalog. A student's questions showed these
+  points were missing from `llms.txt` and `llms-full.txt`.
+* **Update**: [mesa-ducklake](servers/mesa-ducklake.md) and [mesa-mcp](servers/mesa-mcp.md)
+  list the `mesa_ducklake_*` tools mesa-mcp actually ships (`init_project`, `history`,
+  `time_travel`). `snapshot` and `diff` were never MCP tools; `diff` is Python-API only.
+  The CLI list gains `migrate`.
+
 ## 2026-11-13
 
 * **Update**: [MESA RStudio Geospatial](apps/rstudio.md), checked in a running analysis
